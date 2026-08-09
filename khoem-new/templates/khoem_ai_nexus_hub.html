@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHOEM_AI 3.0 Pro & Nexus Hub (Ultimate Edition)</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/khoem_ai_nexus.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+
+    <!-- Google Identity Services — ចាំបាច់សម្រាប់ Sign-In ពិតប្រាកដ -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        :root {
+            --primary:   #00f0ff;
+            --secondary: #1a1d29;
+            --accent:    #ff007f;
+            --bg-dark:   #0b0d14;
+            --text:      #ffffff;
+            --radius:    16px;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Siemreap', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        .app-header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .app-header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .app-header h1 span { color: var(--accent); }
+
+        .app-header p {
+            color: #888;
+            font-size: 13px;
+            margin: 4px 0 0;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            background: var(--secondary);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .lang-btn.active,
+        .lang-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Camera */
+        #camera-section {
+            background: var(--secondary);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .cam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .cam-header span:first-child {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        #cam-status {
+            font-size: 11px;
+            color: #00ff88;
+        }
+
+        #camera-preview {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .cam-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .cam-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            background: var(--primary);
+            color: #000;
+            transition: 0.3s;
+        }
+
+        .cam-btn.secondary {
+            background: #ff4d4d;
+            color: #fff;
+        }
+
+        .cam-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Camera Lock Overlay — លាតឡើងលើ camera-section រហូតដល់ sign-in ជោគជ័យ */
+        #camera-lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 14, 23, 0.9);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 5;
+        }
+
+        #camera-lock-overlay p {
+            color: #aaa;
+            font-size: 13px;
+            margin: 10px 0 0;
+        }
+
+        /* Security / Sign-In */
+        #security-panel {
+            background: var(--secondary);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 0, 127, 0.3);
+        }
+
+        #security-panel h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            color: var(--accent);
+        }
+
+        #nexus-login-status {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Chat */
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            background: var(--secondary);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .msg {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .msg.user      { background: rgba(0, 240, 255, 0.15); text-align: right; }
+        .msg.assistant { background: rgba(255, 255, 255, 0.1); }
+
+        /* Map */
+        #map-container {
+            width: 100%;
+            height: 220px;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        /* Input Row */
+        #input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: var(--secondary);
+            color: #fff;
+        }
+
+        #send-btn {
+            padding: 0 20px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="km">KH</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <h1>KHOEM_AI <span>3.0 PRO</span></h1>
+        <p data-i18n="app_subtitle">Nexus Hub & 4K Camera Ecosystem</p>
+    </header>
+
+    <!-- Camera -->
+    <div id="camera-section">
+        <!-- ចាក់សោរហូតដល់ម្ចាស់ Sign-In ជោគជ័យ -->
+        <div id="camera-lock-overlay">
+            <span style="font-size:32px;">🔒</span>
+            <p data-i18n="cam_locked">សូម Sign-In ដើម្បីប្រើកាមេរ៉ា</p>
+        </div>
+
+        <div class="cam-header">
+            <span data-i18n="cam_title">📷 4K Camera & Video Stream</span>
+            <span id="cam-status">● Standby</span>
+        </div>
+        <video id="camera-preview" autoplay playsinline muted></video>
+        <canvas id="snapshot-canvas" style="display:none;"></canvas>
+        <div class="cam-controls">
+            <button id="switch-cam-btn" class="cam-btn" data-i18n="btn_switch" disabled>🔄 ប្តូរមុខ/ក្រោយ</button>
+            <button id="capture-photo-btn" class="cam-btn" data-i18n="btn_photo" disabled>📸 ថតរូប</button>
+            <button id="capture-video-btn" class="cam-btn secondary" data-i18n="btn_video" disabled>⏺️ ថតវីដេអូ</button>
+        </div>
+    </div>
+
+    <!-- Owner Sign-In (Google) — ជំនួស Face/Fingerprint/PIN ក្លែងក្លាយចាស់ -->
+    <div id="security-panel">
+        <h3 data-i18n="sec_title">🔒 ចូលគណនីម្ចាស់ (Google Sign-In)</h3>
+
+        <div id="g_id_onload"
+             data-client_id="{{ google_client_id }}"
+             data-callback="handleGoogleSignIn">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-theme="filled_black"></div>
+
+        <p id="nexus-login-status" data-i18n="signin_prompt">មិនទាន់ចូលគណនី</p>
+    </div>
+
+    <!-- Chat Box -->
+    <div id="chat-box">
+        <div class="msg assistant" data-i18n="welcome_msg">សួស្តីមេ! ប្រព័ន្ធ KHOEM_AI 3.0 Pro ត្រូវបានរៀបចំរួចរាល់សម្រាប់ការប្រើប្រាស់។</div>
+    </div>
+
+    <!-- Map & GPS -->
+    <div id="map-container"></div>
+
+    <!-- Chat Input -->
+    <div id="input-row">
+        <input id="user-input" type="text"
+               placeholder="វាយសារបញ្ជាទីនេះ..."
+               data-i18n-placeholder="input_placeholder">
+        <button id="send-btn">➤</button>
+    </div>
+
+</div>
+
+<!-- Nexus Hub frontend logic — Google Sign-In flow, device commands (real, server-verified) -->
+<script src="{{ url_for('static', filename='js/khoem_ai_nexus_hub.js') }}"></script>
+
+<script>
+    // --------------------------------------------------
+    // i18n Translations (គ្រាន់តែសម្រាប់ខ្លឹមសារនៅលើទំព័រនេះ —
+    // Face/Fingerprint/PIN keys ចាស់ត្រូវបានដកចេញព្រោះលក្ខណៈនោះលែងមានទៀតហើយ)
+    // --------------------------------------------------
+    const translations = {
+        km: {
+            app_subtitle:      "Nexus Hub & 4K Camera Ecosystem",
+            cam_title:         "📷 4K Camera & Video Stream",
+            cam_locked:        "សូម Sign-In ដើម្បីប្រើកាមេរ៉ា",
+            btn_switch:        "🔄 ប្តូរមុខ/ក្រោយ",
+            btn_photo:         "📸 ថតរូប",
+            btn_video:         "⏺️ ថតវីដេអូ",
+            sec_title:         "🔒 ចូលគណនីម្ចាស់ (Google Sign-In)",
+            signin_prompt:     "មិនទាន់ចូលគណនី",
+            welcome_msg:       "សួស្តីមេ! ប្រព័ន្ធ KHOEM_AI 3.0 Pro ត្រូវបានរៀបចំរួចរាល់សម្រាប់ការប្រើប្រាស់។",
+            input_placeholder: "វាយសារបញ្ជាទីនេះ...",
+            cam_front:         "● កាមេរ៉ាមុខ (4K)",
+            cam_back:          "● កាមេរ៉ាក្រោយ (4K)",
+            cam_standby:       "● Standby",
+            cam_error:         "○ មិនអាចបើកកាមេរ៉ាបានទេ",
+        },
+        en: {
+            app_subtitle:      "Nexus Hub & 4K Camera Ecosystem",
+            cam_title:         "📷 4K Camera & Video Stream",
+            cam_locked:        "Please sign in to use the camera",
+            btn_switch:        "🔄 Switch Cam",
+            btn_photo:         "📸 Take Photo",
+            btn_video:         "⏺️ Record Video",
+            sec_title:         "🔒 Owner Sign-In (Google)",
+            signin_prompt:     "Not signed in",
+            welcome_msg:       "Hello Boss! KHOEM_AI 3.0 Pro system is fully prepared and ready for use.",
+            input_placeholder: "Type your command here...",
+            cam_front:         "● Front Camera (4K)",
+            cam_back:          "● Back Camera (4K)",
+            cam_standby:       "● Standby",
+            cam_error:         "○ Unable to access camera",
+        },
+    };
+
+    let currentLang = 'km';
+
+    function t(key) {
+        return translations[currentLang][key] ?? key;
+    }
+
+    function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[currentLang][key] !== undefined) {
+                el.textContent = translations[currentLang][key];
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[currentLang][key] !== undefined) {
+                el.placeholder = translations[currentLang][key];
+            }
+        });
+
+        updateCamStatus();
+    }
+
+    // --------------------------------------------------
+    // Language Switcher
+    // --------------------------------------------------
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentLang = btn.dataset.lang;
+            document.querySelectorAll('.lang-btn').forEach(b =>
+                b.classList.toggle('active', b === btn)
+            );
+            applyTranslations();
+        });
+    });
+
+    // --------------------------------------------------
+    // Camera — ចាក់សោររហូតដល់ owner Sign-In ជោគជ័យ
+    // --------------------------------------------------
+    let currentStream       = null;
+    let useFrontCamera      = true;
+    let ownerAuthenticated  = false;
+
+    const videoElement  = document.getElementById('camera-preview');
+    const camStatus     = document.getElementById('cam-status');
+    const lockOverlay   = document.getElementById('camera-lock-overlay');
+    const camButtons    = [
+        document.getElementById('switch-cam-btn'),
+        document.getElementById('capture-photo-btn'),
+        document.getElementById('capture-video-btn'),
+    ];
+
+    function updateCamStatus() {
+        if (!currentStream) {
+            camStatus.textContent = t('cam_standby');
+            return;
+        }
+        camStatus.textContent = useFrontCamera ? t('cam_front') : t('cam_back');
+    }
+
+    async function startCamera() {
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+        }
+
+        const constraints = {
+            video: {
+                width:      { ideal: 3840 },
+                height:     { ideal: 2160 },
+                facingMode: useFrontCamera ? 'user' : 'environment',
+            },
+            audio: false,
+        };
+
+        try {
+            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+            videoElement.srcObject = currentStream;
+            updateCamStatus();
+        } catch (err) {
+            console.error('Camera Error:', err);
+            camStatus.textContent = t('cam_error');
+        }
+    }
+
+    // ហៅមុខងារនេះបន្ទាប់ពី /api/auth/google បញ្ជាក់ជោគជ័យ
+    // (khoem_ai_nexus_hub.js ហៅមុខងារនេះ ប្រសិនបើវាមាននៅលើទំព័រ)
+    window.unlockCamera = function () {
+        ownerAuthenticated = true;
+        lockOverlay.style.display = 'none';
+        camButtons.forEach(btn => btn && (btn.disabled = false));
+        startCamera();
+    };
+
+    document.getElementById('switch-cam-btn').addEventListener('click', () => {
+        if (!ownerAuthenticated) return;
+        useFrontCamera = !useFrontCamera;
+        startCamera();
+    });
+
+    document.getElementById('capture-photo-btn').addEventListener('click', () => {
+        if (!ownerAuthenticated) return;
+        const canvas  = document.getElementById('snapshot-canvas');
+        canvas.width  = videoElement.videoWidth  || 1280;
+        canvas.height = videoElement.videoHeight || 720;
+        canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        // TODO: ផ្ញើ canvas.toDataURL() ទៅ /api/vision ដើម្បីវិភាគរូបភាព
+        console.log('[KHOEM_AI] Photo captured (base64 in canvas, not yet sent to /api/vision)');
+    });
+
+    // --------------------------------------------------
+    // Init
+    // --------------------------------------------------
+    applyTranslations();
+    // ចំណាំ: startCamera() លែងហៅដោយស្វ័យប្រវត្តិលើ DOMContentLoaded ទៀតហើយ —
+    // វានឹងចាប់ផ្តើមតែក្រោយ unlockCamera() បន្ទាប់ពី Sign-In ជោគជ័យប៉ុណ្ណោះ។
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+/* ==============================================================================
+   static/css/api-status.css — KHOEM_AI 3.3
+   ស្ទីលសម្រាប់សញ្ញាបង្ហាញស្ថានភាព API (ភ្ជាប់, ខុស key, ហួសកម្រិត)
+   ត្រូវនឹងពណ៌ theme ដដែលនៅក្នុង khoem_ai_nexus.css (cyan/dark)
+   ============================================================================== */
+
+.api-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid rgba(97, 228, 239, 0.2);
+    border-radius: 999px;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: #8bb8be;
+    background: rgba(17, 52, 65, 0.6);
+    transition: all 180ms ease;
+}
+
+.api-status-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #75e3c0; /* --green: ភ្ជាប់បានធម្មតា */
+    box-shadow: 0 0 8px #75e3c0;
+}
+
+/* ស្ថានភាព: ហួសកម្រិត rate limit */
+.api-status-badge.rate-limited {
+    color: #f6d56b;
+    border-color: rgba(246, 213, 107, 0.35);
+    background: rgba(90, 74, 20, 0.35);
+}
+.api-status-badge.rate-limited .dot {
+    background: #f6d56b;
+    box-shadow: 0 0 8px #f6d56b;
+    animation: khoem-pulse 1s ease-in-out infinite;
+}
+
+/* ស្ថានភាព: API key ខុស/ខ្វះ */
+.api-status-badge.unauthorized {
+    color: #ff7a83;
+    border-color: rgba(255, 122, 131, 0.35);
+    background: rgba(90, 20, 25, 0.35);
+}
+.api-status-badge.unauthorized .dot {
+    background: #ff7a83;
+    box-shadow: 0 0 8px #ff7a83;
+}
+
+@keyframes khoem-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+}
+
+/* ប្រអប់តូចសម្រាប់ paste API key ដំបូងបំផុត (បង្ហាញតែពេលមិនទាន់មាន key ក្នុង localStorage) */
+.api-key-setup {
+    display: flex;
+    gap: 8px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(97, 228, 239, 0.25);
+    border-radius: 14px;
+    background: rgba(12, 34, 45, 0.9);
+}
+.api-key-setup input {
+    flex: 1;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid rgba(151, 221, 231, 0.16);
+    border-radius: 10px;
+    background: #102f3c;
+    color: #f1fbfc;
+    font-size: 12px;
+}
+.api-key-setup button {
+    padding: 0 16px;
+    border: none;
+    border-radius: 10px;
+    background: #61e4ef;
+    color: #04131b;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+}

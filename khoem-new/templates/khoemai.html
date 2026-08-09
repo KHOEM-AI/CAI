@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHOEM_AI - Global Time &amp; Countries</title>
+
+    <!-- ពុម្ពអក្សររដ្ឋ Khmer + Latin -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================
+           CSS Variables / Theme
+        ======================== */
+        :root {
+            --khoemai-bg:      #0f172a;
+            --khoemai-card:    #1e293b;
+            --khoemai-border:  #334155;
+            --khoemai-accent:  #38bdf8;
+            --khoemai-text:    #f8fafc;
+            --khoemai-muted:   #94a3b8;
+            --khoemai-radius:  10px;
+            --khoemai-shadow:  0 4px 24px rgba(56, 189, 248, 0.18);
+        }
+
+        /* ========================
+           Reset & Base
+        ======================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--khoemai-bg);
+            color: var(--khoemai-text);
+            font-family: "Inter", "Noto Sans Khmer", Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        /* ========================
+           Card Container
+        ======================== */
+        .khoemai-container {
+            background: var(--khoemai-card);
+            border: 1px solid var(--khoemai-accent);
+            border-radius: var(--khoemai-radius);
+            padding: 28px 24px 24px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: var(--khoemai-shadow);
+        }
+
+        /* ========================
+           Heading
+        ======================== */
+        .khoemai-container h3 {
+            color: var(--khoemai-accent);
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.3px;
+            margin-bottom: 20px;
+        }
+
+        /* ========================
+           Country Select
+        ======================== */
+        .khoemai-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--khoemai-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .khoemai-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--khoemai-bg);
+            color: var(--khoemai-text);
+            border: 1px solid var(--khoemai-border);
+            border-radius: 6px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 36px;
+        }
+
+        .khoemai-select:focus {
+            border-color: var(--khoemai-accent);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        /* ========================
+           Clock Display
+        ======================== */
+        .khoemai-clock-display {
+            background: var(--khoemai-bg);
+            padding: 14px 16px;
+            border-radius: 6px;
+            border: 1px dashed var(--khoemai-accent);
+            text-align: center;
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .khoemai-clock-label {
+            color: var(--khoemai-muted);
+            font-size: 14px;
+        }
+
+        #kmClockTime {
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--khoemai-accent);
+            letter-spacing: 1px;
+            font-variant-numeric: tabular-nums;
+            min-width: 110px;
+            display: inline-block;
+        }
+
+        /* ========================
+           Footer Credit
+        ======================== */
+        .khoemai-footer {
+            margin-top: 18px;
+            font-size: 12px;
+            color: var(--khoemai-muted);
+            text-align: center;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="khoemai-container">
+        <h3>🌍 Select Country &amp; Timezone</h3>
+
+        <label for="kmLangSelect" class="khoemai-label">Country</label>
+        <select id="kmLangSelect" class="khoemai-select" aria-label="Select a country to view its local time">
+            <option value="">⚡ Loading 195 Countries...</option>
+        </select>
+
+        <div class="khoemai-clock-display" role="status" aria-live="polite" aria-label="Local time display">
+            <span class="khoemai-clock-label">🕐 Local Time:</span>
+            <span id="kmClockTime">--:--:-- --</span>
+        </div>
+    </div>
+
+    <p class="khoemai-footer">KHOEM_AI &mdash; Global Clock &copy; 2025</p>
+
+    <!-- JavaScript -->
+    <script src="../static/js/khoemai.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* ==============================================================================
+   static/css/theme-refresh.css — KHOEM_AI 3.3
+   ពណ៌ថ្មីស្រស់ស្អាតជាងមុន — ដាក់ file នេះ "ក្រោយគេ" ក្នុង <head> (បន្ទាប់ពី
+   CSS ចាស់ទាំងអស់) ដើម្បីឲ្យវា override ត្រឹមត្រូវ។ មិនកែ layout អ្វីទាំងអស់
+   ============================================================================== */
+
+:root {
+    /* ពណ៌ background/surface នៅដដែល (ទុកអេក្រង់ដូចមុន) */
+
+    /* ពណ៌ accent ស្រស់ជាងមុន — cyan ភ្លឺជាង + បន្ថែម gradient */
+    --cyan: #4de8ff;
+    --cyan-deep: #00c2d9;
+    --green: #4ef0c4;
+    --yellow: #ffd93d;
+    --red: #ff5c6c;
+}
+
+/* ── ប៊ូតុងចម្បង (send, save, primary actions) — ខ្មៅ + អក្សរស ─────────────── */
+.composer-button.send,
+.nav-btn.save,
+#api-key-save-btn,
+.mini-button:hover {
+    background: #0a0a0a !important;
+    color: #ffffff !important;
+    border: 1px solid var(--cyan) !important;
+    box-shadow: 0 0 14px rgba(77, 232, 255, 0.35);
+}
+
+/* ── ប៊ូតុងធម្មតា (tool-button, chip, place-button) — ខ្មៅស្រាល + អក្សរស ──── */
+.tool-button,
+.chip,
+.place-button,
+.mini-button,
+#api-key-save-btn {
+    background: #101418 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid rgba(77, 232, 255, 0.25) !important;
+}
+.tool-button:hover,
+.chip:hover,
+.place-button:hover {
+    background: #181d24 !important;
+    border-color: var(--cyan) !important;
+    color: #ffffff !important;
+}
+
+/* ── ចន្លោះជជែក user bubble — ភ្លឺជាងបន្តិចឲ្យផ្ទុយពីខ្មៅ ──────────────────── */
+.msg.user {
+    background: linear-gradient(135deg, #00c2d9, #4de8ff) !important;
+    color: #06131a !important;
+    font-weight: 500;
+}
+.msg.user .msg-label {
+    color: #06131a !important;
+    opacity: 0.7;
+}
+
+/* ── Badge / status ពណ៌ភ្លឺជាង ──────────────────────────────────────────── */
+.status-dot {
+    background: var(--cyan) !important;
+    box-shadow: 0 0 12px var(--cyan) !important;
+}
+
+/* ── Card border ភ្លឺបន្តិចឲ្យមើលទៅមិនស្រអាប់ ──────────────────────────── */
+.bento-card {
+    border-color: rgba(77, 232, 255, 0.14) !important;
+}
+
+/* ── Language switcher (ប្រើជាមួយ i18n.js) ─────────────────────────────── */
+.lang-switcher {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid rgba(77, 232, 255, 0.2);
+    border-radius: 999px;
+    background: #0a0a0a;
+}
+.lang-switcher button {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: #8ca8b0;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 150ms ease;
+}
+.lang-switcher button.active {
+    background: var(--cyan);
+    color: #06131a;
+}
+.lang-switcher button:not(.active):hover {
+    color: #f5f5f5;
+}
+
+

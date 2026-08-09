@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHOEM_AI Video Generator</title>
+    <link rel="stylesheet" href="/static/css/video_khoemai.css">
+</head>
+<body>
+
+<div class="video-app">
+
+    <!-- Header -->
+    <header class="video-header">
+        <h1>🎬 KHOEM_AI <span>Video Generator</span></h1>
+        <p>AI Text → Video | Image → Video</p>
+    </header>
+
+    <!-- Generator Panel -->
+    <section class="video-panel">
+        <h2>Create Video</h2>
+
+        <label>Prompt</label>
+        <textarea id="video-prompt" rows="6" placeholder="Describe your video..."></textarea>
+
+        <label>Upload Image (Optional)</label>
+        <input id="video-image" type="file" accept="image/*">
+
+        <label>Duration</label>
+        <select id="video-duration">
+            <option value="10">10 Seconds</option>
+            <option value="30">30 Seconds</option>
+            <option value="60">1 Minute</option>
+            <option value="180">3 Minutes</option>
+            <option value="360">6 Minutes</option>
+        </select>
+
+        <label>Resolution</label>
+        <select id="video-resolution">
+            <option value="720p">HD 720p</option>
+            <option value="1080p">Full HD 1080p</option>
+        </select>
+
+        <button id="generate-video-btn">🎬 Generate Video</button>
+    </section>
+
+</div>
+
+</body>
+</html>
