@@ -10,7 +10,7 @@ routes/chat_routes.py (Patched)
 import logging
 
 from flask import Blueprint, request, jsonify
-from core.ai_engine import call_groq
+from core.ai_engine import chat as call_groq
 from core.database_engine import save_message, get_history, clear_history
 
 logger = logging.getLogger(__name__)
