@@ -994,6 +994,51 @@
                 button.addEventListener("click", function () { startNavigationTo(button.dataset.place); });
             });
             window.openCalendar = function () { addMessage("assistant", "Calendar integration នឹងបើកនៅពេល API calendar ត្រូវបានភ្ជាប់។"); };
+      
+function addAudioMessage(role, trackUrl, caption) {
+                const div = document.createElement("div");
+                div.className = "msg " + (role === "user" ? "user" : "assistant");
+                const label = document.createElement("span");
+                label.className = "msg-label";
+                label.textContent = role === "user" ? "You · now" : "KHOEM_AI · now";
+                div.appendChild(label);
+                if (caption) div.appendChild(document.createTextNode(safeText(caption)));
+                const audio = document.createElement("audio");
+                audio.controls = true;
+                audio.src = trackUrl;
+                audio.style.display = "block";
+                audio.style.marginTop = "8px";
+                audio.style.width = "100%";
+                div.appendChild(audio);
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            async function generateMusic(promptText) {
+                const text = (promptText || "").trim();
+                if (!text) return;
+                addMessage("user", "🎵 បង្កើតបទចម្រៀង: " + text);
+                try {
+                    const data = await KhoemAPI.post("/api/music/generate", {
+                        session_id: sessionId,
+                        prompt: text,
+                        duration: 30
+                    });
+                    if (data.status === "stub") {
+                        addMessage("assistant", "🎵 " + (data.message || "Music API មិនទាន់បានកំណត់ configure នៅឡើយទេ។"));
+                    } else if (data.track_url) {
+                        addAudioMessage("assistant", data.track_url, "🎵 បទចម្រៀងរបស់បងរួចរាល់ហើយ!");
+                        if (window.KhoemVoice && typeof KhoemVoice.speak === "function") {
+                            KhoemVoice.speak("បទចម្រៀងរបស់បងរួចរាល់ហើយ");
+                        }
+                    } else {
+                        addMessage("assistant", "⚠️ មិនអាចបង្កើតបទចម្រៀងបានទេ");
+                    }
+                    updateApiStatusBadge(null, "API ready");
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការបង្កើតបទចម្រៀង");
+                }
+            }       
         });
     </script>
 </body>
