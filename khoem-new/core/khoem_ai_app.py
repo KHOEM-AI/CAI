@@ -37,6 +37,9 @@ from typing import Any, Callable, TypeVar
 
 from flask import Flask, g, jsonify, request
 
+# ── KHOEM_AI: ភ្ជាប់ AI Chat (Groq) ចូល App ───────────────────────────────
+from routes.chat_routes import chat_bp
+
 
 LOGGER = logging.getLogger("khmer_ai")
 F = TypeVar("F", bound=Callable[..., Any])
@@ -284,6 +287,9 @@ def create_app(settings: Settings | None = None) -> Flask:
                 "output": output,
             }
         )
+
+    # ── KHOEM_AI: ភ្ជាប់ Route /api/chat ចូល App (ចាំបាច់ ដើម្បីឱ្យ Chat ដំណើរការ) ──
+    app.register_blueprint(chat_bp)
 
     return app
 
