@@ -33,6 +33,10 @@ class Config:
     GROQ_VISION_MODEL = os.getenv("GROQ_VISION_MODEL", "llava-v1.5-7b-4096-preview")
     GROQ_API_URL      = "https://api.groq.com/openai/v1/chat/completions"
 
+    MUSIC_API_KEY  = os.getenv("MUSIC_API_KEY", "")
+    MUSIC_API_URL  = os.getenv("MUSIC_API_URL", "https://api.example-music-gen.com/v1/generate")
+    MUSIC_PROVIDER = os.getenv("MUSIC_PROVIDER", "stub")
+
     DB_PATH  = os.path.join(BASE_DIR, "database", "khoem_ai.db")
     LOG_PATH = os.path.join(BASE_DIR, "logs",     "system.log")
 
