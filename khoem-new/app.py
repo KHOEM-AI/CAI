@@ -411,7 +411,56 @@ def vision():
 
     return jsonify({"answer": answer})
 
+# ==============================================================================
+# Routes — Music Generation API  (សម្រាប់បង្កើតបទចម្រៀង/តន្ត្រីភ្ជាប់ជាមួយវីដេអូ)
+# ==============================================================================
 
+@app.route("/api/music/generate", methods=["POST"])
+@require_api_key
+@rate_limit(max_calls=5, window_seconds=60)
+def generate_music():
+    data = request.get_json(silent=True) or {}
+    err  = _require_json_fields(data, "session_id", "prompt")
+    if err:
+        return jsonify({"error": err}), 400
+
+    session_id   = str(data["session_id"]).strip()
+    prompt_text  = str(data["prompt"]).strip()
+    style        = str(data.get("style", "")).strip()
+    instrumental = bool(data.get("instrumental", False))
+
+    try:
+        duration_sec = int(data.get("duration", 30))
+    except (TypeError, ValueError):
+        return jsonify({"error": "duration ត្រូវតែជាលេខ"}), 400
+
+    if len(prompt_text) > 1000:
+        return jsonify({"error": "Prompt វែងពេក (អតិបរមា ១០០០ តួអក្សរ)"}), 400
+
+    if duration_sec < 5 or duration_sec > 180:
+        return jsonify({"error": "duration ត្រូវនៅចន្លោះ ៥ ដល់ ១៨០ វិនាទី"}), 400
+
+    save_message(session_id, "user", f"[music-request] {prompt_text}")
+
+    success, result = call_music_api(
+        prompt=prompt_text,
+        style=style,
+        duration_sec=duration_sec,
+        instrumental=instrumental,
+    )
+    if not success:
+        return jsonify(result), 502
+
+    if result["status"] == "completed":
+        save_message(session_id, "assistant", f"[music-track] {result.get('track_url')}")
+
+    return jsonify({
+        "session_id": session_id,
+        "status":     result["status"],
+        "track_url":  result.get("track_url"),
+        "job_id":     result.get("job_id"),
+        "message":    result.get("message"),
+    })
 # ==============================================================================
 # Routes — Directions (Stub — integrate Google Maps API ពេលក្រោយ)
 # ==============================================================================
