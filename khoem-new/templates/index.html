@@ -988,7 +988,11 @@
                             addMessage("assistant", "មិនអាចស្វែងរកទីតាំងបានទេ។");
                         }
                     }
-                });
+                    if (action === "music") {
+                        const musicPrompt = window.prompt("ពិពណ៌នាបទចម្រៀងដែលបងចង់បង្កើត (ឧ. បទស្នេហាយឺតៗ សំឡេងគីតា):");
+                        if (musicPrompt) generateMusic(musicPrompt);
+                    }      
+               });
             });
             document.querySelectorAll("[data-place]").forEach(function (button) {
                 button.addEventListener("click", function () { startNavigationTo(button.dataset.place); });
