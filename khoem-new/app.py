@@ -264,7 +264,50 @@ def call_groq_vision(image_b64: str, question: str, mime_type: str = "image/jpeg
         logger.error("Groq Vision request error: %s", e)
         return False, "បញ្ហាក្នុងការវិភាគរូបភាព"
 
+def call_music_api(prompt: str, style: str = "", duration_sec: int = 30, instrumental: bool = False) -> tuple[bool, dict]:
+    """ហៅ Music Generation API ខាងក្រៅ (Suno / ElevenLabs Music / ផ្សេងៗ) ដើម្បីបង្កើតបទចម្រៀង។
+    ប្រសិនបើ MUSIC_API_KEY មិនទាន់បានកំណត់ក្នុង .env — endpoint នេះនឹងត្រឡប់ status="stub"
+    ដើម្បីឲ្យ Frontend អាចដំណើរការតេស្តបានដោយមិនចាំបាច់មាន API key ពិតប្រាកដមុនសិន។
+    """
+    if not Config.MUSIC_API_KEY:
+        logger.warning("MUSIC_API_KEY មិនទាន់បានកំណត់ — ត្រឡប់ stub response")
+        return True, {
+            "status": "stub",
+            "track_url": None,
+            "message": "សូមកំណត់ MUSIC_API_KEY ក្នុង .env ដើម្បីបង្កើតបទចម្រៀងពិតប្រាកដ",
+        }
 
+    payload = {
+        "prompt": prompt,
+        "style": style,
+        "duration": duration_sec,
+        "instrumental": instrumental,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {Config.MUSIC_API_KEY}",
+    }
+    try:
+        resp = requests.post(
+            Config.MUSIC_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=60,
+        )
+        resp.raise_for_status()
+        result = resp.json()
+        return True, {
+            "status": "completed",
+            "track_url": result.get("audio_url") or result.get("track_url"),
+            "job_id": result.get("id") or result.get("job_id"),
+            "raw": result,
+        }
+    except requests.exceptions.HTTPError as e:
+        logger.error("Music API HTTP error: %s — %s", e, resp.text)
+        return False, {"error": f"បញ្ហា Music API (HTTP {resp.status_code})"}
+    except requests.exceptions.RequestException as e:
+        logger.error("Music API request error: %s", e)
+        return False, {"error": "បញ្ហាក្នុងការភ្ជាប់ទៅ Music API"}
 # ==============================================================================
 # Validation Helper
 # ==============================================================================
