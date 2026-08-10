@@ -10,13 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
-    
+
     <!-- Original project modules are intentionally kept in the same HTML document. -->
+  
     <link rel="stylesheet" href="static/css/khoem_ai_nexus.css">
     <link rel="stylesheet" href="static/css/khoemai.css">
     <link rel="stylesheet" href="static/css/magnifying_glass.css">
     <link rel="stylesheet" href="static/css/api-status.css">
-    <link rel="stylesheet" href="/static/css/theme-refresh.css">
+    <link rel="stylesheet" href="static/css/theme-override.css">
     <style>
         :root {
             --bg: #071923;
@@ -473,22 +474,16 @@
                 <div class="system-status"><i class="status-dot"></i> System operational</div>
                 <span id="api-status-badge" class="api-status-badge">
                     <i class="dot"></i><span id="api-status-text">API ready</span>
-            
-            </span>
+                </span>
                 <div class="session-id">SESSION / <span id="session-label">--</span></div>
                 <div class="session-clock">Local session<strong id="session-clock">--:--:--</strong></div>
                 <div class="profile">KM</div>
             </div>
-
-            <div class="lang-switcher">
-                <button onclick="changeLanguage('en')">EN</button>
-                <button onclick="changeLanguage('km')">KM</button>
-                <button onclick="changeLanguage('zh')">ZH</button>
-            </div>
         </header>
 
         <div class="dashboard-layout">
-            <aside class="sidebar" aria-label="KHOEM_AI controls">
+
+<aside class="sidebar" aria-label="KHOEM_AI controls">
                 <section class="bento-card command-card card-pad">
                     <div class="command-heading">
                         <div>
@@ -621,6 +616,8 @@
                         <button class="chip" data-action="navigate" type="button">នាំផ្លូវ</button>
                         <button class="chip" data-action="goto-home" type="button">ទៅផ្ទះ</button>
                         <button class="chip" data-action="goto-work" type="button">ទៅធ្វើការ</button>
+                        <button class="chip" data-action="music" type="button">🎵 ចម្រៀង</button>
+                        <button class="chip" data-action="video-music" type="button">🎬🎵 វីដេអូ+ចម្រៀង</button>
                     </div>
                 </section>
 
@@ -666,7 +663,7 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src="static/js/api-client.js"></script>
     <script src="static/js/settings.js"></script>
     <script src="static/js/voice.js"></script>
@@ -681,7 +678,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // ── API key setup box + status badge ──────────────────────────────
             const setupBox   = document.getElementById("api-key-setup");
             const keyInput   = document.getElementById("api-key-input");
             const keySaveBtn = document.getElementById("api-key-save-btn");
@@ -706,7 +702,6 @@
                 badgeText.textContent = message || "API ready";
             }
 
-            // ── ស្នូល Dashboard ────────────────────────────────────────────────
             const sessionId = "session_" + Math.random().toString(36).slice(2, 10);
             const sessionLabel = document.getElementById("session-label");
             const sessionClock = document.getElementById("session-clock");
@@ -761,7 +756,6 @@
                 element.style.display = "block";
             }
 
-            // ── ការហៅ API — ប្រើ KhoemAPI ជានិច្ច ដើម្បីផ្ញើ X-API-Key ស្វ័យប្រវត្តិ ──
             async function sendImageMessage(question) {
                 addMessage("user", "[រូបភាព] " + question);
                 const image = pendingImageBase64;
@@ -961,6 +955,95 @@
                 }
             });
 
+            function addAudioMessage(role, trackUrl, caption) {
+                const div = document.createElement("div");
+                div.className = "msg " + (role === "user" ? "user" : "assistant");
+                const label = document.createElement("span");
+                label.className = "msg-label";
+                label.textContent = role === "user" ? "You · now" : "KHOEM_AI · now";
+                div.appendChild(label);
+                if (caption) div.appendChild(document.createTextNode(safeText(caption)));
+                const audio = document.createElement("audio");
+                audio.controls = true;
+                audio.src = trackUrl;
+                audio.style.display = "block";
+                audio.style.marginTop = "8px";
+                audio.style.width = "100%";
+                div.appendChild(audio);
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            async function generateMusic(promptText) {
+                const text = (promptText || "").trim();
+                if (!text) return;
+                addMessage("user", "🎵 បង្កើតបទចម្រៀង: " + text);
+                try {
+                    const data = await KhoemAPI.post("/api/music/generate", {
+                        session_id: sessionId,
+                        prompt: text,
+                        duration: 30
+                    });
+                    if (data.status === "stub") {
+                        addMessage("assistant", "🎵 " + (data.message || "Music API មិនទាន់បានកំណត់ configure នៅឡើយទេ។"));
+                    } else if (data.track_url) {
+                        addAudioMessage("assistant", data.track_url, "🎵 បទចម្រៀងរបស់បងរួចរាល់ហើយ!");
+                        if (window.KhoemVoice && typeof KhoemVoice.speak === "function") {
+                            KhoemVoice.speak("បទចម្រៀងរបស់បងរួចរាល់ហើយ");
+                        }
+                    } else {
+                        addMessage("assistant", "⚠️ មិនអាចបង្កើតបទចម្រៀងបានទេ");
+                    }
+                    updateApiStatusBadge(null, "API ready");
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការបង្កើតបទចម្រៀង");
+                }
+            }
+
+            async function generateVideoWithMusic(videoPrompt, musicPrompt) {
+                const vText = (videoPrompt || "").trim();
+                if (!vText) return;
+                addMessage("user", "🎬🎵 បង្កើតវីដេអូ+ចម្រៀង: " + vText);
+                try {
+                    const data = await KhoemAPI.post("/api/video/generate-with-music", {
+                        session_id: sessionId,
+                        video_prompt: vText,
+                        music_prompt: (musicPrompt || vText).trim(),
+                        duration: 10
+                    });
+                    const videoUrl = data.final_video_url || data.video_url;
+                    if (data.status === "stub") {
+                        addMessage("assistant", "⚠️ " + (data.message || "API key មិនទាន់បានកំណត់ configure"));
+                    } else if (videoUrl) {
+                        const div = document.createElement("div");
+                        div.className = "msg assistant";
+                        const label = document.createElement("span");
+                        label.className = "msg-label";
+                        label.textContent = "KHOEM_AI · now";
+                        div.appendChild(label);
+                        div.appendChild(document.createTextNode("🎬🎵 វីដេអូ+ចម្រៀងរបស់បងរួចរាល់ហើយ!"));
+                        const video = document.createElement("video");
+                        video.controls = true;
+                        video.src = videoUrl;
+                        video.style.display = "block";
+                        video.style.marginTop = "8px";
+                        video.style.width = "100%";
+                        video.style.borderRadius = "12px";
+                        div.appendChild(video);
+                        chatBox.appendChild(div);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        if (window.KhoemVoice && typeof KhoemVoice.speak === "function") {
+                            KhoemVoice.speak("វីដេអូ និងចម្រៀងរបស់បងរួចរាល់ហើយ");
+                        }
+                    } else {
+                        addMessage("assistant", "⚠️ មិនអាចបង្កើតបានទេ");
+                    }
+                    updateApiStatusBadge(null, "API ready");
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការបង្កើតវីដេអូ+ចម្រៀង");
+                }
+            }
+
             document.querySelectorAll(".chip[data-action]").forEach(function (button) {
                 button.addEventListener("click", async function () {
                     const action = button.dataset.action;
@@ -993,6 +1076,17 @@
                             addMessage("assistant", "មិនអាចស្វែងរកទីតាំងបានទេ។");
                         }
                     }
+                    if (action === "music") {
+                        const musicPrompt = window.prompt("ពិពណ៌នាបទចម្រៀងដែលបងចង់បង្កើត (ឧ. បទស្នេហាយឺតៗ សំឡេងគីតា):");
+                        if (musicPrompt) generateMusic(musicPrompt);
+                    }
+                    if (action === "video-music") {
+                        const vPrompt = window.prompt("ពិពណ៌នាវីដេអូដែលបងចង់បង្កើត:");
+                        if (vPrompt) {
+                            const mPrompt = window.prompt("ពិពណ៌នាតន្ត្រី/បទចម្រៀង (ទុកទទេប្រើដូចវីដេអូ):");
+                            generateVideoWithMusic(vPrompt, mPrompt);
+                        }
+                    }
                 });
             });
             document.querySelectorAll("[data-place]").forEach(function (button) {
@@ -1000,10 +1094,6 @@
             });
             window.openCalendar = function () { addMessage("assistant", "Calendar integration នឹងបើកនៅពេល API calendar ត្រូវបានភ្ជាប់។"); };
         });
-   </script>
-    <script src="/static/js/i18n.js"></script>
-    <script src="/static/js/api-client.js"></script>
-      
+    </script>
 </body>
-</html>
-
+</html>    
