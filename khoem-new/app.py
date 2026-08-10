@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # ==============================================================================
-# app.py — KHOEM_AI 3.3 Backend (Chat + Vision + Memory / Saved Places)
+# app.py — KHOEM_AI 3.3 Backend (Chat + Vision + Memory / Saved Places + Music/Video)
 # ==============================================================================
 
 # ── Standard library ──────────────────────────────────────────────────────────
@@ -9,6 +9,8 @@ import os
 import sqlite3
 import logging
 import datetime
+import subprocess
+import uuid
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 # ── Third-party ───────────────────────────────────────────────────────────────
@@ -37,6 +39,14 @@ class Config:
     MUSIC_API_URL  = os.getenv("MUSIC_API_URL", "https://api.example-music-gen.com/v1/generate")
     MUSIC_PROVIDER = os.getenv("MUSIC_PROVIDER", "stub")
 
+    VIDEO_API_KEY  = os.getenv("VIDEO_API_KEY", "")
+    VIDEO_API_URL  = os.getenv("VIDEO_API_URL", "https://api.example-video-gen.com/v1/generate")
+    VIDEO_PROVIDER = os.getenv("VIDEO_PROVIDER", "stub")
+
+    FFMPEG_BIN     = os.getenv("FFMPEG_BIN", "ffmpeg")
+    OUTPUT_DIR     = os.path.join(BASE_DIR, "static", "generated")
+    TMP_DIR        = os.path.join(BASE_DIR, "tmp")
+
     DB_PATH  = os.path.join(BASE_DIR, "database", "khoem_ai.db")
     LOG_PATH = os.path.join(BASE_DIR, "logs",     "system.log")
 
@@ -53,9 +63,10 @@ class Config:
     )
 
 
-# បង្កើត Folder ចាំបាច់ប្រសិនបើមិនទាន់មាន
 os.makedirs(os.path.dirname(Config.DB_PATH),  exist_ok=True)
 os.makedirs(os.path.dirname(Config.LOG_PATH), exist_ok=True)
+os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
+os.makedirs(Config.TMP_DIR,    exist_ok=True)
 
 # ==============================================================================
 # Logging
@@ -79,9 +90,8 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "change-me-in-production")
 
 CORS(app, origins=os.getenv("CORS_ORIGINS", "*").split(","))
-init_security(app)  # ភ្ជាប់ Security Middleware (API key + rate limit) ចូលទៅក្នុង Flask App
+init_security(app)
 
-# ── Blueprint registration ────────────────────────────────────────────────────
 try:
     from routes.settings_routes      import settings_bp
     from routes.accessibility_routes import accessibility_bp
@@ -198,7 +208,6 @@ def _groq_headers() -> dict:
 
 
 def call_groq(messages: list[dict], system_prompt: str = "") -> tuple[bool, str]:
-    """ផ្ញើសារទៅ Groq text model ហើយទទួលចម្លើយ។"""
     if not Config.GROQ_API_KEY:
         return False, "សូមកំណត់ GROQ_API_KEY ក្នុង .env មុនសិន"
 
@@ -231,7 +240,6 @@ def call_groq(messages: list[dict], system_prompt: str = "") -> tuple[bool, str]
 
 
 def call_groq_vision(image_b64: str, question: str, mime_type: str = "image/jpeg") -> tuple[bool, str]:
-    """ផ្ញើរូបភាព base64 ទៅ Groq vision model ហើយទទួលការពិពណ៌នា។"""
     if not Config.GROQ_API_KEY:
         return False, "សូមកំណត់ GROQ_API_KEY ក្នុង .env មុនសិន"
 
@@ -264,11 +272,12 @@ def call_groq_vision(image_b64: str, question: str, mime_type: str = "image/jpeg
         logger.error("Groq Vision request error: %s", e)
         return False, "បញ្ហាក្នុងការវិភាគរូបភាព"
 
+
+# ==============================================================================
+# Music + Video Generation Helpers
+# ==============================================================================
+
 def call_music_api(prompt: str, style: str = "", duration_sec: int = 30, instrumental: bool = False) -> tuple[bool, dict]:
-    """ហៅ Music Generation API ខាងក្រៅ (Suno / ElevenLabs Music / ផ្សេងៗ) ដើម្បីបង្កើតបទចម្រៀង។
-    ប្រសិនបើ MUSIC_API_KEY មិនទាន់បានកំណត់ក្នុង .env — endpoint នេះនឹងត្រឡប់ status="stub"
-    ដើម្បីឲ្យ Frontend អាចដំណើរការតេស្តបានដោយមិនចាំបាច់មាន API key ពិតប្រាកដមុនសិន។
-    """
     if not Config.MUSIC_API_KEY:
         logger.warning("MUSIC_API_KEY មិនទាន់បានកំណត់ — ត្រឡប់ stub response")
         return True, {
@@ -288,19 +297,13 @@ def call_music_api(prompt: str, style: str = "", duration_sec: int = 30, instrum
         "Authorization": f"Bearer {Config.MUSIC_API_KEY}",
     }
     try:
-        resp = requests.post(
-            Config.MUSIC_API_URL,
-            headers=headers,
-            json=payload,
-            timeout=60,
-        )
+        resp = requests.post(Config.MUSIC_API_URL, headers=headers, json=payload, timeout=60)
         resp.raise_for_status()
         result = resp.json()
         return True, {
             "status": "completed",
             "track_url": result.get("audio_url") or result.get("track_url"),
             "job_id": result.get("id") or result.get("job_id"),
-            "raw": result,
         }
     except requests.exceptions.HTTPError as e:
         logger.error("Music API HTTP error: %s — %s", e, resp.text)
@@ -308,15 +311,90 @@ def call_music_api(prompt: str, style: str = "", duration_sec: int = 30, instrum
     except requests.exceptions.RequestException as e:
         logger.error("Music API request error: %s", e)
         return False, {"error": "បញ្ហាក្នុងការភ្ជាប់ទៅ Music API"}
+
+
+def call_video_api(prompt: str, duration_sec: int = 5, resolution: str = "720p",
+                    style: str = "cinematic", fps: int = 24, quality: str = "standard") -> tuple[bool, dict]:
+    if not Config.VIDEO_API_KEY:
+        logger.warning("VIDEO_API_KEY មិនទាន់បានកំណត់ — ត្រឡប់ stub response")
+        return True, {
+            "status": "stub",
+            "video_url": None,
+            "message": "សូមកំណត់ VIDEO_API_KEY ក្នុង .env ដើម្បីបង្កើតវីដេអូពិតប្រាកដ",
+        }
+
+    payload = {
+        "prompt": prompt,
+        "duration": duration_sec,
+        "resolution": resolution,
+        "style": style,
+        "fps": fps,
+        "quality": quality,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {Config.VIDEO_API_KEY}",
+    }
+    try:
+        resp = requests.post(Config.VIDEO_API_URL, headers=headers, json=payload, timeout=120)
+        resp.raise_for_status()
+        result = resp.json()
+        return True, {
+            "status": "completed",
+            "video_url": result.get("video_url") or result.get("download_url"),
+            "job_id": result.get("id") or result.get("job_id"),
+        }
+    except requests.exceptions.HTTPError as e:
+        logger.error("Video API HTTP error: %s — %s", e, resp.text)
+        return False, {"error": f"បញ្ហា Video API (HTTP {resp.status_code})"}
+    except requests.exceptions.RequestException as e:
+        logger.error("Video API request error: %s", e)
+        return False, {"error": "បញ្ហាក្នុងការភ្ជាប់ទៅ Video API"}
+
+
+def _download_to_file(url: str, dest_path: str, timeout: int = 120) -> None:
+    with requests.get(url, stream=True, timeout=timeout) as r:
+        r.raise_for_status()
+        with open(dest_path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+
+
+def merge_audio_video(video_path: str, audio_path: str, output_path: str) -> tuple[bool, str]:
+    try:
+        cmd = [
+            Config.FFMPEG_BIN, "-y",
+            "-i", video_path,
+            "-i", audio_path,
+            "-c:v", "copy",
+            "-c:a", "aac",
+            "-shortest",
+            "-map", "0:v:0",
+            "-map", "1:a:0",
+            output_path,
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+        if result.returncode != 0:
+            logger.error("ffmpeg merge error: %s", result.stderr)
+            return False, result.stderr[-500:] if result.stderr else "ffmpeg merge បរាជ័យ"
+        return True, ""
+    except FileNotFoundError:
+        return False, "រកមិនឃើញ ffmpeg — សូមតម្លើង ffmpeg ក្នុង server (apt install ffmpeg)"
+    except subprocess.TimeoutExpired:
+        return False, "ffmpeg merge ប្រើពេលយូរពេក (timeout)"
+    except Exception as e:
+        logger.error("merge_audio_video unexpected error: %s", e)
+        return False, str(e)
+
+
 # ==============================================================================
 # Validation Helper
 # ==============================================================================
 
 def _require_json_fields(data: dict, *fields) -> str | None:
-    """ត្រួតពិនិត្យ field ចាំបាច់ — ប្រសិនបើខ្វះ ត្រឡប់ error message។"""
     missing = [f for f in fields if data.get(f) in (None, "")]
     return f"តម្រូវឲ្យមាន field: {', '.join(missing)}" if missing else None
-
 
 # ==============================================================================
 # Routes — Frontend
@@ -411,8 +489,9 @@ def vision():
 
     return jsonify({"answer": answer})
 
+
 # ==============================================================================
-# Routes — Music Generation API  (សម្រាប់បង្កើតបទចម្រៀង/តន្ត្រីភ្ជាប់ជាមួយវីដេអូ)
+# Routes — Music Generation API
 # ==============================================================================
 
 @app.route("/api/music/generate", methods=["POST"])
@@ -436,7 +515,6 @@ def generate_music():
 
     if len(prompt_text) > 1000:
         return jsonify({"error": "Prompt វែងពេក (អតិបរមា ១០០០ តួអក្សរ)"}), 400
-
     if duration_sec < 5 or duration_sec > 180:
         return jsonify({"error": "duration ត្រូវនៅចន្លោះ ៥ ដល់ ១៨០ វិនាទី"}), 400
 
@@ -461,6 +539,114 @@ def generate_music():
         "job_id":     result.get("job_id"),
         "message":    result.get("message"),
     })
+
+
+# ==============================================================================
+# Routes — Video + Music Combined Generation
+# ==============================================================================
+
+@app.route("/api/video/generate-with-music", methods=["POST"])
+@require_api_key
+@rate_limit(max_calls=3, window_seconds=60)
+def generate_video_with_music():
+    data = request.get_json(silent=True) or {}
+    err  = _require_json_fields(data, "session_id", "video_prompt")
+    if err:
+        return jsonify({"error": err}), 400
+
+    session_id   = str(data["session_id"]).strip()
+    video_prompt = str(data["video_prompt"]).strip()
+    music_prompt = str(data.get("music_prompt") or video_prompt).strip()
+    style        = str(data.get("style", "cinematic")).strip()
+    resolution   = str(data.get("resolution", "720p")).strip()
+    fps          = int(data.get("fps", 24))
+    quality      = str(data.get("quality", "standard")).strip()
+    instrumental = bool(data.get("instrumental", False))
+
+    try:
+        duration_sec = int(data.get("duration", 10))
+    except (TypeError, ValueError):
+        return jsonify({"error": "duration ត្រូវតែជាលេខ"}), 400
+
+    if duration_sec < 5 or duration_sec > 60:
+        return jsonify({"error": "duration ត្រូវនៅចន្លោះ ៥ ដល់ ៦០ វិនាទី"}), 400
+    if len(video_prompt) > 1000 or len(music_prompt) > 1000:
+        return jsonify({"error": "Prompt វែងពេក (អតិបរមា ១០០០ តួអក្សរ)"}), 400
+
+    save_message(session_id, "user", f"[video+music-request] video={video_prompt} | music={music_prompt}")
+
+    music_ok, music_result = call_music_api(
+        prompt=music_prompt,
+        style=style,
+        duration_sec=duration_sec,
+        instrumental=instrumental,
+    )
+    if not music_ok:
+        return jsonify({"stage": "music", **music_result}), 502
+
+    video_ok, video_result = call_video_api(
+        prompt=video_prompt,
+        duration_sec=duration_sec,
+        resolution=resolution,
+        style=style,
+        fps=fps,
+        quality=quality,
+    )
+    if not video_ok:
+        return jsonify({"stage": "video", **video_result}), 502
+
+    if music_result["status"] == "stub" or video_result["status"] == "stub":
+        return jsonify({
+            "session_id": session_id,
+            "status": "stub",
+            "message": "ត្រូវការទាំង MUSIC_API_KEY និង VIDEO_API_KEY ដើម្បីបង្កើត និងបញ្ចូលគ្នាដោយស្វ័យប្រវត្តិ",
+            "music": music_result,
+            "video": video_result,
+        })
+
+    music_url = music_result.get("track_url")
+    video_url = video_result.get("video_url")
+    if not music_url or not video_url:
+        return jsonify({"error": "API ខាងក្រៅមិនបានត្រឡប់ URL ត្រឹមត្រូវ"}), 502
+
+    job_id     = uuid.uuid4().hex[:12]
+    tmp_video  = os.path.join(Config.TMP_DIR, f"{job_id}_video.mp4")
+    tmp_audio  = os.path.join(Config.TMP_DIR, f"{job_id}_audio.mp3")
+    out_name   = f"{job_id}_final.mp4"
+    out_path   = os.path.join(Config.OUTPUT_DIR, out_name)
+
+    try:
+        _download_to_file(video_url, tmp_video)
+        _download_to_file(music_url, tmp_audio)
+    except requests.exceptions.RequestException as e:
+        logger.error("ការទាញយកឯកសារបរាជ័យ: %s", e)
+        return jsonify({"error": "មិនអាចទាញយកវីដេអូ ឬតន្ត្រីបានទេ"}), 502
+
+    merge_ok, merge_err = merge_audio_video(tmp_video, tmp_audio, out_path)
+
+    for f in (tmp_video, tmp_audio):
+        try:
+            if os.path.exists(f):
+                os.remove(f)
+        except OSError:
+            pass
+
+    if not merge_ok:
+        return jsonify({"stage": "merge", "error": merge_err}), 502
+
+    final_url = f"/static/generated/{out_name}"
+    save_message(session_id, "assistant", f"[video-music-track] {final_url}")
+
+    return jsonify({
+        "session_id": session_id,
+        "status": "completed",
+        "final_video_url": final_url,
+        "video_url": final_url,
+        "music_source": music_url,
+        "video_source": video_url,
+    })
+
+
 # ==============================================================================
 # Routes — Directions (Stub — integrate Google Maps API ពេលក្រោយ)
 # ==============================================================================
@@ -538,12 +724,11 @@ def delete_place(session_id: str, label: str):
 
 
 # ==============================================================================
-# Routes — Global Time API  (FIX: ប្រើ zoneinfo.ZoneInfo ត្រឹមត្រូវ)
+# Routes — Global Time API
 # ==============================================================================
 
 @app.route("/api/global-time", methods=["GET"])
 def global_time():
-    """ទាញយកម៉ោងបច្ចុប្បន្នតាម IANA timezone ណាមួយ។"""
     timezone_name = request.args.get("tz", "Asia/Phnom_Penh")
     try:
         tz           = ZoneInfo(timezone_name)
@@ -600,3 +785,5 @@ if __name__ == "__main__":
         Config.VERSION, Config.PORT, Config.DEBUG,
     )
     app.run(host="0.0.0.0", port=Config.PORT, debug=Config.DEBUG)
+
+
