@@ -1,0 +1,233 @@
+<!-- ==========================================================
+     FILE : templates/navigator.html
+     PROJECT : KHOEM_AI 2.1
+     MODULE : Navigator Panel v1.0
+=========================================================== -->
+
+<div id="navigator-panel">
+
+    <div id="navigator-title">
+        🗺️ KHOEM_AI Navigator
+    </div>
+
+
+    <div class="navigator-info">
+
+        <div>
+            <strong>GPS:</strong>
+            <span id="gps-status">
+                Waiting...
+            </span>
+        </div>
+
+        <br>
+
+        <div>
+            <strong>Destination:</strong>
+            <span id="destination-name">
+                Not selected
+            </span>
+        </div>
+
+        <br>
+
+
+        <div class="destination-box">
+
+            <input
+                id="destination-input"
+                type="text"
+                placeholder="បញ្ចូលគោលដៅ..."
+            >
+
+            <button
+                class="navigator-btn"
+                onclick="startRouteFromInput()">
+                🧭 Go
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="navigator-buttons">
+
+
+        <button
+            class="navigator-btn btn-start"
+            onclick="navigatorStart()">
+            ▶ Start
+        </button>
+
+
+        <button
+            class="navigator-btn btn-stop"
+            onclick="KHOEM_NAVIGATOR.clearRoute()">
+            ⏹ Stop
+        </button>
+
+
+        <button
+            class="navigator-btn btn-center"
+            onclick="centerCurrentLocation()">
+            📍 My Location
+        </button>
+
+
+        <button
+            class="navigator-btn btn-voice"
+            onclick="toggleNavigatorVoice()">
+            🎤 Voice
+        </button>
+
+
+        <button
+            class="navigator-btn btn-close"
+            onclick="toggleNavigatorPanel()">
+            ❌ Close
+        </button>
+
+
+    </div>
+
+
+    <div id="navigator-status">
+        Ready.
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+function toggleNavigatorPanel(){
+
+    const panel =
+        document.getElementById("navigator-panel");
+
+    panel.style.display =
+        panel.style.display === "none"
+        ? "block"
+        : "none";
+}
+
+
+
+
+function toggleNavigatorVoice(){
+
+    if(!window.KHOEM_NAVIGATOR){
+        return;
+    }
+
+
+    KHOEM_NAVIGATOR.voiceEnabled =
+        !KHOEM_NAVIGATOR.voiceEnabled;
+
+
+    document.getElementById("navigator-status").textContent =
+        KHOEM_NAVIGATOR.voiceEnabled
+        ? "Voice Enabled"
+        : "Voice Disabled";
+
+}
+
+
+
+
+function centerCurrentLocation(){
+
+    if(!window.KHOEM_NAVIGATOR){
+        return;
+    }
+
+
+    if(!KHOEM_NAVIGATOR.currentLocation){
+        return;
+    }
+
+
+    if(KHOEM_NAVIGATOR.map){
+
+        KHOEM_NAVIGATOR.map.setView(
+            KHOEM_NAVIGATOR.currentLocation,
+            18
+        );
+
+    }
+
+}
+
+
+
+
+function navigatorStart(){
+
+    if(!window.KHOEM_NAVIGATOR){
+        console.error("Navigator module missing");
+        return;
+    }
+
+
+    KHOEM_NAVIGATOR.startNavigation();
+
+}
+
+
+
+
+async function startRouteFromInput(){
+
+    const destination =
+        document
+        .getElementById("destination-input")
+        .value
+        .trim();
+
+
+
+    if(!destination){
+
+        alert("សូមបញ្ចូលគោលដៅ");
+
+        return;
+    }
+
+
+
+    document
+    .getElementById("destination-name")
+    .textContent = destination;
+
+
+
+    // ភ្ជាប់ទៅ index.html window.startNavigation()
+
+    if(window.startNavigation){
+
+        startNavigation(destination);
+
+    }
+    else{
+
+        console.error(
+            "startNavigation not found"
+        );
+
+    }
+
+
+}
+
+
+</script>
+
+
+<!-- ==========================================================
+     END OF navigator.html
+=========================================================== -->

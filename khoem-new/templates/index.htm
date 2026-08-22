@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071923">
+    <title>KHOEM_AI 3.3 PRO — Nexus Master Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+
+    <!-- Original project modules are intentionally kept in the same HTML document. -->
+  
+    <link rel="stylesheet" href="static/css/khoem_ai_nexus.css">
+    <link rel="stylesheet" href="static/css/khoemai.css">
+    <link rel="stylesheet" href="static/css/magnifying_glass.css">
+    <link rel="stylesheet" href="static/css/api-status.css">
+    <link rel="stylesheet" href="static/css/theme-override.css">
+    <style>
+        :root {
+            --bg: #071923;
+            --bg-deep: #04131b;
+            --panel: rgba(12, 34, 45, .9);
+            --panel-soft: rgba(17, 47, 60, .72);
+            --panel-hover: rgba(23, 63, 78, .9);
+            --line: rgba(151, 221, 231, .16);
+            --line-strong: rgba(151, 221, 231, .28);
+            --text: #f1fbfc;
+            --muted: #8ca8b0;
+            --cyan: #61e4ef;
+            --cyan-deep: #1da9bc;
+            --green: #75e3c0;
+            --yellow: #f6d56b;
+            --red: #ff7a83;
+            --radius: 22px;
+            --shadow: 0 18px 50px rgba(0, 0, 0, .22);
+            --ease: 180ms ease;
+        }
+
+        * { box-sizing: border-box; }
+        html { min-width: 320px; background: var(--bg); }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 86% 4%, rgba(35, 153, 169, .12), transparent 25rem),
+                radial-gradient(circle at 8% 100%, rgba(25, 113, 131, .1), transparent 28rem),
+                linear-gradient(145deg, #061720 0%, #081e2a 48%, #06151e 100%);
+            font-family: "Noto Sans Khmer", "Inter", sans-serif;
+        }
+
+        button, input, select { font: inherit; }
+        button { color: inherit; }
+        button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+            outline: 3px solid rgba(97, 228, 239, .55);
+            outline-offset: 2px;
+        }
+
+        .app-container {
+            width: min(1480px, 100%);
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .topbar {
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 15px 20px;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: rgba(7, 27, 37, .84);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+        .brand-mark {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border: 1px solid rgba(97, 228, 239, .42);
+            border-radius: 15px;
+            color: var(--cyan);
+            background: linear-gradient(145deg, rgba(97, 228, 239, .2), rgba(97, 228, 239, .04));
+            box-shadow: 0 0 24px rgba(97, 228, 239, .12);
+        }
+        .brand-mark svg { width: 25px; height: 25px; }
+        .brand h1 {
+            margin: 0;
+            font-family: "Inter", sans-serif;
+            font-size: 16px;
+            letter-spacing: .2em;
+            white-space: nowrap;
+        }
+        .brand h1 span { color: var(--cyan); }
+        .brand p {
+            margin: 3px 0 0;
+            color: var(--muted);
+            font-family: "Inter", sans-serif;
+            font-size: 10px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+        .topbar-status {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            color: var(--muted);
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            letter-spacing: .08em;
+        }
+        .system-status { display: flex; align-items: center; gap: 8px; color: #a7c8cd; }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            display: inline-block;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 11px var(--cyan);
+        }
+        .session-id { opacity: .7; }
+        .session-clock {
+            min-width: 100px;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            text-align: right;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.25;
+            text-transform: uppercase;
+        }
+        .session-clock strong {
+            display: block;
+            color: var(--text);
+            font-size: 12px;
+            letter-spacing: .08em;
+        }
+        .profile {
+            width: 37px;
+            height: 37px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--bg-deep);
+            background: var(--cyan);
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 270px minmax(0, 1fr) 270px;
+            gap: 18px;
+            align-items: start;
+            margin-top: 20px;
+        }
+        .sidebar, .main-content, .right-rail { min-width: 0; }
+        .sidebar, .right-rail {
+            display: grid;
+            gap: 18px;
+            position: sticky;
+            top: 20px;
+        }
+        .main-content { display: grid; gap: 18px; }
+
+        .bento-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: linear-gradient(145deg, rgba(13, 40, 52, .94), rgba(7, 26, 36, .92));
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .card-pad { padding: 20px; }
+        .eyebrow {
+            margin: 0 0 9px;
+            color: #70919a;
+            font-family: "Inter", sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+        }
+        .card-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.35;
+        }
+        .card-title small {
+            color: var(--muted);
+            font-family: "Inter", sans-serif;
+            font-size: 10px;
+            font-weight: 400;
+        }
+        .divider { height: 1px; margin: 18px 0; background: var(--line); }
+
+        .command-card h2 { margin: 0; font-size: 23px; line-height: 1.3; }
+        .command-card .welcome { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+        .signal-button {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(97, 228, 239, .2);
+            border-radius: 12px;
+            color: var(--cyan);
+            background: rgba(97, 228, 239, .1);
+            cursor: pointer;
+            transition: transform var(--ease), background var(--ease);
+        }
+        .signal-button:hover { transform: translateY(-2px); background: rgba(97, 228, 239, .18); }
+        .command-heading { display: flex; justify-content: space-between; gap: 12px; }
+        .tool-list { display: grid; gap: 8px; }
+        .tool-button, .place-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            color: #b9d2d6;
+            background: rgba(18, 54, 68, .58);
+            text-align: left;
+            cursor: pointer;
+            transition: border-color var(--ease), background var(--ease), transform var(--ease);
+        }
+        .tool-button:hover, .place-button:hover { border-color: var(--line-strong); background: var(--panel-hover); transform: translateX(2px); }
+        .tool-button svg, .place-button svg { width: 16px; height: 16px; color: var(--cyan); flex: 0 0 auto; }
+        .tool-button .toggle { width: 7px; height: 7px; margin-left: auto; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .nexus-section { text-align: left; }
+        .nexus-section p { margin: 0; color: #c6e1e5; font-size: 13px; line-height: 1.7; }
+        .nexus-section a { display: inline-block; margin-top: 11px; color: var(--cyan); font-size: 11px; text-decoration: none; }
+        .nexus-section a:hover { text-decoration: underline; }
+
+        .api-list { display: grid; gap: 13px; margin-top: 16px; }
+        .api-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #98b2b8; font-size: 12px; }
+        .api-row span:last-child { display: flex; align-items: center; gap: 7px; color: #bfd6d9; }
+        .api-row .status-dot { width: 6px; height: 6px; }
+        .api-row.warning .status-dot { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+        .shield { color: var(--cyan); }
+        .shield svg { width: 22px; height: 22px; }
+
+        .timezone-card select, .settings-panel select {
+            width: 100%;
+            margin-top: 12px;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: var(--text);
+            background: #102f3c;
+            cursor: pointer;
+        }
+        .timezone-label { margin-top: 19px; color: #708f97; font-family: "Inter", sans-serif; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; }
+        .clock { margin-top: 3px; color: var(--text); font-family: "Inter", sans-serif; font-size: 27px; font-weight: 600; letter-spacing: .05em; }
+        .clock-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 11px; }
+        .clock-meta span:last-child { color: var(--cyan); }
+
+        .settings-panel, #accessibility-panel { display: none; }
+        .settings-panel.is-open, #accessibility-panel.is-open { display: block; }
+        .settings-panel p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+        .settings-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+        .mini-button {
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            color: #b8d5d9;
+            background: rgba(26, 67, 81, .62);
+            cursor: pointer;
+        }
+        .mini-button:hover { border-color: var(--cyan); color: var(--cyan); }
+
+        .assistant-card { min-height: 590px; display: flex; flex-direction: column; }
+        .assistant-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 20px 22px 15px; }
+        .assistant-head h2 { margin: 0; font-size: 20px; }
+        .assistant-tabs { display: inline-flex; gap: 7px; margin-left: 8px; color: var(--muted); font-family: "Inter", sans-serif; font-size: 10px; font-weight: 400; }
+        .assistant-tabs span:first-child { color: var(--cyan); }
+        .encrypted {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 9px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: #8bb8be;
+            font-family: "Inter", sans-serif;
+            font-size: 9px;
+        }
+        .encrypted .status-dot { width: 5px; height: 5px; }
+        #chat-box {
+            flex: 1;
+            min-height: 350px;
+            max-height: 510px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 0 20px;
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background:
+                linear-gradient(rgba(5, 24, 32, .91), rgba(5, 24, 32, .91)),
+                repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(97, 228, 239, .045) 40px);
+        }
+        #chat-box:before {
+            content: "TODAY  ·  KHOEM_AI SESSION";
+            align-self: center;
+            padding-bottom: 3px;
+            color: #5f858e;
+            font-family: "Inter", sans-serif;
+            font-size: 9px;
+            letter-spacing: .14em;
+        }
+        .msg {
+            max-width: 78%;
+            padding: 13px 15px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            color: #d4e7e9;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .msg.assistant { align-self: flex-start; background: rgba(22, 59, 73, .8); border-top-left-radius: 5px; }
+        .msg.user { align-self: flex-end; background: rgba(30, 117, 134, .76); border-color: rgba(97, 228, 239, .24); border-top-right-radius: 5px; }
+        .msg-label { display: block; margin-bottom: 5px; color: #75a5ad; font-family: "Inter", sans-serif; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+        .msg.user .msg-label { color: #a4e8ea; text-align: right; }
+        .composer { display: flex; gap: 8px; align-items: center; padding: 12px 20px 10px; }
+        .composer-button {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            color: #a9cdd1;
+            background: #123544;
+            cursor: pointer;
+            transition: all var(--ease);
+        }
+        .composer-button:hover, .composer-button.listening { color: var(--cyan); border-color: var(--cyan); background: rgba(97, 228, 239, .12); }
+        .composer-button.send { color: var(--bg-deep); background: var(--cyan); border-color: var(--cyan); }
+        .composer-button svg { width: 18px; height: 18px; }
+        .composer input {
+            min-width: 0;
+            width: 100%;
+            height: 44px;
+            padding: 0 14px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            color: var(--text);
+            background: #102f3c;
+        }
+        .composer input::placeholder { color: #76979e; }
+        #image-preview-row { display: none; align-items: center; gap: 10px; margin: 0 20px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: #102f3c; }
+        #image-preview { width: 42px; height: 42px; object-fit: cover; border-radius: 8px; }
+        #image-name { overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+        #clear-image-btn { width: 28px; height: 28px; margin-left: auto; border: 0; color: var(--muted); background: transparent; cursor: pointer; }
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 20px 20px; }
+        .chip {
+            min-height: 38px;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            color: #b6d4d8;
+            background: rgba(17, 52, 65, .8);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all var(--ease);
+        }
+        .chip:hover { color: var(--cyan); border-color: rgba(97, 228, 239, .42); background: rgba(32, 89, 103, .8); }
+        .chat-status { padding: 0 22px 17px; color: #6f989e; font-family: "Inter", sans-serif; font-size: 10px; }
+        .chat-status span { color: var(--cyan); }
+
+        #map-container { display: none; min-height: 260px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+        #route-info, #location-status { display: none; padding: 12px 15px; border: 1px solid rgba(97, 228, 239, .2); border-radius: 14px; color: var(--cyan); background: rgba(19, 69, 79, .65); font-size: 12px; }
+        #nav-controls { display: none; gap: 8px; }
+        .nav-btn { flex: 1; min-height: 40px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; font-size: 12px; }
+        .nav-btn.save { color: var(--bg-deep); background: var(--cyan); }
+        .nav-btn.stop { color: #ffd9dc; background: rgba(139, 45, 58, .7); }
+
+        .telemetry-card { padding: 20px; }
+        .telemetry-value { color: var(--cyan); font-family: "Inter", sans-serif; font-size: 12px; }
+        .telemetry-graph { width: 100%; height: 92px; margin-top: 15px; }
+        .telemetry-graph path { fill: none; stroke: var(--cyan); stroke-width: 2; }
+        .telemetry-graph .area { fill: url(#telemetryFill); stroke: none; }
+        .graph-grid { stroke: rgba(151, 221, 231, .1); stroke-width: 1; }
+        .focus-list { display: grid; gap: 12px; margin-top: 16px; }
+        .focus-row { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 10px; align-items: center; }
+        .focus-time { color: var(--cyan); font-family: "Inter", sans-serif; font-size: 10px; }
+        .focus-copy { padding-left: 11px; border-left: 1px solid rgba(97, 228, 239, .35); color: #c1d8db; font-size: 12px; }
+        .focus-copy small { display: block; margin-top: 2px; color: var(--muted); font-family: "Inter", sans-serif; font-size: 9px; }
+        .context-list { display: grid; gap: 14px; margin-top: 17px; }
+        .context-row { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 12px; }
+        .context-row strong { color: #bed7da; font-weight: 500; text-align: right; }
+        .context-row strong.stable:before { content: ""; width: 6px; height: 6px; display: inline-block; margin-right: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .place-list { display: grid; gap: 8px; margin-top: 16px; }
+        .place-button { font-size: 11px; }
+        .place-button span { margin-left: auto; color: var(--muted); }
+        .route-card { display: grid; gap: 10px; }
+
+        @media (max-width: 1120px) {
+            .dashboard-layout { grid-template-columns: 230px minmax(0, 1fr); }
+            .right-rail { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); position: static; }
+        }
+        @media (max-width: 760px) {
+            .app-container { padding: 12px; }
+            .topbar { min-height: 62px; padding: 10px 12px; border-radius: 18px; }
+            .topbar-status { gap: 0; }
+            .system-status, .session-id, .session-clock { display: none; }
+            .brand-mark { width: 39px; height: 39px; border-radius: 12px; }
+            .brand h1 { font-size: 13px; letter-spacing: .14em; }
+            .brand p { font-size: 8px; }
+            .dashboard-layout { display: flex; flex-direction: column; margin-top: 12px; gap: 12px; }
+            .sidebar, .right-rail { width: 100%; display: grid; position: static; gap: 12px; }
+            .right-rail { grid-template-columns: 1fr; }
+            .main-content { display: contents; }
+            .command-card { order: 1; }
+            .nexus-section { order: 2; }
+            .api-card { order: 3; }
+            .timezone-card { order: 4; }
+            .assistant-card { order: 5; width: 100%; min-height: 610px; }
+            .telemetry-card { order: 6; }
+            .right-rail { order: 7; }
+            .assistant-head { padding: 17px 15px 12px; }
+            .assistant-head h2 { font-size: 17px; }
+            .assistant-tabs { display: none; }
+            #chat-box { min-height: 375px; margin: 0 12px; padding: 14px; }
+            .composer { padding: 10px 12px 8px; }
+            .composer-button { width: 40px; height: 40px; }
+            .quick-actions { grid-template-columns: repeat(2, 1fr); padding: 0 12px 14px; }
+            .chat-status { padding: 0 15px 14px; }
+            .msg { max-width: 89%; font-size: 12px; }
+        }
+        @media (max-width: 400px) {
+            .brand h1 { font-size: 11px; }
+            .brand p { letter-spacing: .08em; }
+            .composer-button { width: 37px; height: 37px; }
+            .composer input { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 3v4M12 17v4M3 12h4m10 0h4M5.6 5.6l2.8 2.8m7.2 7.2 2.8 2.8m0-12.8-2.8 2.8m-7.2 7.2-2.8 2.8"/>
+                        <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>KHOEM_AI <span>3.3 PRO</span></h1>
+                    <p>Nexus Master Dashboard</p>
+                </div>
+            </div>
+            <div class="topbar-status">
+                <div class="system-status"><i class="status-dot"></i> System operational</div>
+                <span id="api-status-badge" class="api-status-badge">
+                    <i class="dot"></i><span id="api-status-text">API ready</span>
+                </span>
+                <div class="session-id">SESSION / <span id="session-label">--</span></div>
+                <div class="session-clock">Local session<strong id="session-clock">--:--:--</strong></div>
+                <div class="profile">KM</div>
+            </div>
+        </header>
+
+        <div class="dashboard-layout">
+
+<aside class="sidebar" aria-label="KHOEM_AI controls">
+                <section class="bento-card command-card card-pad">
+                    <div class="command-heading">
+                        <div>
+                            <p class="eyebrow">Command center</p>
+                            <h2>សួស្តី, បង</h2>
+                            <p class="welcome">តើខ្ញុំអាចជួយអ្វីបានខ្លះ?</p>
+                        </div>
+                        <button id="voice-toggle" class="signal-button" type="button" title="Voice Toggle" aria-label="Voice Toggle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2m7 9v3m-4 0h8"/></svg>
+                        </button>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="tool-list">
+                        <button id="voice-assistant-btn" class="tool-button" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2m7 9v3"/></svg>
+                            <span>Voice assistant</span><i class="toggle"></i>
+                        </button>
+                        <button id="accessibility-btn" class="tool-button" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="5" r="2"/><path d="M5 9h14M12 7v13m-5-7 5 2 5-2m-8 6-2 3m8-3 2 3"/></svg>
+                            <span>Accessibility &amp; voice</span>
+                        </button>
+                        <button id="settings-btn" class="tool-button" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+                            <span>System settings</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="bento-card nexus-section card-pad">
+                    <p class="eyebrow">Nexus hub</p>
+                    <p>ស្វាគមន៍មកកាន់ប្រព័ន្ធបញ្ជាកណ្តាល។</p>
+                    <a href="/api/status">ពិនិត្យស្ថានភាព API ecosystem →</a>
+                    <div id="nexus-hub-placeholder"></div>
+                </section>
+
+                <section class="bento-card api-card card-pad">
+                    <div class="card-title"><h3 class="card-title">API ecosystem</h3><span class="shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 3 7 3v5c0 4.5-3 8.1-7 10-4-1.9-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+                    <p style="margin:4px 0 0;color:#d3e5e7;font-size:13px;">All systems nominal</p>
+                    <div class="api-list">
+                        <div class="api-row"><span>Core intelligence</span><span><i class="status-dot"></i>Connected</span></div>
+                        <div class="api-row"><span>Voice &amp; vision</span><span><i class="status-dot"></i>Connected</span></div>
+                        <div class="api-row warning"><span>GPS services</span><span><i class="status-dot"></i>Standby</span></div>
+                    </div>
+                </section>
+
+                <section class="bento-card timezone-card card-pad khoemai-container">
+                    <div class="card-title"><h3 class="card-title">Global time</h3><small id="timezone-label">GMT+7</small></div>
+                    <label class="sr-only" for="kmLangSelect">Country</label>
+                    <select id="kmLangSelect" aria-label="Select a country to view its local time">
+                        <option value="Asia/Phnom_Penh">កម្ពុជា · ភ្នំពេញ</option>
+                        <option value="Asia/Tokyo">ជប៉ុន · តូក្យូ</option>
+                        <option value="Asia/Singapore">សិង្ហបុរី · សិង្ហបុរី</option>
+                        <option value="Europe/London">ចក្រភពអង់គ្លេស · ឡុងដ៍</option>
+                        <option value="America/New_York">សហរដ្ឋអាមេរិក · ញូវយ៉ក</option>
+                    </select>
+                    <div class="timezone-label">Local time</div>
+                    <div id="kmClockTime" class="clock" role="status" aria-live="polite">--:--:--</div>
+                    <div class="clock-meta"><span>◌ Sync clock</span><span id="timezone-city">ភ្នំពេញ</span></div>
+                </section>
+
+                <section id="accessibility-panel" class="bento-card settings-panel card-pad" aria-label="Accessibility and voice settings">
+                    <p class="eyebrow">Accessibility</p>
+                    <p>កែសម្រួលសំឡេង និងទំហំបង្ហាញតាមតម្រូវការ។</p>
+                    <label for="voice-select" style="display:block;margin-top:14px;color:#93b5bb;font-size:11px;">Browser voice</label>
+                    <select id="voice-select"><option>Loading voices...</option></select>
+                    <div class="settings-actions">
+                        <button id="zoom-out-btn" class="mini-button" type="button">− តូច</button>
+                        <button id="zoom-in-btn" class="mini-button" type="button">+ ធំ</button>
+                        <button id="rotate-btn" class="mini-button" type="button">បង្វិល</button>
+                        <button id="reset-view-btn" class="mini-button" type="button">Reset</button>
+                    </div>
+                    <div class="clock-meta"><span>Zoom <b id="zoom-value">100%</b></span><span>Rotation <b id="rotation-value">0°</b></span></div>
+                </section>
+
+                <section id="settings-panel" class="bento-card settings-panel card-pad">
+                    <p class="eyebrow">System settings</p>
+                    <p>Session preferences are ready. Your changes remain local to this session.</p>
+                    <div class="settings-actions"><button id="save-pref-btn" class="mini-button" type="button">Save preferences</button><button id="reset-pref-btn" class="mini-button" type="button">Reset</button></div>
+                </section>
+            </aside>
+
+            <main class="main-content">
+                <section class="bento-card assistant-card">
+                    <div class="assistant-head">
+                        <div>
+                            <p class="eyebrow">Assistant workspace</p>
+                            <h2>Conversation <span class="assistant-tabs"><span>Chat</span><span>·</span><span>Voice</span><span>·</span><span>Vision</span></span></h2>
+                        </div>
+                        <span class="encrypted"><i class="status-dot"></i> encrypted</span>
+                    </div>
+
+                    <div id="api-key-setup" class="api-key-setup" style="display:none;">
+                        <input id="api-key-input" type="password" placeholder="បញ្ចូល API Key របស់បង..." autocomplete="off">
+                        <button id="api-key-save-btn" type="button">រក្សាទុក</button>
+                    </div>
+
+                    <div id="chat-box" role="log" aria-live="polite" aria-label="Chat messages">
+                        <div class="msg assistant"><span class="msg-label">KHOEM_AI · 09:41</span>សួស្តី! ខ្ញុំជា KHOEM_AI របស់បង។ ខ្ញុំអាចជួយជជែក ស្តាប់សំឡេង មើលរូបភាព និងជួយស្វែងរកផ្លូវបាន។</div>
+                        <div class="msg user"><span class="msg-label">You · 09:42</span>ជួយរៀបចំផែនការថ្ងៃនេះឱ្យខ្ញុំបានទេ?</div>
+                        <div class="msg assistant"><span class="msg-label">KHOEM_AI · 09:42</span>បានណា៎។ ខ្ញុំនឹងជួយរៀបចំអាទិភាព និងរំលឹកកិច្ចការសំខាន់ៗរបស់បង។</div>
+                    </div>
+                    <div id="route-info" role="status"></div>
+                    <div id="location-status" role="status"></div>
+                    <div id="map-container" role="region" aria-label="Navigation map"></div>
+                    <div id="nav-controls">
+                        <button id="save-place-btn" class="nav-btn save" type="button">រក្សាទុកទីតាំង</button>
+                        <button id="stop-nav-btn" class="nav-btn stop" type="button">បញ្ឈប់នាំផ្លូវ</button>
+                    </div>
+                    <div id="image-preview-row">
+                        <img id="image-preview" alt="Selected image preview">
+                        <span id="image-name"></span>
+                        <button id="clear-image-btn" type="button" aria-label="Remove image">×</button>
+                    </div>
+                    <div class="composer" id="input-row">
+                        <button id="mic-btn" class="composer-button" type="button" title="Voice input" aria-label="Start voice input">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2m7 9v3m-4 0h8"/></svg>
+                        </button>
+                        <label for="camera-input" class="composer-button" title="Take photo" aria-label="Take or upload photo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h3l1.5-2h7L17 7h3v12H4V7Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                        </label>
+                        <input id="camera-input" type="file" accept="image/*" capture="environment" hidden>
+                        <input id="user-input" type="text" placeholder="វាយសារនៅទីនេះ..." autocomplete="off" aria-label="Message input">
+                        <button id="send-btn" class="composer-button send" type="button" aria-label="Send message">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m21 3-7.5 18-3.5-8-8-3.5L21 3Z"/><path d="M21 3 10 13"/></svg>
+                        </button>
+                    </div>
+                    <div class="chat-status"><span>●</span> Ready · Session encrypted</div>
+                    <div class="quick-actions" role="group" aria-label="Quick actions">
+                        <button class="chip" data-action="location" type="button">ទីតាំងរបស់ខ្ញុំ</button>
+                        <button class="chip" data-action="navigate" type="button">នាំផ្លូវ</button>
+                        <button class="chip" data-action="goto-home" type="button">ទៅផ្ទះ</button>
+                        <button class="chip" data-action="goto-work" type="button">ទៅធ្វើការ</button>
+                        <button class="chip" data-action="music" type="button">🎵 ចម្រៀង</button>
+                        <button class="chip" data-action="video-music" type="button">🎬🎵 វីដេអូ+ចម្រៀង</button>
+                    </div>
+                </section>
+
+                <section class="bento-card telemetry-card">
+                    <div class="card-title"><div><p class="eyebrow">Nexus telemetry</p><h3 class="card-title">Assistant activity</h3></div><span class="telemetry-value">+18.4%</span></div>
+                    <svg class="telemetry-graph" viewBox="0 0 800 120" preserveAspectRatio="none" aria-label="Assistant activity graph" role="img">
+                        <defs><linearGradient id="telemetryFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#61e4ef" stop-opacity=".25"/><stop offset="1" stop-color="#61e4ef" stop-opacity="0"/></linearGradient></defs>
+                        <path class="graph-grid" d="M0 20H800M0 60H800M0 100H800M80 0V120M240 0V120M400 0V120M560 0V120M720 0V120"/>
+                        <path class="area" d="M0 105 C50 94 72 96 112 75 S178 66 210 84 S268 97 300 59 S370 37 405 64 S470 88 500 43 S570 55 604 31 S662 24 700 48 S760 62 800 18 V120 H0Z"/>
+                        <path d="M0 105 C50 94 72 96 112 75 S178 66 210 84 S268 97 300 59 S370 37 405 64 S470 88 500 43 S570 55 604 31 S662 24 700 48 S760 62 800 18"/>
+                    </svg>
+                </section>
+            </main>
+
+            <aside class="right-rail" aria-label="Today and saved information">
+                <section class="bento-card card-pad">
+                    <div class="card-title"><h3 class="card-title">Today</h3><small>3 items</small></div>
+                    <div class="focus-list">
+                        <div class="focus-row"><div class="focus-time">14:30</div><div class="focus-copy">ពិនិត្យកិច្ចការប្រចាំថ្ងៃ<small>Work · in 2h</small></div></div>
+                        <div class="focus-row"><div class="focus-time">16:00</div><div class="focus-copy">ពេលសម្រាក និងផឹកទឹក<small>Personal</small></div></div>
+                        <div class="focus-row"><div class="focus-time">18:45</div><div class="focus-copy">រៀបចំផែនការថ្ងៃស្អែក<small>Route</small></div></div>
+                    </div>
+                    <button class="chip" style="width:100%;margin-top:16px;" type="button" onclick="window.openCalendar && window.openCalendar()">Open calendar ↗</button>
+                </section>
+
+                <section class="bento-card card-pad">
+                    <div class="card-title"><h3 class="card-title">Quick context</h3><span style="color:var(--cyan);">?</span></div>
+                    <div class="context-list">
+                        <div class="context-row"><span>Weather</span><strong>29° · Cloudy</strong></div>
+                        <div class="context-row"><span>Air quality</span><strong>Good · 42</strong></div>
+                        <div class="context-row"><span>Network</span><strong class="stable">Stable</strong></div>
+                    </div>
+                </section>
+
+                <section class="bento-card card-pad">
+                    <div class="card-title"><h3 class="card-title">Saved places</h3><span style="color:var(--cyan);">▣</span></div>
+                    <div class="place-list">
+                        <button class="place-button" type="button" data-place="ផ្ទះ">ផ្ទះ · Sen Sok <span>↗</span></button>
+                        <button class="place-button" type="button" data-place="ការងារ">ការងារ · BKK1 <span>↗</span></button>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="static/js/api-client.js"></script>
+    <script src="static/js/settings.js"></script>
+    <script src="static/js/voice.js"></script>
+    <script src="static/js/gps.js"></script>
+    <script src="static/js/map.js"></script>
+    <script src="static/js/camera.js"></script>
+    <script src="static/js/navigator.js"></script>
+    <script src="static/js/magnifying_glass.js"></script>
+    <script src="static/js/video_khoemai.js"></script>
+    <script src="static/js/khoem_ai_nexus_hub.js"></script>
+    <script src="static/js/khoemai.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const setupBox   = document.getElementById("api-key-setup");
+            const keyInput   = document.getElementById("api-key-input");
+            const keySaveBtn = document.getElementById("api-key-save-btn");
+            const badge      = document.getElementById("api-status-badge");
+            const badgeText  = document.getElementById("api-status-text");
+
+            if (!localStorage.getItem("khoem_api_key")) {
+                setupBox.style.display = "flex";
+            }
+
+            keySaveBtn.addEventListener("click", function () {
+                const key = keyInput.value.trim();
+                if (!key) return;
+                KhoemAPI.setApiKey(key);
+                setupBox.style.display = "none";
+                badge.className = "api-status-badge";
+                badgeText.textContent = "API ready";
+            });
+
+            function updateApiStatusBadge(state, message) {
+                badge.className = "api-status-badge" + (state ? " " + state : "");
+                badgeText.textContent = message || "API ready";
+            }
+
+            const sessionId = "session_" + Math.random().toString(36).slice(2, 10);
+            const sessionLabel = document.getElementById("session-label");
+            const sessionClock = document.getElementById("session-clock");
+            const chatBox = document.getElementById("chat-box");
+            const input = document.getElementById("user-input");
+            const micBtn = document.getElementById("mic-btn");
+            const cameraInput = document.getElementById("camera-input");
+            const imagePreviewRow = document.getElementById("image-preview-row");
+            const imagePreview = document.getElementById("image-preview");
+            const imageName = document.getElementById("image-name");
+            const clearImageBtn = document.getElementById("clear-image-btn");
+            const locationStatus = document.getElementById("location-status");
+            const routeInfo = document.getElementById("route-info");
+            const mapContainer = document.getElementById("map-container");
+            const navControls = document.getElementById("nav-controls");
+            const voiceSelect = document.getElementById("voice-select");
+            const timezoneSelect = document.getElementById("kmLangSelect");
+            const clock = document.getElementById("kmClockTime");
+            const timezoneLabel = document.getElementById("timezone-label");
+            const timezoneCity = document.getElementById("timezone-city");
+            let pendingImageBase64 = null;
+            let mapInitialized = false;
+            let lastRouteDest = null;
+            let zoom = 100;
+            let rotation = 0;
+
+            sessionLabel.textContent = sessionId.replace("session_", "").toUpperCase();
+            function updateSessionClock() {
+                sessionClock.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
+            }
+            updateSessionClock();
+            setInterval(updateSessionClock, 1000);
+
+            function safeText(value) {
+                return String(value == null ? "" : value);
+            }
+
+            function addMessage(role, text) {
+                const div = document.createElement("div");
+                div.className = "msg " + (role === "user" ? "user" : "assistant");
+                const label = document.createElement("span");
+                label.className = "msg-label";
+                label.textContent = role === "user" ? "You · now" : "KHOEM_AI · now";
+                div.appendChild(label);
+                div.appendChild(document.createTextNode(safeText(text)));
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            function showStatus(element, text) {
+                element.textContent = text;
+                element.style.display = "block";
+            }
+
+            async function sendImageMessage(question) {
+                addMessage("user", "[រូបភាព] " + question);
+                const image = pendingImageBase64;
+                clearImage();
+                try {
+                    const data = await KhoemAPI.post("/api/vision", { image, question, mime_type: "image/jpeg" });
+                    addMessage("assistant", data.answer);
+                    updateApiStatusBadge(null, "API ready");
+                    if (window.KhoemVoice && typeof KhoemVoice.speak === "function") KhoemVoice.speak(data.answer);
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការវិភាគរូបភាព");
+                }
+            }
+
+            async function sendMessage(text) {
+                const message = (text || input.value).trim();
+                if (pendingImageBase64) {
+                    await sendImageMessage(message || "សូមពិពណ៌នារូបភាពនេះ");
+                    return;
+                }
+                if (!message) return;
+                addMessage("user", message);
+                input.value = "";
+                try {
+                    const data = await KhoemAPI.post("/api/chat", { session_id: sessionId, message });
+                    addMessage("assistant", data.reply);
+                    updateApiStatusBadge(null, "API ready");
+                    if (window.KhoemVoice && typeof KhoemVoice.speak === "function") KhoemVoice.speak(data.reply);
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការភ្ជាប់ទៅកាន់ Server");
+                }
+            }
+
+            function handleApiError(error, fallbackMessage) {
+                if (error && error.type === "rate_limited") {
+                    addMessage("assistant", "⏳ " + error.message);
+                    updateApiStatusBadge("rate-limited", "ហួសកម្រិត");
+                } else if (error && error.type === "unauthorized") {
+                    addMessage("assistant", "🔒 API key មិនត្រឹមត្រូវ សូមកំណត់ម្តងទៀត");
+                    updateApiStatusBadge("unauthorized", "Key ខុស");
+                    setupBox.style.display = "flex";
+                } else {
+                    addMessage("assistant", "error: " + fallbackMessage);
+                }
+            }
+
+            function clearImage() {
+                pendingImageBase64 = null;
+                imagePreviewRow.style.display = "none";
+                cameraInput.value = "";
+            }
+
+            document.getElementById("send-btn").addEventListener("click", function () { sendMessage(); });
+            input.addEventListener("keydown", function (event) { if (event.key === "Enter") sendMessage(); });
+            clearImageBtn.addEventListener("click", clearImage);
+
+            cameraInput.addEventListener("change", async function (event) {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+                if (window.KhoemCamera && typeof KhoemCamera.fileToBase64 === "function") {
+                    pendingImageBase64 = await KhoemCamera.fileToBase64(file);
+                } else {
+                    pendingImageBase64 = await new Promise(function (resolve, reject) {
+                        const reader = new FileReader();
+                        reader.onload = function () { resolve(String(reader.result).split(",")[1] || ""); };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                }
+                imagePreview.src = URL.createObjectURL(file);
+                imageName.textContent = file.name;
+                imagePreviewRow.style.display = "flex";
+            });
+
+            let voiceReady = false;
+            if (window.KhoemVoice && typeof KhoemVoice.initRecognition === "function") {
+                voiceReady = KhoemVoice.initRecognition(
+                    function (transcript) { micBtn.classList.remove("listening"); sendMessage(transcript); },
+                    function (error) { micBtn.classList.remove("listening"); addMessage("assistant", "error: " + error); }
+                );
+            }
+            micBtn.addEventListener("click", function () {
+                if (voiceReady && window.KhoemVoice) {
+                    micBtn.classList.add("listening");
+                    KhoemVoice.startListening();
+                } else {
+                    addMessage("assistant", "ការបញ្ចូលសំឡេងមិនទាន់មាននៅលើ Browser នេះទេ។");
+                }
+            });
+
+            function populateVoiceList() {
+                if (!window.KhoemVoice || typeof KhoemVoice.getVoiceOptions !== "function") return;
+                const options = KhoemVoice.getVoiceOptions();
+                if (!options.length) return;
+                voiceSelect.innerHTML = "";
+                options.forEach(function (option) {
+                    const item = document.createElement("option");
+                    item.value = option.index;
+                    item.textContent = option.name + " (" + option.lang + ")";
+                    if (option.isDefault) item.selected = true;
+                    voiceSelect.appendChild(item);
+                });
+            }
+            voiceSelect.addEventListener("change", function (event) {
+                if (window.KhoemVoice && typeof KhoemVoice.setVoice === "function") KhoemVoice.setVoice(Number(event.target.value));
+            });
+            setTimeout(populateVoiceList, 500);
+
+            function togglePanel(buttonId, panelId) {
+                document.getElementById(buttonId).addEventListener("click", function () {
+                    document.getElementById(panelId).classList.toggle("is-open");
+                });
+            }
+            togglePanel("accessibility-btn", "accessibility-panel");
+            togglePanel("settings-btn", "settings-panel");
+            document.getElementById("voice-toggle").addEventListener("click", function () {
+                addMessage("assistant", "Voice assistant " + (this.dataset.active === "true" ? "បានបិទ" : "បានបើក") + "។");
+                this.dataset.active = this.dataset.active === "true" ? "false" : "true";
+            });
+            document.getElementById("voice-assistant-btn").addEventListener("click", function () { micBtn.click(); });
+
+            function applyView() {
+                document.body.style.zoom = zoom / 100;
+                document.body.style.transform = "rotate(" + rotation + "deg)";
+                document.getElementById("zoom-value").textContent = zoom + "%";
+                document.getElementById("rotation-value").textContent = rotation + "°";
+            }
+            document.getElementById("zoom-in-btn").addEventListener("click", function () { zoom = Math.min(120, zoom + 10); applyView(); });
+            document.getElementById("zoom-out-btn").addEventListener("click", function () { zoom = Math.max(80, zoom - 10); applyView(); });
+            document.getElementById("rotate-btn").addEventListener("click", function () { rotation = rotation === 0 ? 180 : 0; applyView(); });
+            document.getElementById("reset-view-btn").addEventListener("click", function () { zoom = 100; rotation = 0; applyView(); });
+            document.getElementById("save-pref-btn").addEventListener("click", function () { addMessage("assistant", "ចំណូលចិត្តត្រូវបានរក្សាទុកសម្រាប់ session នេះ។"); });
+            document.getElementById("reset-pref-btn").addEventListener("click", function () { zoom = 100; rotation = 0; applyView(); });
+
+            function updateClock() {
+                const timezone = timezoneSelect.value || "Asia/Phnom_Penh";
+                const parts = new Intl.DateTimeFormat("en-GB", { timeZone: timezone, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(new Date());
+                const values = {};
+                parts.forEach(function (part) { values[part.type] = part.value; });
+                clock.textContent = values.hour + ":" + values.minute + ":" + values.second;
+                const names = {
+                    "Asia/Phnom_Penh": ["GMT+7", "ភ្នំពេញ"],
+                    "Asia/Tokyo": ["GMT+9", "តូក្យូ"],
+                    "Asia/Singapore": ["GMT+8", "សិង្ហបុរី"],
+                    "Europe/London": ["GMT", "ឡុងដ៍"],
+                    "America/New_York": ["GMT-4", "ញូវយ៉ក"]
+                };
+                const info = names[timezone] || ["Local", "Local"];
+                timezoneLabel.textContent = info[0];
+                timezoneCity.textContent = info[1];
+            }
+            timezoneSelect.addEventListener("change", updateClock);
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            async function startNavigationTo(destinationName) {
+                addMessage("user", "នាំផ្លូវទៅ " + destinationName);
+                showStatus(routeInfo, "កំពុងស្វែងរកផ្លូវ...");
+                try {
+                    if (!window.KhoemGPS || !window.KhoemMap) throw new Error("GPS module is not available");
+                    if (!KhoemGPS.currentPosition) await KhoemGPS.getCurrentLocation();
+                    mapContainer.style.display = "block";
+                    if (!mapInitialized) {
+                        KhoemMap.init("map-container", KhoemGPS.currentPosition.lat, KhoemGPS.currentPosition.lng);
+                        mapInitialized = true;
+                    }
+                    const destination = await KhoemMap.geocodeSearch(destinationName);
+                    const route = await KhoemMap.getRoute(KhoemGPS.currentPosition.lat, KhoemGPS.currentPosition.lng, destination.lat, destination.lng);
+                    KhoemMap.drawRoute(route.coordinates, destination.lat, destination.lng);
+                    const summary = "ចម្ងាយ " + route.distanceKm + " គីឡូម៉ែត្រ · ប្រើពេលប្រហែល " + route.durationMin + " នាទី";
+                    showStatus(routeInfo, summary);
+                    addMessage("assistant", summary);
+                    lastRouteDest = destination;
+                    navControls.style.display = "flex";
+                    if (window.KhoemNavigator) KhoemNavigator.start(route, function (position) { KhoemMap.updateUserLocation(position.lat, position.lng); });
+                } catch (error) {
+                    showStatus(routeInfo, "មិនអាចចាប់ផ្តើមនាំផ្លូវបានទេ។ សូមពិនិត្យ GPS របស់បង។");
+                    addMessage("assistant", "សុំទោស មានបញ្ហាជាមួយ GPS ឬផែនទី។");
+                }
+            }
+
+            document.getElementById("stop-nav-btn").addEventListener("click", function () {
+                if (window.KhoemNavigator) KhoemNavigator.stop();
+                navControls.style.display = "none";
+                routeInfo.style.display = "none";
+            });
+            document.getElementById("save-place-btn").addEventListener("click", async function () {
+                if (!lastRouteDest) return;
+                const label = window.prompt("ដាក់ឈ្មោះទីតាំងនេះ (ឧ. ផ្ទះ, ការងារ):");
+                if (!label) return;
+                try {
+                    await KhoemAPI.post("/api/places", { session_id: sessionId, label: label.trim(), lat: lastRouteDest.lat, lng: lastRouteDest.lng });
+                    addMessage("assistant", "បានរក្សាទុកទីតាំង \"" + label.trim() + "\" រួចរាល់!");
+                    updateApiStatusBadge(null, "API ready");
+                } catch (error) {
+                    handleApiError(error, "មិនអាចរក្សាទុកទីតាំងបានទេ។");
+                }
+            });
+
+            function addAudioMessage(role, trackUrl, caption) {
+                const div = document.createElement("div");
+                div.className = "msg " + (role === "user" ? "user" : "assistant");
+                const label = document.createElement("span");
+                label.className = "msg-label";
+                label.textContent = role === "user" ? "You · now" : "KHOEM_AI · now";
+                div.appendChild(label);
+                if (caption) div.appendChild(document.createTextNode(safeText(caption)));
+                const audio = document.createElement("audio");
+                audio.controls = true;
+                audio.src = trackUrl;
+                audio.style.display = "block";
+                audio.style.marginTop = "8px";
+                audio.style.width = "100%";
+                div.appendChild(audio);
+                chatBox.appendChild(div);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            async function generateMusic(promptText) {
+                const text = (promptText || "").trim();
+                if (!text) return;
+                addMessage("user", "🎵 បង្កើតបទចម្រៀង: " + text);
+                try {
+                    const data = await KhoemAPI.post("/api/music/generate", {
+                        session_id: sessionId,
+                        prompt: text,
+                        duration: 30
+                    });
+                    if (data.status === "stub") {
+                        addMessage("assistant", "🎵 " + (data.message || "Music API មិនទាន់បានកំណត់ configure នៅឡើយទេ។"));
+                    } else if (data.track_url) {
+                        addAudioMessage("assistant", data.track_url, "🎵 បទចម្រៀងរបស់បងរួចរាល់ហើយ!");
+                        if (window.KhoemVoice && typeof KhoemVoice.speak === "function") {
+                            KhoemVoice.speak("បទចម្រៀងរបស់បងរួចរាល់ហើយ");
+                        }
+                    } else {
+                        addMessage("assistant", "⚠️ មិនអាចបង្កើតបទចម្រៀងបានទេ");
+                    }
+                    updateApiStatusBadge(null, "API ready");
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការបង្កើតបទចម្រៀង");
+                }
+            }
+
+            async function generateVideoWithMusic(videoPrompt, musicPrompt) {
+                const vText = (videoPrompt || "").trim();
+                if (!vText) return;
+                addMessage("user", "🎬🎵 បង្កើតវីដេអូ+ចម្រៀង: " + vText);
+                try {
+                    const data = await KhoemAPI.post("/api/video/generate-with-music", {
+                        session_id: sessionId,
+                        video_prompt: vText,
+                        music_prompt: (musicPrompt || vText).trim(),
+                        duration: 10
+                    });
+                    const videoUrl = data.final_video_url || data.video_url;
+                    if (data.status === "stub") {
+                        addMessage("assistant", "⚠️ " + (data.message || "API key មិនទាន់បានកំណត់ configure"));
+                    } else if (videoUrl) {
+                        const div = document.createElement("div");
+                        div.className = "msg assistant";
+                        const label = document.createElement("span");
+                        label.className = "msg-label";
+                        label.textContent = "KHOEM_AI · now";
+                        div.appendChild(label);
+                        div.appendChild(document.createTextNode("🎬🎵 វីដេអូ+ចម្រៀងរបស់បងរួចរាល់ហើយ!"));
+                        const video = document.createElement("video");
+                        video.controls = true;
+                        video.src = videoUrl;
+                        video.style.display = "block";
+                        video.style.marginTop = "8px";
+                        video.style.width = "100%";
+                        video.style.borderRadius = "12px";
+                        div.appendChild(video);
+                        chatBox.appendChild(div);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        if (window.KhoemVoice && typeof KhoemVoice.speak === "function") {
+                            KhoemVoice.speak("វីដេអូ និងចម្រៀងរបស់បងរួចរាល់ហើយ");
+                        }
+                    } else {
+                        addMessage("assistant", "⚠️ មិនអាចបង្កើតបានទេ");
+                    }
+                    updateApiStatusBadge(null, "API ready");
+                } catch (error) {
+                    handleApiError(error, "បរាជ័យក្នុងការបង្កើតវីដេអូ+ចម្រៀង");
+                }
+            }
+
+            document.querySelectorAll(".chip[data-action]").forEach(function (button) {
+                button.addEventListener("click", async function () {
+                    const action = button.dataset.action;
+                    if (action === "location") {
+                        showStatus(locationStatus, "កំពុងស្វែងរកទីតាំង...");
+                        try {
+                            if (!window.KhoemGPS) throw new Error("GPS unavailable");
+                            const position = await KhoemGPS.getCurrentLocation();
+                            showStatus(locationStatus, "ទីតាំងរបស់បង: " + position.lat.toFixed(5) + ", " + position.lng.toFixed(5));
+                            mapContainer.style.display = "block";
+                            if (!mapInitialized && window.KhoemMap) {
+                                KhoemMap.init("map-container", position.lat, position.lng);
+                                mapInitialized = true;
+                            } else if (window.KhoemMap) KhoemMap.updateUserLocation(position.lat, position.lng);
+                        } catch (error) {
+                            showStatus(locationStatus, "មិនអាចទទួលបានទីតាំងបានទេ។ សូមអនុញ្ញាត GPS។");
+                        }
+                    }
+                    if (action === "navigate") {
+                        const destination = window.prompt("សូមប្រាប់គោលដៅដែលបងចង់ទៅ:");
+                        if (destination) startNavigationTo(destination);
+                    }
+                    if (action === "goto-home" || action === "goto-work") {
+                        const label = action === "goto-home" ? "ផ្ទះ" : "ការងារ";
+                        try {
+                            const data = await KhoemAPI.get("/api/places/" + sessionId + "/" + encodeURIComponent(label));
+                            if (data.lat) startNavigationTo(label);
+                            else addMessage("assistant", "មិនទាន់បានកំណត់ទីតាំង" + label + "នៅឡើយទេ។");
+                        } catch (error) {
+                            addMessage("assistant", "មិនអាចស្វែងរកទីតាំងបានទេ។");
+                        }
+                    }
+                    if (action === "music") {
+                        const musicPrompt = window.prompt("ពិពណ៌នាបទចម្រៀងដែលបងចង់បង្កើត (ឧ. បទស្នេហាយឺតៗ សំឡេងគីតា):");
+                        if (musicPrompt) generateMusic(musicPrompt);
+                    }
+                    if (action === "video-music") {
+                        const vPrompt = window.prompt("ពិពណ៌នាវីដេអូដែលបងចង់បង្កើត:");
+                        if (vPrompt) {
+                            const mPrompt = window.prompt("ពិពណ៌នាតន្ត្រី/បទចម្រៀង (ទុកទទេប្រើដូចវីដេអូ):");
+                            generateVideoWithMusic(vPrompt, mPrompt);
+                        }
+                    }
+                });
+            });
+            document.querySelectorAll("[data-place]").forEach(function (button) {
+                button.addEventListener("click", function () { startNavigationTo(button.dataset.place); });
+            });
+            window.openCalendar = function () { addMessage("assistant", "Calendar integration នឹងបើកនៅពេល API calendar ត្រូវបានភ្ជាប់។"); };
+        });
+    </script>
+</body>
+</html>    

@@ -1,0 +1,120 @@
+/* ========================
+   khoemai.css
+   KHOEM_AI — Global Clock Widget
+======================== */
+
+/* ========================
+   CSS Variables / Theme
+======================== */
+:root {
+    --khoemai-bg:        #f8fafc;
+    --khoemai-card:      #ffffff;
+    --khoemai-border:    #e1e8ed;
+    --khoemai-border-focus: #0f172a;
+    --khoemai-accent:    #0f172a;
+    --khoemai-text:      #1e293b;
+    --khoemai-muted:     #64748b;
+    --khoemai-clock-bg:  #e2e8f0;
+    --khoemai-radius-sm: 8px;
+    --khoemai-radius-md: 12px;
+    --khoemai-shadow:    0 4px 15px rgba(0, 0, 0, 0.08);
+    --khoemai-transition: all 0.25s ease;
+}
+
+/* ========================
+   Card Container
+======================== */
+.khoemai-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--khoemai-card);
+    border: 1px solid var(--khoemai-border);
+    border-radius: var(--khoemai-radius-md);
+    box-shadow: var(--khoemai-shadow);
+    padding: 24px 20px 20px;
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+    margin: 15px 0;
+    text-align: center;
+}
+
+/* ========================
+   Heading
+======================== */
+.khoemai-container h3 {
+    margin: 0 0 18px;
+    color: var(--khoemai-text);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+/* ========================
+   Country Select
+======================== */
+.khoemai-select {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    border-radius: var(--khoemai-radius-sm);
+    border: 1px solid #cbd5e1;
+    outline: none;
+    cursor: pointer;
+    background-color: var(--khoemai-bg);
+    color: var(--khoemai-accent);
+    transition: var(--khoemai-transition);
+
+    /* Custom dropdown arrow */
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 38px;
+}
+
+.khoemai-select:hover {
+    border-color: #94a3b8;
+}
+
+.khoemai-select:focus {
+    border-color: var(--khoemai-border-focus);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
+    background-color: #ffffff;
+}
+
+/* ========================
+   Clock Display
+======================== */
+.khoemai-clock-display {
+    margin-top: 16px;
+    background: var(--khoemai-clock-bg);
+    border-left: 5px solid var(--khoemai-accent);
+    border-radius: var(--khoemai-radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.khoemai-clock-display span:first-child {
+    font-size: 14px;
+    color: var(--khoemai-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#kmClockTime {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--khoemai-accent);
+    letter-spacing: 1px;
+
+    /* ធ្វើឲ្យលេខមិនហ្លូចទីតាំង */
+    font-variant-numeric: tabular-nums;
+    min-width: 120px;
+    text-align: right;
+}
