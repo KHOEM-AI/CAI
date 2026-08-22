@@ -1,11 +1,13 @@
-# CAI
+## CAI
 
 > 🔗🌐 ធនធានផ្ទាល់ខ្លួន — វិញ្ញាបនបត្រសិក្សា Sololearn ទាំងអស់របស់ខ្ញុំ
 
 ## 📜 វិញ្ញាបនបត្រ Sololearn (Sololearn Certificates)
 
-សរុប **47** វិញ្ញាបនបត្រ។ ចុចលេខសម្គាល់ ឬ "មើលរូបភាព" ដើម្បីបើកមើលនីមួយៗ។
+## សរុប **47** វិញ្ញាបនបត្រ។ ចុចលេខសម្គាល់ ឬ "មើលរូបភាព" ដើម្បីបើកមើលនីមួយៗ។
 
+<details>
+<summary>📜 <b>ចុចទីនេះដើម្បីមើល វិញ្ញាបនបត្រ Sololearn ទាំងអស់ (Sololearn Certificates)</b></summary>
 | # | Certificate ID | តំណ |
 |---|---|---|
 | 1 | `CC-4WMNT8MZ` | [មើលរូបភាព](https://api2.sololearn.com/v2/certificates/CC-4WMNT8MZ/image/png?t=639211314186882960) |
