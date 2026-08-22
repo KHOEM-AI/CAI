@@ -30,8 +30,8 @@
             --line-strong: rgba(151, 221, 231, .28);
             --text: #f1fbfc;
             --muted: #8ca8b0;
-            --cyan: #3fa9f5;
-            --cyan-deep: #1c7ed6;
+            --cyan: #61e4ef;
+            --cyan-deep: #1da9bc;
             --green: #75e3c0;
             --yellow: #f6d56b;
             --red: #ff7a83;
@@ -314,7 +314,9 @@
             overflow-y: auto;
             border: 1px solid var(--line);
             border-radius: 18px;
-            background: #000000;
+            background:
+                linear-gradient(rgba(5, 24, 32, .91), rgba(5, 24, 32, .91)),
+                repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(97, 228, 239, .045) 40px);
         }
         #chat-box:before {
             content: "TODAY  ·  KHOEM_AI SESSION";
@@ -453,6 +455,7 @@
             .composer input { font-size: 12px; }
         }
     </style>
+    <link rel="stylesheet" href="static/css/ai.css">
 </head>
 <body>
     <div class="app-container">
@@ -665,59 +668,59 @@
                     <div class="scanner-title" style="color: var(--cyan); font-weight: bold; font-size: 13px; margin-bottom: 5px;">📡 SATELLITE LIVE MATRIX</div>
                         <p style="font-size: 10px; color: var(--muted); margin: 0 0 10px 0;">ប្រព័ន្ធតាមដាន៖ អាកាសធាតុ និងរ៉ាដាផ្កាយរណប</p>
                         <a href="https://zoom.earth/#overlays=wind,radar" target="_blank" class="chip" style="display: inline-block; text-decoration: none; width: 100%;">
-                          👁️ បើកផែនទីផ្កាយរណប ↗
+                         👁️ បើកផែនទីផ្កាយរណប ↗
                       </a>
                    </div>
                 </section>
 
-                <section class="bento-card vault-card" id="vault-card">
-                   <div class="card-title">
+               <section class="bento-card vault-card" id="vault-card">
+                 <div class="card-title">
                    <h3 class="card-title">
                    <span class="vault-lock-icon" aria-hidden="true">
-                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                   <rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
-                 </svg>
-              </span>
-             SECURE VAULT MATRIX
-          </h3>
-       </div>
-      <div id="vault-state" class="vault-state">កំពុងផ្ទុក...</div>
-       <div id="vault-error" class="vault-error" role="alert"></div>
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+                </svg>
+            </span>
+            SECURE VAULT MATRIX
+        </h3>
+    </div>
+    <div id="vault-state" class="vault-state">កំពុងផ្ទុក...</div>
+    <div id="vault-error" class="vault-error" role="alert"></div>
 
-          <div id="vault-gate" class="vault-panel vault-gate" hidden>
-              <p id="vault-gate-title" style="margin:0;color:#c1d8db;font-size:12px;"></p>
-              <input id="vault-gate-password" type="password" placeholder="Master password" autocomplete="off">
-              <div class="vault-gate-actions">
-              <button id="vault-gate-submit" class="vault-btn primary" type="button">បន្ត</button>
-              <button id="vault-face-unlock-btn" class="vault-btn" type="button" hidden>📷 ស្កេនមុខ</button>
-             </div>
-             <div id="vault-face-box" class="vault-face-box" hidden>
+    <div id="vault-gate" class="vault-panel vault-gate" hidden>
+        <p id="vault-gate-title" style="margin:0;color:#c1d8db;font-size:12px;"></p>
+        <input id="vault-gate-password" type="password" placeholder="Master password" autocomplete="off">
+        <div class="vault-gate-actions">
+            <button id="vault-gate-submit" class="vault-btn primary" type="button">បន្ត</button>
+            <button id="vault-face-unlock-btn" class="vault-btn" type="button" hidden>📷 ស្កេនមុខ</button>
+        </div>
+        <div id="vault-face-box" class="vault-face-box" hidden>
             <video id="vault-face-video" muted playsinline></video>
-           </div>
-         <button id="vault-face-capture-btn" class="vault-btn primary" type="button" hidden style="margin-top:8px;">ថតរូប</button>
-       </div>
+        </div>
+        <button id="vault-face-capture-btn" class="vault-btn primary" type="button" hidden style="margin-top:8px;">ថតរូប</button>
+    </div>
 
-         <div id="vault-unlocked" class="vault-panel" hidden>
-            <div class="vault-google-row" id="vault-google-row"></div>
-             <button id="vault-enroll-face-btn" class="vault-btn" type="button">📷 ចុះឈ្មោះមុខសម្រាប់ Face Unlock</button>
-              <div class="vault-tabs" role="tablist" aria-label="Vault categories">
-                 <button class="vault-tab is-active" data-category="document" type="button">📄<span class="vault-tab-label">ឯកសារ</span></button>
-                 <button class="vault-tab" data-category="image" type="button">🖼️<span class="vault-tab-label">រូបភាព</span></button>
-                 <button class="vault-tab" data-category="video" type="button">🎥<span class="vault-tab-label">វីដេអូ</span></button>
-                 <button class="vault-tab" data-category="code" type="button">💻<span class="vault-tab-label">កូដ</span></button>
-                 <button class="vault-tab" data-category="audio" type="button">🎵<span class="vault-tab-label">សំឡេង</span></button>
-            </div>
+    <div id="vault-unlocked" class="vault-panel" hidden>
+        <div class="vault-google-row" id="vault-google-row"></div>
+        <button id="vault-enroll-face-btn" class="vault-btn" type="button">📷 ចុះឈ្មោះមុខសម្រាប់ Face Unlock</button>
+        <div class="vault-tabs" role="tablist" aria-label="Vault categories">
+            <button class="vault-tab is-active" data-category="document" type="button">📄<span class="vault-tab-label">ឯកសារ</span></button>
+            <button class="vault-tab" data-category="image" type="button">🖼️<span class="vault-tab-label">រូបភាព</span></button>
+            <button class="vault-tab" data-category="video" type="button">🎥<span class="vault-tab-label">វីដេអូ</span></button>
+            <button class="vault-tab" data-category="code" type="button">💻<span class="vault-tab-label">កូដ</span></button>
+            <button class="vault-tab" data-category="audio" type="button">🎵<span class="vault-tab-label">សំឡេង</span></button>
+         </div>
             <div class="vault-dropzone" id="vault-dropzone">
-                  ទាញឯកសារមកទីនេះ ឬចុចដើម្បីជ្រើសរើស
-                <input type="file" id="vault-file-input">
-                </div>
-                <div class="vault-upload-progress" id="vault-upload-progress"><span></span></div>
-                <div class="vault-file-list" id="vault-file-list"></div>
-              </div>
-            </section>
-           </aside>
-      </div> 
-  </div>
+            ទាញឯកសារមកទីនេះ ឬចុចដើម្បីជ្រើសរើស
+            <input type="file" id="vault-file-input">
+        </div>
+          <div class="vault-upload-progress" id="vault-upload-progress"><span></span></div>
+          <div class="vault-file-list" id="vault-file-list"></div>
+         </div>
+         </section>
+        </aside>
+      </div>
+   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src="static/js/api-client.js"></script>
@@ -1163,12 +1166,9 @@
             window.openCalendar = function () { addMessage("assistant", "Calendar integration នឹងបើកនៅពេល API calendar ត្រូវបានភ្ជាប់។"); };
         });
     </script>
+    <script src="static/js/ai.js"></script>
 </body>
 </html>    
-
-
-
-
 
 
 

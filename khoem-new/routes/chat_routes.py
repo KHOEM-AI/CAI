@@ -12,6 +12,7 @@ import logging
 from flask import Blueprint, request, jsonify
 from core.ai_engine import chat as call_groq
 from core.database_engine import save_message, get_history, clear_history
+from core.security_engine import require_api_key, rate_limit
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,8 @@ def _error(message: str, status: int = 400):
 
 
 @chat_bp.route("/api/chat", methods=["POST"])
+@require_api_key
+@rate_limit(max_calls=15, window_seconds=60)
 def chat():
     data = request.get_json(silent=True) or {}
 
@@ -39,6 +42,11 @@ def chat():
 
     if not session_id or not isinstance(session_id, str):
         return _error("session_id ត្រូវការ ហើយត្រូវតែជា string")
+    session_id = session_id.strip()
+    if not session_id:
+        return _error("session_id មិនអាចទទេបានទេ")
+    if len(session_id) > 128:
+        return _error("session_id វែងពេក (អតិបរមា ១២៨ តួអក្សរ)")
 
     if not raw_message or not isinstance(raw_message, str):
         return _error("message ត្រូវការ ហើយត្រូវតែជា string")
@@ -49,6 +57,12 @@ def chat():
 
     if len(user_message) > MAX_MESSAGE_LENGTH:
         return _error(f"សារវែងពេក (អតិបរមា {MAX_MESSAGE_LENGTH} តួអក្សរ)")
+
+    if not isinstance(system_prompt, str):
+        return _error("system_prompt ត្រូវតែជា string")
+    system_prompt = system_prompt.strip() or DEFAULT_SYSTEM_PROMPT
+    if len(system_prompt) > MAX_MESSAGE_LENGTH:
+        return _error(f"system_prompt វែងពេក (អតិបរមា {MAX_MESSAGE_LENGTH} តួអក្សរ)")
 
     try:
         save_message(session_id, "user", user_message)
@@ -79,6 +93,8 @@ def chat():
 
 
 @chat_bp.route("/api/history/<session_id>", methods=["GET"])
+@require_api_key
+@rate_limit(max_calls=30, window_seconds=60)
 def history(session_id):
     try:
         limit = int(request.args.get("limit", 100))
@@ -97,6 +113,8 @@ def history(session_id):
 
 
 @chat_bp.route("/api/history/<session_id>", methods=["DELETE"])
+@require_api_key
+@rate_limit(max_calls=10, window_seconds=60)
 def delete_history(session_id):
     try:
         clear_history(session_id)
@@ -105,3 +123,4 @@ def delete_history(session_id):
         return _error("មិនអាចលុបប្រវត្តិសន្ទនាបានទេ", 500)
 
     return jsonify({"status": "cleared", "session_id": session_id})
+

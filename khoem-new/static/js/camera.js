@@ -1,49 +1,34 @@
-// ============================================================================
-// FILE: static/js/camera.js
-// PROJECT : KHOEM_AI 3.0
-// MODULE  : Camera Engine
-// VERSION : 3.0
-// AUTHOR  : KHOEM SOKSIVUTHA
-// ============================================================================
-
-const KhoemCamera = {
-    // ============================================================
-    // CAMERA STATE
-    // ============================================================
-    initialized: false,
-    stream: null,
-    videoElement: null,
-    canvasElement: null,
-    imageElement: null,
-    currentDeviceId: null,
-    devices: [],
-
-    // ============================================================
-    // SETTINGS
-    // ============================================================
-    settings: {
-        imageQuality: 0.90,
-        imageType: "image/jpeg",
-        maxWidth: 1280,
-        maxHeight: 720,
-        facingMode: "environment"
     },
 
     // ============================================================
-    // CALLBACKS
+    // MOBILE BROWSER SUPPORT
     // ============================================================
-    onCapture: null,
-    onError: null,
-    onReady: null,
+    isSupported() {
+        return !!(
+            navigator.mediaDevices &&
+            typeof navigator.mediaDevices.getUserMedia === "function"
+        );
+    },
 
-    // ============================================================
-    // INITIALIZE
-    // ============================================================
-    init() {
-        this.initialized = true;
-        this.loadSettings();
-        console.log("KhoemCamera initialized");
-        return true;
+    getErrorMessage(error) {
+        const name = error && error.name ? error.name : "";
+
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+            return "សូមអនុញ្ញាត Camera ក្នុង Browser Settings រួចសាកល្បងម្ដងទៀត។";
+        }
+        if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+            return "រកមិនឃើញ Camera នៅលើទូរសព្ទនេះទេ។";
+        }
+        if (name === "NotReadableError" || name === "TrackStartError") {
+            return "Camera កំពុងត្រូវបានប្រើដោយកម្មវិធីផ្សេង។ សូមបិទកម្មវិធីនោះ រួចសាកល្បងម្ដងទៀត។";
+        }
+        if (name === "OverconstrainedError") {
+            return "Camera ទូរសព្ទនេះមិនគាំទ្រការកំណត់ដែលបានជ្រើសទេ។";
+        }
+        if (name === "SecurityError") {
+            return "Camera ត្រូវការបើកតាម HTTPS ឬ localhost។";
+        }
+        return "មិនអាចបើក Camera បានទេ។ សូមពិនិត្យ Permission រួចសាកល្បងម្ដងទៀត។";
     },
 
     // ============================================================
@@ -74,8 +59,18 @@ const KhoemCamera = {
     // REQUEST CAMERA PERMISSION
     // ============================================================
     async requestPermission() {
+        if (!this.isSupported()) {
+            const error = new Error("Camera is not supported by this browser.");
+            error.name = "NotSupportedError";
+            if (typeof this.onError === "function") this.onError(error);
+            return false;
+        }
+
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: this.settings.facingMode } },
+                audio: false
+            });
             stream.getTracks().forEach(track => track.stop());
             return true;
         } catch (error) {
@@ -89,6 +84,10 @@ const KhoemCamera = {
     // LOAD CAMERA DEVICES
     // ============================================================
     async loadDevices() {
+        if (!navigator.mediaDevices || typeof navigator.mediaDevices.enumerateDevices !== "function") {
+            return [];
+        }
+
         try {
             const devices = await navigator.mediaDevices.enumerateDevices();
             this.devices = devices.filter(device => device.kind === "videoinput");
@@ -103,27 +102,62 @@ const KhoemCamera = {
     // START CAMERA
     // ============================================================
     async start(videoElement) {
+        if (!videoElement) {
+            const error = new Error("A video element is required.");
+            error.name = "VideoElementMissingError";
+            if (typeof this.onError === "function") this.onError(error);
+            return false;
+        }
+
+        if (!this.isSupported()) {
+            const error = new Error("Camera is not supported by this browser.");
+            error.name = "NotSupportedError";
+            if (typeof this.onError === "function") this.onError(error);
+            return false;
+        }
+
         this.videoElement = videoElement;
         if (this.stream) this.stop();
 
+        // These attributes are important for older Android browsers.
+        this.videoElement.setAttribute("autoplay", "true");
+        this.videoElement.setAttribute("muted", "true");
+        this.videoElement.setAttribute("playsinline", "true");
+        this.videoElement.setAttribute("webkit-playsinline", "true");
+        this.videoElement.muted = true;
+        this.videoElement.playsInline = true;
+
         const constraints = {
             video: {
-                width: this.settings.maxWidth,
-                height: this.settings.maxHeight,
-                facingMode: this.settings.facingMode,
-                deviceId: this.currentDeviceId ? { exact: this.currentDeviceId } : undefined
+                width: { ideal: this.settings.maxWidth },
+                height: { ideal: this.settings.maxHeight },
+                facingMode: { ideal: this.settings.facingMode }
             },
             audio: false
         };
 
+        if (this.currentDeviceId) {
+            constraints.video.deviceId = { exact: this.currentDeviceId };
+        }
+
         try {
-            this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+            try {
+                this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (firstError) {
+                // Some older phones reject ideal/device constraints.
+                console.warn("Retrying camera with simple mobile constraints", firstError);
+                this.stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+            }
+
             this.videoElement.srcObject = this.stream;
             await this.videoElement.play();
             if (typeof this.onReady === "function") this.onReady();
             return true;
         } catch (error) {
-            console.error(error);
+            console.error("Camera start failed:", error, this.getErrorMessage(error));
             if (typeof this.onError === "function") this.onError(error);
             return false;
         }
@@ -152,10 +186,26 @@ const KhoemCamera = {
     // CAPTURE IMAGE
     // ============================================================
     capture() {
-        if (!this.videoElement) throw new Error("Camera is not started.");
+        if (
+            !this.videoElement ||
+            !this.stream ||
+            !this.videoElement.videoWidth ||
+            !this.videoElement.videoHeight
+        ) {
+            throw new Error("Camera is not ready yet.");
+        }
+
         const canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
+        const videoWidth = this.videoElement.videoWidth;
+        const videoHeight = this.videoElement.videoHeight;
+        const scale = Math.min(
+            1,
+            this.settings.maxWidth / videoWidth,
+            this.settings.maxHeight / videoHeight
+        );
+
+        canvas.width = Math.max(1, Math.round(videoWidth * scale));
+        canvas.height = Math.max(1, Math.round(videoHeight * scale));
         const context = canvas.getContext("2d");
         context.drawImage(this.videoElement, 0, 0, canvas.width, canvas.height);
         return canvas;
@@ -174,7 +224,20 @@ const KhoemCamera = {
     captureBlob() {
         return new Promise((resolve) => {
             const canvas = this.capture();
-            canvas.toBlob((blob) => { resolve(blob); }, this.settings.imageType, this.settings.imageQuality);
+            if (typeof canvas.toBlob === "function") {
+                canvas.toBlob((blob) => { resolve(blob); }, this.settings.imageType, this.settings.imageQuality);
+                return;
+            }
+
+            // Fallback for older Android browsers without canvas.toBlob().
+            const dataUrl = canvas.toDataURL(this.settings.imageType, this.settings.imageQuality);
+            const parts = dataUrl.split(",");
+            const binary = atob(parts[1]);
+            const bytes = new Uint8Array(binary.length);
+            for (let index = 0; index < binary.length; index += 1) {
+                bytes[index] = binary.charCodeAt(index);
+            }
+            resolve(new Blob([bytes], { type: this.settings.imageType }));
         });
     },
 
@@ -235,20 +298,33 @@ const KhoemCamera = {
     async analyzeImage(base64Image, question = "", sessionId = "") {
         const textPrompt = question || "Please analyze this image.";
         
-        const response = await fetch("/api/vision", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                image: base64Image,
-                question: textPrompt,
-                message: textPrompt,      // បន្ថែម message ក្រែង Backend ត្រូវការ
-                session_id: sessionId,    // សំខាន់បំផុត សម្រាប់ចងភ្ជាប់ប្រវត្តិ!
-                mime_type: this.settings.imageType
-            })
-        });
-        return await response.json();
+        try {
+            const response = await fetch("/api/vision", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    image: base64Image,
+                    question: textPrompt,
+                    message: textPrompt,
+                    session_id: sessionId,
+                    mime_type: this.settings.imageType
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) {
+                const error = new Error(result.error || "Vision API request failed.");
+                error.status = response.status;
+                throw error;
+            }
+            return result;
+        } catch (error) {
+            console.error("Vision request failed:", error);
+            if (typeof this.onError === "function") this.onError(error);
+            throw error;
+        }
     },
 
     // ============================================================
@@ -274,3 +350,4 @@ const KhoemCamera = {
 // AUTO INITIALIZE
 // ============================================================================
 KhoemCamera.init();
+

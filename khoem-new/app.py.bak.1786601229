@@ -100,6 +100,7 @@ app.secret_key = (
     or os.getenv("FLASK_SECRET_KEY")
     or "dev-only-change-this-secret"
 )
+app.permanent_session_lifetime = datetime.timedelta(days=365)
 
 CORS(app, origins=os.getenv("CORS_ORIGINS", "*").split(","))
 init_security(app)
@@ -109,11 +110,11 @@ try:
     from routes.accessibility_routes import accessibility_bp
     from routes.navigator_routes     import navigator_bp
     from routes.vault_routes         import vault_bp
-    
+   
     app.register_blueprint(settings_bp)
     app.register_blueprint(accessibility_bp)
     app.register_blueprint(navigator_bp)
-    app.register_blueprint(vault_bp)
+    app.register_blueprint(vault_bp)  
     logger.info("Optional route blueprints registered.")
 except ImportError as _e:
     logger.warning("Some route blueprints not found and were skipped: %s", _e)

@@ -1,54 +1,64 @@
-/* ==============================================================================
-   theme-override.css — KHOEM_AI Color Patch
-   ខ្មៅ (ផ្ទៃខាងក្រោយ) + ស (អក្សរ) + ផ្កាឈូក ស្រាល (ប៊ូតុង/ស៊ុម) + ស្វាយ (ឆ្នូត)
-   + ប៊ូតុងផុសអណ្ដែតបែប 3D
-
-   របៀបប្រើ៖ ដាក់ File នេះក្នុង static/css/theme-override.css
-   រួចបន្ថែម Link នេះជាបន្ទាត់ចុងក្រោយបំផុតក្នុង <head> របស់ index.html
-   (ត្រូវដាក់ក្រោយ Link CSS ដទៃទៀតទាំងអស់ ដើម្បីឱ្យវាជាន់លើ)៖
-
-     <link rel="stylesheet" href="static/css/theme-override.css">
-   ============================================================================== */
-
 :root {
-  --bg: #050505 !important;
-  --bg-deep: #000000 !important;
-  --panel: rgba(247, 184, 212, 0.10) !important;
-  --panel-soft: rgba(247, 184, 212, 0.06) !important;
-  --panel-hover: rgba(247, 184, 212, 0.16) !important;
-  --line: rgba(167, 139, 250, 0.45) !important;
-  --line-strong: rgba(167, 139, 250, 0.75) !important;
-  --text: #ffffff !important;
-  --muted: #e3cfe0 !important;
-  --cyan: #f7b8d4 !important;
-  --cyan-deep: #a78bfa !important;
-  --green: #b9f7d4 !important;
-  --yellow: #ffe6a7 !important;
-  --red: #ff9fb0 !important;
+  --bg: #07131d !important;
+  --bg-deep: #050d15 !important;
+  --panel: rgba(102, 226, 220, 0.10) !important;
+  --panel-soft: rgba(102, 226, 220, 0.06) !important;
+  --panel-hover: rgba(102, 226, 220, 0.18) !important;
+  --line: rgba(102, 226, 220, 0.35) !important;
+  --line-strong: rgba(102, 226, 220, 0.6) !important;
+  --text: #e7f2f1 !important;
+  --muted: #8caab7 !important;
+  --cyan: #66e2dc !important;
+  --cyan-deep: #4bc4be !important;
+  --green: #71c895 !important;
+  --yellow: #f2bd66 !important;
+  --red: #f18181 !important;
 }
 
-body {
-  background:
-    radial-gradient(circle at 86% 4%, rgba(167, 139, 250, .10), transparent 25rem),
-    radial-gradient(circle at 8% 100%, rgba(247, 184, 212, .08), transparent 28rem),
-    linear-gradient(145deg, #000000 0%, #0a0508 48%, #000000 100%) !important;
-  color: #ffffff !important;
+* { color: #e7f2f1; }
+
+html, body {
+  background: #07131d !important;
+  color: #e7f2f1 !important;
 }
 
-/* ── ស៊ុមកាតទាំងអស់ — ផ្ទៃខ្មៅតិចៗលាយផ្កាឈូក ស្រាល + ឆ្នូតស្វាយ ── */
+.app-container,
+.dashboard-layout,
+.main-content,
+.sidebar,
+.right-rail {
+  background: transparent !important;
+}
+
+.topbar {
+  background: linear-gradient(145deg, #0d1e2a, #07131d) !important;
+  border: 1px solid rgba(102, 226, 220, .3) !important;
+  box-shadow: 0 0 20px rgba(102, 226, 220, .08) !important;
+}
+
+.brand-mark {
+  background: linear-gradient(145deg, rgba(102, 226, 220, .25), rgba(102, 226, 220, .08)) !important;
+  border: 1px solid rgba(102, 226, 220, .5) !important;
+  color: #66e2dc !important;
+}
+
 .bento-card,
 .card,
 .settings-panel,
-#accessibility-panel {
-  background: linear-gradient(145deg, rgba(20, 8, 16, .95), rgba(0, 0, 0, .96)) !important;
-  border: 1px solid rgba(167, 139, 250, .40) !important;
+#accessibility-panel,
+.command-card,
+.nexus-section,
+.api-card,
+.timezone-card,
+.assistant-card,
+.telemetry-card {
+  background: linear-gradient(145deg, #0d1e2a, #0a1922) !important;
+  border: 1px solid rgba(102, 226, 220, .25) !important;
   box-shadow:
-    6px 6px 16px rgba(0, 0, 0, .65),
-    -3px -3px 12px rgba(247, 184, 212, .05),
-    0 0 0 1px rgba(167, 139, 250, .08) inset !important;
+    0 8px 24px rgba(0, 0, 0, .5),
+    0 0 0 1px rgba(102, 226, 220, .06) inset !important;
 }
 
-/* ── ប៊ូតុងទាំងអស់ — ផុសអណ្ដែតបែប 3D ពណ៌ផ្កាឈូក ស្រាល + ឆ្នូតស្វាយ ── */
 .tool-button,
 .place-button,
 .chip,
@@ -58,15 +68,23 @@ body {
 .nav-btn,
 .btn-primary,
 .btn-secondary,
-#send-btn {
-  background: linear-gradient(160deg, rgba(247, 184, 212, .16), rgba(167, 139, 250, .08)) !important;
-  border: 1px solid rgba(167, 139, 250, .5) !important;
-  color: #ffffff !important;
+#send-btn,
+button {
+  background: linear-gradient(160deg, rgba(102, 226, 220, .35), rgba(75, 196, 190, .25)) !important;
+  border: 1px solid rgba(102, 226, 220, .7) !important;
+  color: #07131d !important;
   box-shadow:
-    3px 3px 8px rgba(0, 0, 0, .6),
-    -2px -2px 6px rgba(247, 184, 212, .08),
-    0 1px 0 rgba(255, 255, 255, .05) inset !important;
+    3px 3px 10px rgba(0, 0, 0, .5),
+    -2px -2px 8px rgba(102, 226, 220, .12),
+    0 1px 0 rgba(255, 255, 255, .08) inset !important;
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.tool-button,
+.place-button,
+.chip,
+.mini-button,
+.nav-btn {
+  color: #e7f2f1 !important;
 }
 
 .tool-button:hover,
@@ -76,72 +94,152 @@ body {
 .composer-button:hover,
 .signal-button:hover,
 .btn-primary:hover,
-.btn-secondary:hover {
+.btn-secondary:hover,
+button:hover {
   transform: translateY(-2px) !important;
-  background: linear-gradient(160deg, rgba(247, 184, 212, .26), rgba(167, 139, 250, .16)) !important;
-  border-color: rgba(167, 139, 250, .85) !important;
+  background: linear-gradient(160deg, rgba(102, 226, 220, .5), rgba(75, 196, 190, .4)) !important;
+  border-color: rgba(102, 226, 220, 1) !important;
   box-shadow:
-    5px 6px 14px rgba(0, 0, 0, .7),
-    -2px -2px 8px rgba(247, 184, 212, .10) !important;
+    5px 6px 16px rgba(0, 0, 0, .55),
+    -2px -2px 10px rgba(102, 226, 220, .22) !important;
 }
 
 .tool-button:active,
 .place-button:active,
 .chip:active,
 .composer-button:active,
-.btn-primary:active {
+.btn-primary:active,
+button:active {
   transform: translateY(0) !important;
   box-shadow:
-    1px 1px 4px rgba(0, 0, 0, .6),
-    inset 2px 2px 6px rgba(0, 0, 0, .4) !important;
+    1px 1px 4px rgba(0, 0, 0, .5),
+    inset 2px 2px 8px rgba(0, 0, 0, .4) !important;
 }
 
-/* Send button (composer, pill accent) — ស្រទាប់ខ្លាំងជាងបន្តិចព្រោះជា Action សំខាន់ */
 .composer-button.send,
 .nav-btn.save {
-  background: linear-gradient(160deg, #f7b8d4, #a78bfa) !important;
-  color: #14060f !important;
-  border: none !important;
+  background: linear-gradient(160deg, #66e2dc, #4bc4be) !important;
+  color: #07131d !important;
+  border: 1px solid #66e2dc !important;
   box-shadow:
-    4px 4px 10px rgba(0, 0, 0, .65),
-    -2px -2px 8px rgba(247, 184, 212, .18) !important;
+    4px 4px 12px rgba(0, 0, 0, .5),
+    -2px -2px 8px rgba(102, 226, 220, .3) !important;
 }
 
-/* ── Text ពណ៌ស — ធានាថាគ្មានកន្លែងណានៅសល់ជាពណ៌ Cyan ចាស់ ── */
-h1, h2, h3, p, span, label, .msg, .card-title, .eyebrow,
-.metric-value, .clock, .focus-copy, .context-row, .nav-item {
-  color: #ffffff;
-}
-.muted, .eyebrow, .metric-label, .welcome, .chat-status {
-  color: #e3cfe0 !important;
-}
-
-/* ── Chat bubbles — Assistant ស្រាល, User ជាឆ្នូតស្វាយ-ផ្កាឈូក ── */
-.msg.assistant {
-  background: rgba(20, 8, 16, .85) !important;
-  border: 1px solid rgba(167, 139, 250, .35) !important;
+.nav-btn.stop {
+  background: linear-gradient(160deg, rgba(241, 129, 129, .35), rgba(7, 19, 29, .9)) !important;
+  border: 1px solid rgba(241, 129, 129, .7) !important;
   color: #ffffff !important;
+}
+
+.tool-button .toggle {
+  background: #66e2dc !important;
+  box-shadow: 0 0 8px #66e2dc !important;
+}
+
+h1, h2, h3, h4, p, span, label, a, li, small, strong, b, i,
+.msg, .card-title, .eyebrow, .metric-value, .clock, .focus-copy,
+.context-row, .nav-item, .welcome, .place-button, .chip, .tool-button,
+.chat-status, .muted, .metric-label, .session-clock, .session-id,
+.timezone-label, .timezone-city, .focus-time, .api-row {
+  color: #e7f2f1 !important;
+}
+
+.muted { color: #8caab7 !important; }
+
+/* ── Chat box — ខ្មៅសុទ្ធ (មិនប្តូរ តែមួយកន្លែងនេះទេ) ── */
+#chat-box {
+  background: #050d15 !important;
+  border: 1px solid rgba(102, 226, 220, .3) !important;
+}
+
+#chat-box:before {
+  color: #66e2dc !important;
+}
+
+.msg.assistant {
+  background: rgba(102, 226, 220, .1) !important;
+  border: 1px solid rgba(102, 226, 220, .3) !important;
+  color: #e7f2f1 !important;
 }
 .msg.user {
-  background: linear-gradient(160deg, rgba(247, 184, 212, .22), rgba(167, 139, 250, .18)) !important;
-  border: 1px solid rgba(247, 184, 212, .45) !important;
-  color: #ffffff !important;
+  background: linear-gradient(160deg, rgba(102, 226, 220, .35), rgba(75, 196, 190, .25)) !important;
+  border: 1px solid rgba(102, 226, 220, .5) !important;
+  color: #07131d !important;
+}
+.msg-label {
+  color: #66e2dc !important;
+}
+.msg.user .msg-label {
+  color: #0a1922 !important;
 }
 
-/* ── Inputs ── */
 .composer input,
 .search-box input,
 .timezone-card select,
 .settings-panel select,
-#user-input {
-  background: #0a0508 !important;
-  border: 1px solid rgba(167, 139, 250, .35) !important;
-  color: #ffffff !important;
+#user-input,
+#voice-select,
+#api-key-input,
+input,
+select,
+textarea {
+  background: #0a1922 !important;
+  border: 1px solid rgba(102, 226, 220, .35) !important;
+  color: #e7f2f1 !important;
 }
-.composer input::placeholder { color: #b9a3b5 !important; }
+input::placeholder { color: #627f8b !important; }
 
-/* ── Status dots — ស្រាល ស្វាយ/ផ្កាឈូក ជំនួសបៃតង Cyan ចាស់ ── */
 .status-dot {
-  background: #f7b8d4 !important;
-  box-shadow: 0 0 10px rgba(247, 184, 212, .7) !important;
+  background: #66e2dc !important;
+  box-shadow: 0 0 10px rgba(102, 226, 220, .8) !important;
+}
+.api-row.warning .status-dot {
+  background: #f2bd66 !important;
+  box-shadow: 0 0 8px #f2bd66 !important;
+}
+
+.encrypted {
+  background: rgba(102, 226, 220, .14) !important;
+  border: 1px solid rgba(102, 226, 220, .35) !important;
+  color: #e7f2f1 !important;
+}
+
+#route-info, #location-status {
+  background: rgba(102, 226, 220, .14) !important;
+  border: 1px solid rgba(102, 226, 220, .3) !important;
+  color: #e7f2f1 !important;
+}
+
+.telemetry-graph path {
+  stroke: #66e2dc !important;
+}
+.telemetry-value {
+  color: #f2bd66 !important;
+}
+.graph-grid {
+  stroke: rgba(102, 226, 220, .15) !important;
+}
+
+.divider {
+  background: rgba(102, 226, 220, .3) !important;
+}
+
+.profile {
+  background: #66e2dc !important;
+  color: #07131d !important;
+}
+
+.shield {
+  color: #66e2dc !important;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #07131d; }
+::-webkit-scrollbar-thumb {
+  background: rgba(102, 226, 220, .5);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 226, 220, .8);
 }

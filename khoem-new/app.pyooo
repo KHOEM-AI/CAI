@@ -108,12 +108,13 @@ try:
     from routes.settings_routes      import settings_bp
     from routes.accessibility_routes import accessibility_bp
     from routes.navigator_routes     import navigator_bp
-    from routes.vault_routes         import vault_bp
+    from routes.vault_routes         import vault_bp, init_vault_db
     
     app.register_blueprint(settings_bp)
     app.register_blueprint(accessibility_bp)
     app.register_blueprint(navigator_bp)
     app.register_blueprint(vault_bp)
+    init_vault_db()  
     logger.info("Optional route blueprints registered.")
 except ImportError as _e:
     logger.warning("Some route blueprints not found and were skipped: %s", _e)
