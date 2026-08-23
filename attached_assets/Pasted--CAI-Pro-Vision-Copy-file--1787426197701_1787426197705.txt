@@ -1,0 +1,115 @@
+# កូដខ្វះសម្រាប់ CAI Pro Vision
+
+សូមចម្លង (Copy) កូដនីមួយៗខាងក្រោម ទៅដាក់ក្នុង file ដែលមានឈ្មោះចង្អុលបង្ហាញ។
+
+---
+
+## ១. File: `lib/db/src/schema/cai.ts` (បង្កើត file ថ្មី)
+
+```typescript
+import { pgTable, uuid, text, timestamp, integer, jsonb } from "drizzle-orm/pg-core";
+
+export const caiUsersTable = pgTable("cai_users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: text("role").notNull().default("staff"),
+  status: text("status").notNull().default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const caiScansTable = pgTable("cai_scans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  operatorId: uuid("operator_id").notNull(),
+  batchId: text("batch_id").notNull(),
+  category: text("category").notNull(),
+  totalCount: integer("total_count").notNull(),
+  detectedTypes: jsonb("detected_types"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+```
+
+---
+
+## ២. File: `lib/db/src/index.ts` (បើកមាន បន្ថែមទៅចុង file)
+
+```typescript
+export * from "./schema/cai";
+```
+
+---
+
+## ៣. File: `lib/api-zod/src/schema/cai.ts` (បង្កើត file ថ្មី)
+
+```typescript
+import { z } from "zod";
+
+export const LoginBody = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+
+export const LoginResponse = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+  user: z.object({
+    id: z.string(),
+    name: z.string(),
+    role: z.string(),
+  }),
+});
+
+export const GetCurrentUserResponse = z.object({
+  id: z.string(),
+  name: z.string(),
+  role: z.string(),
+});
+
+export const CreateScanBody = z.object({
+  batchId: z.string(),
+  category: z.string(),
+  totalCount: z.number(),
+  detectedTypes: z.array(z.string()).optional(),
+});
+
+export const CreateScanResponse = z.object({
+  id: z.string(),
+  batchId: z.string(),
+});
+
+export const GetDashboardSummaryResponse = z.object({
+  totalScans: z.number(),
+  categoryCounts: z.record(z.number()),
+});
+
+export const ListScansQueryParams = z.object({
+  limit: z.number().optional(),
+  offset: z.number().optional(),
+});
+
+export const ListScansResponse = z.object({
+  scans: z.array(CreateScanResponse),
+  total: z.number(),
+});
+```
+
+---
+
+## ៤. File: `lib/api-zod/src/index.ts` (បើកមាន បន្ថែមទៅចុង file)
+
+```typescript
+export * from "./schema/cai";
+```
+
+---
+
+## សរុប — ជំហានធ្វើក្នុង Replit
+
+1. បើក Replit → File Explorer
+2. រកមើល folder `lib/db/src/schema/` → បើមិនមាន file `cai.ts` សូមបង្កើតថ្មី → paste កូដទី ១
+3. បើក `lib/db/src/index.ts` → បន្ថែមបន្ទាត់កូដទី ២ ទៅចុង file
+4. រកមើល folder `lib/api-zod/src/schema/` → បង្កើត file `cai.ts` → paste កូដទី ៣
+5. បើក `lib/api-zod/src/index.ts` → បន្ថែមបន្ទាត់កូដទី ៤ ទៅចុង file
+6. Save ទាំងអស់ → ចូល Shell → `git add .` → `git commit -m "add missing schema"` → `git push origin main`

@@ -10,6 +10,12 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: scans
+    description: Secure scan records
+  - name: dashboard
+    description: Dashboard summaries
 paths:
   /healthz:
     get:
@@ -24,7 +30,113 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Sign in to CAI Pro Vision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "401":
+          description: Invalid credentials
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get the current signed-in user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+  /scans:
+    get:
+      operationId: listScans
+      tags: [scans]
+      summary: List scan records visible to the current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+      responses:
+        "200":
+          description: Scan records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Scan"
+        "401":
+          description: Not authenticated
+    post:
+      operationId: createScan
+      tags: [scans]
+      summary: Save a signed scan record
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanInput"
+      responses:
+        "201":
+          description: Saved scan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scan"
+        "400":
+          description: Invalid scan
+        "401":
+          description: Not authenticated
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get scan dashboard summary
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Summary data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          description: Not authenticated
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +145,71 @@ components:
           type: string
       required:
         - status
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 1
+    User:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        role:
+          type: string
+          enum: [staff, admin]
+    AuthSession:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string }
+        user:
+          $ref: "#/components/schemas/User"
+    ScanInput:
+      type: object
+      required: [category, batchId, totalCount, detectedTypes, hashSignature, aiAssisted]
+      properties:
+        category:
+          type: string
+          enum: [universal, wood, fruits, sugarcane]
+        batchId: { type: string, minLength: 1, maxLength: 80 }
+        totalCount: { type: number, minimum: 0 }
+        detectedTypes:
+          type: array
+          items: { type: string }
+        hashSignature: { type: string, minLength: 64, maxLength: 64 }
+        aiAssisted: { type: boolean }
+        latitude:
+          type: ["number", "null"]
+        longitude:
+          type: ["number", "null"]
+    Scan:
+      allOf:
+        - $ref: "#/components/schemas/ScanInput"
+        - type: object
+          required: [id, operator, createdAt]
+          properties:
+            id: { type: string }
+            operator: { type: string }
+            createdAt: { type: string, format: date-time }
+    DashboardSummary:
+      type: object
+      required: [totalScans, totalItems, todayScans, categoryCounts, recentScans]
+      properties:
+        totalScans: { type: number }
+        totalItems: { type: number }
+        todayScans: { type: number }
+        categoryCounts:
+          type: object
+          additionalProperties: { type: number }
+        recentScans:
+          type: array
+          items:
+            $ref: "#/components/schemas/Scan"
 
