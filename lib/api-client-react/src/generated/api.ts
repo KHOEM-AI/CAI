@@ -65,8 +65,6 @@ export const getHealthCheckUrl = () => {
   return `/api/healthz`
 }
 
-// End of generated API definitions.
-
 /**
  * Returns server health status
  * @summary Health check
@@ -128,9 +126,15 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-   return withQueryKey(query, queryOptions.queryKey);
- }
- // Generated file terminator.
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export const getLoginUrl = () => {
 
 
@@ -271,7 +275,14 @@ export function useGetCurrentUser<TData = Awaited<ReturnType<typeof getCurrentUs
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
   return withQueryKey(query, queryOptions.queryKey);
-} // Generated file terminator.
+}
+
+
+
+
+
+
+
 export const getListScansUrl = (params?: ListScansParams,) => {
   const normalizedParams = new URLSearchParams();
 
@@ -349,6 +360,13 @@ export function useListScans<TData = Awaited<ReturnType<typeof listScans>>, TErr
 
   return withQueryKey(query, queryOptions.queryKey);
 }
+
+
+
+
+
+
+
 export const getCreateScanUrl = () => {
 
 

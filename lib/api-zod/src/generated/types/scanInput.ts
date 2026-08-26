@@ -27,4 +27,17 @@ export interface ScanInput {
   latitude?: number | null;
   /** @nullable */
   longitude?: number | null;
+  /** @nullable */
+  locationAccuracy?: number | null;
+  estimated?: boolean;
+  /**
+     * @minimum 0
+     * @maximum 1
+     * @nullable
+     */
+  confidence?: number | null;
+  /** @nullable */
+  modelName?: string | null;
+  /** @nullable */
+  modelVersion?: string | null;
 }

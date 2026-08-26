@@ -3,10 +3,6 @@ import { join } from 'path';
 import { Pool } from 'pg';
 import 'dotenv/config';
 
-// រត់ដោយ: npm run migrate  (មើល package.json snippet ខាងក្រោម)
-// អាន schema.sql ទាំងមូល ហើយប្រតិបត្តិម្តងតែមួយ — គ្រប់ statement ប្រើ IF NOT EXISTS
-// ដូច្នេះអាចរត់ម្តងទៀត (idempotent) ដោយសុវត្ថិភាព។
-
 async function migrate() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   const schemaPath = join(__dirname, 'schema.sql');

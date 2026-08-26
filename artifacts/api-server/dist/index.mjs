@@ -805,7 +805,7 @@ var require_src = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/depd@2.0.0/node_modules/d​byepd/index.js
+// ../../node_modules/.pnpm/depd@2.0.0/node_modules/depd/index.js
 var require_depd = __commonJS({
   "../../node_modules/.pnpm/depd@2.0.0/node_modules/depd/index.js"(exports, module) {
     var relative = __require("path").relative;
@@ -28317,7 +28317,7 @@ var require_pino = __commonJS({
     function pinoBundlerAbsolutePath(p) {
       try {
         const path = __require("path");
-        const outputDir = "/home/runner/workspace/artifacts/api-server/dist";
+        const outputDir = "/data/data/com.termux/files/home/CAI-new/artifacts/api-server/dist";
         return path.resolve(outputDir, p.replace(/^\.\//, ""));
       } catch (e) {
         const f = new Function("p", "return new URL(p, import.meta.url).pathname");
@@ -37858,6 +37858,8 @@ var listScansResponseOneBatchIdMax = 80;
 var listScansResponseOneTotalCountMin = 0;
 var listScansResponseOneHashSignatureMin = 64;
 var listScansResponseOneHashSignatureMax = 64;
+var listScansResponseOneConfidenceMin = 0;
+var listScansResponseOneConfidenceMax = 1;
 var ListScansResponseItem = objectType({
   "category": enumType(["universal", "wood", "fruits", "sugarcane"]),
   "batchId": stringType().min(1).max(listScansResponseOneBatchIdMax),
@@ -37866,7 +37868,12 @@ var ListScansResponseItem = objectType({
   "hashSignature": stringType().min(listScansResponseOneHashSignatureMin).max(listScansResponseOneHashSignatureMax),
   "aiAssisted": booleanType(),
   "latitude": numberType().nullish(),
-  "longitude": numberType().nullish()
+  "longitude": numberType().nullish(),
+  "locationAccuracy": numberType().nullish(),
+  "estimated": booleanType().optional(),
+  "confidence": numberType().min(listScansResponseOneConfidenceMin).max(listScansResponseOneConfidenceMax).nullish(),
+  "modelName": stringType().nullish(),
+  "modelVersion": stringType().nullish()
 }).and(objectType({
   "id": stringType(),
   "operator": stringType(),
@@ -37877,6 +37884,8 @@ var createScanBodyBatchIdMax = 80;
 var createScanBodyTotalCountMin = 0;
 var createScanBodyHashSignatureMin = 64;
 var createScanBodyHashSignatureMax = 64;
+var createScanBodyConfidenceMin = 0;
+var createScanBodyConfidenceMax = 1;
 var CreateScanBody = objectType({
   "category": enumType(["universal", "wood", "fruits", "sugarcane"]),
   "batchId": stringType().min(1).max(createScanBodyBatchIdMax),
@@ -37885,12 +37894,19 @@ var CreateScanBody = objectType({
   "hashSignature": stringType().min(createScanBodyHashSignatureMin).max(createScanBodyHashSignatureMax),
   "aiAssisted": booleanType(),
   "latitude": numberType().nullish(),
-  "longitude": numberType().nullish()
+  "longitude": numberType().nullish(),
+  "locationAccuracy": numberType().nullish(),
+  "estimated": booleanType().optional(),
+  "confidence": numberType().min(createScanBodyConfidenceMin).max(createScanBodyConfidenceMax).nullish(),
+  "modelName": stringType().nullish(),
+  "modelVersion": stringType().nullish()
 });
 var createScanResponseOneBatchIdMax = 80;
 var createScanResponseOneTotalCountMin = 0;
 var createScanResponseOneHashSignatureMin = 64;
 var createScanResponseOneHashSignatureMax = 64;
+var createScanResponseOneConfidenceMin = 0;
+var createScanResponseOneConfidenceMax = 1;
 var CreateScanResponse = objectType({
   "category": enumType(["universal", "wood", "fruits", "sugarcane"]),
   "batchId": stringType().min(1).max(createScanResponseOneBatchIdMax),
@@ -37899,7 +37915,12 @@ var CreateScanResponse = objectType({
   "hashSignature": stringType().min(createScanResponseOneHashSignatureMin).max(createScanResponseOneHashSignatureMax),
   "aiAssisted": booleanType(),
   "latitude": numberType().nullish(),
-  "longitude": numberType().nullish()
+  "longitude": numberType().nullish(),
+  "locationAccuracy": numberType().nullish(),
+  "estimated": booleanType().optional(),
+  "confidence": numberType().min(createScanResponseOneConfidenceMin).max(createScanResponseOneConfidenceMax).nullish(),
+  "modelName": stringType().nullish(),
+  "modelVersion": stringType().nullish()
 }).and(objectType({
   "id": stringType(),
   "operator": stringType(),
@@ -37909,6 +37930,8 @@ var getDashboardSummaryResponseRecentScansItemOneBatchIdMax = 80;
 var getDashboardSummaryResponseRecentScansItemOneTotalCountMin = 0;
 var getDashboardSummaryResponseRecentScansItemOneHashSignatureMin = 64;
 var getDashboardSummaryResponseRecentScansItemOneHashSignatureMax = 64;
+var getDashboardSummaryResponseRecentScansItemOneConfidenceMin = 0;
+var getDashboardSummaryResponseRecentScansItemOneConfidenceMax = 1;
 var GetDashboardSummaryResponse = objectType({
   "totalScans": numberType(),
   "totalItems": numberType(),
@@ -37922,7 +37945,12 @@ var GetDashboardSummaryResponse = objectType({
     "hashSignature": stringType().min(getDashboardSummaryResponseRecentScansItemOneHashSignatureMin).max(getDashboardSummaryResponseRecentScansItemOneHashSignatureMax),
     "aiAssisted": booleanType(),
     "latitude": numberType().nullish(),
-    "longitude": numberType().nullish()
+    "longitude": numberType().nullish(),
+    "locationAccuracy": numberType().nullish(),
+    "estimated": booleanType().optional(),
+    "confidence": numberType().min(getDashboardSummaryResponseRecentScansItemOneConfidenceMin).max(getDashboardSummaryResponseRecentScansItemOneConfidenceMax).nullish(),
+    "modelName": stringType().nullish(),
+    "modelVersion": stringType().nullish()
   }).and(objectType({
     "id": stringType(),
     "operator": stringType(),
@@ -56324,6 +56352,11 @@ var caiScansTable = pgTable("cai_scans", {
   aiAssisted: boolean("ai_assisted").notNull().default(false),
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
+  locationAccuracy: doublePrecision("location_accuracy"),
+  estimated: boolean("estimated").notNull().default(false),
+  confidence: doublePrecision("confidence"),
+  modelName: text("model_name"),
+  modelVersion: text("model_version"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 });
 var insertCaiUserSchema = createInsertSchema(caiUsersTable).omit({ createdAt: true });
@@ -56413,6 +56446,11 @@ var mapScan = (row, operator) => ({
   aiAssisted: row.aiAssisted,
   latitude: row.latitude,
   longitude: row.longitude,
+  locationAccuracy: row.locationAccuracy,
+  estimated: row.estimated,
+  confidence: row.confidence,
+  modelName: row.modelName,
+  modelVersion: row.modelVersion,
   createdAt: row.createdAt.toISOString()
 });
 router3.get("/scans", authenticateCai, async (req, res) => {

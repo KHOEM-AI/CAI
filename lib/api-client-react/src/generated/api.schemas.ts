@@ -65,6 +65,19 @@ export interface ScanInput {
   latitude?: number | null;
   /** @nullable */
   longitude?: number | null;
+  /** @nullable */
+  locationAccuracy?: number | null;
+  estimated?: boolean;
+  /**
+     * @minimum 0
+     * @maximum 1
+     * @nullable
+     */
+  confidence?: number | null;
+  /** @nullable */
+  modelName?: string | null;
+  /** @nullable */
+  modelVersion?: string | null;
 }
 
 export type Scan = ScanInput & {
@@ -72,6 +85,7 @@ export type Scan = ScanInput & {
   operator: string;
   createdAt: string;
 };
+
 export type DashboardSummaryCategoryCounts = {[key: string]: number};
 
 export interface DashboardSummary {
@@ -89,3 +103,4 @@ export type ListScansParams = {
  */
 limit?: number;
 };
+

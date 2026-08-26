@@ -16,7 +16,7 @@ export const HealthCheckResponse = zod.object({
   "status": zod.string()
 })
 
-// End of generated API definitions.
+
 /**
  * @summary Sign in to CAI Pro Vision
  */
@@ -37,6 +37,8 @@ export const LoginResponse = zod.object({
   "role": zod.enum(['staff', 'admin'])
 })
 })
+
+
 /**
  * @summary Get the current signed-in user
  */
@@ -46,6 +48,8 @@ export const GetCurrentUserResponse = zod.object({
   "email": zod.string(),
   "role": zod.enum(['staff', 'admin'])
 })
+
+
 /**
  * @summary List scan records visible to the current user
  */
@@ -65,6 +69,9 @@ export const listScansResponseOneTotalCountMin = 0;
 export const listScansResponseOneHashSignatureMin = 64;
 export const listScansResponseOneHashSignatureMax = 64;
 
+export const listScansResponseOneConfidenceMin = 0;
+export const listScansResponseOneConfidenceMax = 1;
+
 
 
 export const ListScansResponseItem = zod.object({
@@ -75,7 +82,12 @@ export const ListScansResponseItem = zod.object({
   "hashSignature": zod.string().min(listScansResponseOneHashSignatureMin).max(listScansResponseOneHashSignatureMax),
   "aiAssisted": zod.boolean(),
   "latitude": zod.number().nullish(),
-  "longitude": zod.number().nullish()
+  "longitude": zod.number().nullish(),
+  "locationAccuracy": zod.number().nullish(),
+  "estimated": zod.boolean().optional(),
+  "confidence": zod.number().min(listScansResponseOneConfidenceMin).max(listScansResponseOneConfidenceMax).nullish(),
+  "modelName": zod.string().nullish(),
+  "modelVersion": zod.string().nullish()
 }).and(zod.object({
   "id": zod.string(),
   "operator": zod.string(),
@@ -94,6 +106,9 @@ export const createScanBodyTotalCountMin = 0;
 export const createScanBodyHashSignatureMin = 64;
 export const createScanBodyHashSignatureMax = 64;
 
+export const createScanBodyConfidenceMin = 0;
+export const createScanBodyConfidenceMax = 1;
+
 
 
 export const CreateScanBody = zod.object({
@@ -104,7 +119,12 @@ export const CreateScanBody = zod.object({
   "hashSignature": zod.string().min(createScanBodyHashSignatureMin).max(createScanBodyHashSignatureMax),
   "aiAssisted": zod.boolean(),
   "latitude": zod.number().nullish(),
-  "longitude": zod.number().nullish()
+  "longitude": zod.number().nullish(),
+  "locationAccuracy": zod.number().nullish(),
+  "estimated": zod.boolean().optional(),
+  "confidence": zod.number().min(createScanBodyConfidenceMin).max(createScanBodyConfidenceMax).nullish(),
+  "modelName": zod.string().nullish(),
+  "modelVersion": zod.string().nullish()
 })
 
 export const createScanResponseOneBatchIdMax = 80;
@@ -113,6 +133,9 @@ export const createScanResponseOneTotalCountMin = 0;
 
 export const createScanResponseOneHashSignatureMin = 64;
 export const createScanResponseOneHashSignatureMax = 64;
+
+export const createScanResponseOneConfidenceMin = 0;
+export const createScanResponseOneConfidenceMax = 1;
 
 
 
@@ -124,7 +147,12 @@ export const CreateScanResponse = zod.object({
   "hashSignature": zod.string().min(createScanResponseOneHashSignatureMin).max(createScanResponseOneHashSignatureMax),
   "aiAssisted": zod.boolean(),
   "latitude": zod.number().nullish(),
-  "longitude": zod.number().nullish()
+  "longitude": zod.number().nullish(),
+  "locationAccuracy": zod.number().nullish(),
+  "estimated": zod.boolean().optional(),
+  "confidence": zod.number().min(createScanResponseOneConfidenceMin).max(createScanResponseOneConfidenceMax).nullish(),
+  "modelName": zod.string().nullish(),
+  "modelVersion": zod.string().nullish()
 }).and(zod.object({
   "id": zod.string(),
   "operator": zod.string(),
@@ -142,6 +170,9 @@ export const getDashboardSummaryResponseRecentScansItemOneTotalCountMin = 0;
 export const getDashboardSummaryResponseRecentScansItemOneHashSignatureMin = 64;
 export const getDashboardSummaryResponseRecentScansItemOneHashSignatureMax = 64;
 
+export const getDashboardSummaryResponseRecentScansItemOneConfidenceMin = 0;
+export const getDashboardSummaryResponseRecentScansItemOneConfidenceMax = 1;
+
 
 
 export const GetDashboardSummaryResponse = zod.object({
@@ -157,12 +188,17 @@ export const GetDashboardSummaryResponse = zod.object({
   "hashSignature": zod.string().min(getDashboardSummaryResponseRecentScansItemOneHashSignatureMin).max(getDashboardSummaryResponseRecentScansItemOneHashSignatureMax),
   "aiAssisted": zod.boolean(),
   "latitude": zod.number().nullish(),
-  "longitude": zod.number().nullish()
+  "longitude": zod.number().nullish(),
+  "locationAccuracy": zod.number().nullish(),
+  "estimated": zod.boolean().optional(),
+  "confidence": zod.number().min(getDashboardSummaryResponseRecentScansItemOneConfidenceMin).max(getDashboardSummaryResponseRecentScansItemOneConfidenceMax).nullish(),
+  "modelName": zod.string().nullish(),
+  "modelVersion": zod.string().nullish()
 }).and(zod.object({
   "id": zod.string(),
   "operator": zod.string(),
   "createdAt": zod.coerce.date()
 })))
-}) // Generated file terminator.
+})
 
 

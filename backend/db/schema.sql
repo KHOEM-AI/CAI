@@ -54,7 +54,6 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id    ON refresh_tokens (user_id);
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token_hash ON refresh_tokens (token_hash);
--- ស្វែងរក token សុពលភាពលឿន (user_id + token_hash + not revoked + not expired)
 CREATE INDEX IF NOT EXISTS idx_refresh_tokens_active
   ON refresh_tokens (user_id, token_hash)
   WHERE revoked_at IS NULL;
@@ -65,7 +64,7 @@ CREATE INDEX IF NOT EXISTS idx_refresh_tokens_active
 CREATE TABLE IF NOT EXISTS audit_log (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   actor_id      UUID REFERENCES users(id) ON DELETE SET NULL,
-  action        TEXT NOT NULL,               -- e.g. 'auth.login', 'user.role_changed'
+  action        TEXT NOT NULL,
   target_type   TEXT,
   target_id     TEXT,
   metadata      JSONB,
@@ -76,11 +75,6 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS idx_audit_log_actor_id   ON audit_log (actor_id);
 CREATE INDEX IF NOT EXISTS idx_audit_log_action     ON audit_log (action);
 CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON audit_log (created_at DESC);
-
--- ⚠️ Production TODO (មើល docs/SECURITY.md): បង្កើត DB role ដាច់ដោយឡែកសម្រាប់ app user
--- ដែលមិនមាន UPDATE/DELETE privilege លើ audit_log ដើម្បី enforce append-only នៅកម្រិត DB ពិត។
--- ឧទាហរណ៍ (រត់ម្តងជា superuser, កែ role name ឱ្យត្រូវនឹងអ្នកកំណត់ពិត)៖
---   REVOKE UPDATE, DELETE ON audit_log FROM cai_app_user;
 
 -- ------------------------------------------------------------
 -- updated_at auto-touch trigger សម្រាប់ users
@@ -100,7 +94,5 @@ CREATE TRIGGER trg_users_updated_at
   EXECUTE FUNCTION set_updated_at();
 
 -- ============================================================
--- ❌ NOT YET INCLUDED (Phase 2-4 — មើល docs/DATABASE.md ផ្នែក "Tables ដែលមិនទាន់មាន"):
---   scans, scan_items, scan_verifications, sync_queue / sync_events
--- បន្ថែមជា migration ដាច់ដោយឡែក (schema_002_scans.sql ។ល។) ពេលចាប់ផ្តើម Phase 2។
+-- ❌ NOT YET INCLUDED (Phase 2-4): scans, scan_items, scan_verifications, sync_queue
 -- ============================================================

@@ -189,6 +189,18 @@ components:
           type: ["number", "null"]
         longitude:
           type: ["number", "null"]
+        locationAccuracy:
+          type: ["number", "null"]
+        estimated:
+          type: boolean
+        confidence:
+          type: ["number", "null"]
+          minimum: 0
+          maximum: 1
+        modelName:
+          type: ["string", "null"]
+        modelVersion:
+          type: ["string", "null"]
     Scan:
       allOf:
         - $ref: "#/components/schemas/ScanInput"

@@ -22,6 +22,11 @@ export const caiScansTable = pgTable("cai_scans", {
   aiAssisted: boolean("ai_assisted").notNull().default(false),
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
+  locationAccuracy: doublePrecision("location_accuracy"),
+  estimated: boolean("estimated").notNull().default(false),
+  confidence: doublePrecision("confidence"),
+  modelName: text("model_name"),
+  modelVersion: text("model_version"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

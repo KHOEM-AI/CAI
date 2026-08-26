@@ -174,3 +174,12 @@
 .animate-rise-delay-3 { animation-delay: .21s; }
 .scan-line { animation: scan-line 2.2s ease-in-out infinite; }
 .pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+.bg-universal {
+}
+.text-universal {
+}
+.border-universal {
+}
+
+

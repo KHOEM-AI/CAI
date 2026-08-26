@@ -9,7 +9,8 @@ const router: IRouter = Router();
 const mapScan = (row: typeof caiScansTable.$inferSelect, operator: string) => ({
   id: row.id, operator, category: row.category, batchId: row.batchId, totalCount: row.totalCount,
   detectedTypes: row.detectedTypes, hashSignature: row.hashSignature, aiAssisted: row.aiAssisted,
-  latitude: row.latitude, longitude: row.longitude, createdAt: row.createdAt.toISOString(),
+  latitude: row.latitude, longitude: row.longitude, locationAccuracy: row.locationAccuracy, estimated: row.estimated, confidence: row.confidence,
+  modelName: row.modelName, modelVersion: row.modelVersion, createdAt: row.createdAt.toISOString(),
 });
 
 router.get("/scans", authenticateCai, async (req, res): Promise<void> => {
