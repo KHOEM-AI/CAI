@@ -1,54 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken, UserRole, AccessTokenPayload } from '../utils/tokens';
+import { pool } from '../db/pool';
 
-// Extend Express Request with the authenticated principal
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Request {
-      user?: AccessTokenPayload;
-    }
-  }
-}
-
-// មិនអានទេ header X-Role ឬ body.role ណាមួយឡើយ — role មកពី JWT ដែល server ចុះហត្ថលេខាតែម្តងគត់
-export function authenticate(req: Request, res: Response, next: NextFunction) {
-  const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing or malformed Authorization header' });
-  }
-  const token = header.slice('Bearer '.length);
+export async function recordAudit(params: {
+  actorId: string | null;
+  action: string;
+  targetType?: string;
+  targetId?: string;
+  metadata?: Record<string, unknown>;
+  ipAddress?: string;
+}) {
+  const { actorId, action, targetType, targetId, metadata, ipAddress } = params;
   try {
-    req.user = verifyAccessToken(token);
-    next();
-  } catch {
-    return res.status(401).json({ error: 'Invalid or expired token' });
+    await pool.query(
+      `INSERT INTO audit_log (actor_id, action, target_type, target_id, metadata, ip_address)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [actorId, action, targetType ?? null, targetId ?? null, metadata ? JSON.stringify(metadata) : null, ipAddress ?? null]
+    );
+  } catch (err) {
+    // Audit logging must never crash the request — log locally and move on
+    console.error('[audit] failed to record', action, err);
   }
-}
-
-// Role hierarchy: super_admin > admin > staff
-const ROLE_RANK: Record<UserRole, number> = { staff: 1, admin: 2, super_admin: 3 };
-
-export function requireRole(minRole: UserRole) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
-    if (ROLE_RANK[req.user.role] < ROLE_RANK[minRole]) {
-      return res.status(403).json({ error: 'Insufficient permissions' });
-    }
-    next();
-  };
-}
-
-// សម្រាប់ resource ដែលជា "own data only" សម្រាប់ staff (e.g. មើលតែ history របស់ខ្លួន)
-// admin/super_admin រំលងបាន
-export function requireSelfOrRole(getOwnerId: (req: Request) => string, minRole: UserRole) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
-    const isOwner = req.user.sub === getOwnerId(req);
-    const hasRole = ROLE_RANK[req.user.role] >= ROLE_RANK[minRole];
-    if (!isOwner && !hasRole) {
-      return res.status(403).json({ error: 'Insufficient permissions' });
-    }
-    next();
-  };
 }
