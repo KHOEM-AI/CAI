@@ -1,3 +1,4 @@
+import ProjectSwitcher from './components/ProjectSwitcher';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -63,6 +64,7 @@ function Sidebar({ user, onLogout }: { user: User; onLogout: () => void }) {
   ];
   return <aside className="hidden min-h-[100dvh] w-[262px] shrink-0 flex-col bg-sidebar px-5 py-6 text-sidebar-foreground md:flex">
     <Brand />
+    <ProjectSwitcher current="CAI" />
     <div className="mt-12 px-3 text-[10px] font-bold uppercase tracking-[.2em] text-sidebar-foreground/40">Operations</div>
     <nav className="mt-3 space-y-1" aria-label="Primary navigation">
       {items.map(({ href, label, sub, icon: Icon }) => {
