@@ -3,51 +3,38 @@ import React from 'react';
 type ProjectType = 'ksv' | 'cai';
 
 interface ProjectSwitcherProps {
-  activeProject: ProjectType;
-  onChange: (project: ProjectType) => void;
+  activeProject?: ProjectType; // ប្រើសញ្ញា ? ដើម្បីកុំឱ្យវា Error ក្នុង App.tsx ចាស់
+  current?: 'KSV' | 'CAI';     // គាំទ្រ Props ចាស់របស់បង
 }
 
-export default function ProjectSwitcher({
-  activeProject,
-  onChange,
-}: ProjectSwitcherProps) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 10,
-        padding: 12,
-        background: '#111827',
-        borderBottom: '1px solid #374151',
-      }}
-    >
-      <button
-        onClick={() => onChange('ksv')}
-        style={{
-          padding: '10px 22px',
-          border: 0,
-          borderRadius: 8,
-          cursor: 'pointer',
-          color: '#fff',
-          background: activeProject === 'ksv' ? '#2563eb' : '#374151',
-        }}
-      >
-        KSV
-      </button>
+export default function ProjectSwitcher({ activeProject, current }: ProjectSwitcherProps) {
+  // កំណត់ថាបច្ចុប្បន្នជា KSV ឬ CAI
+  const isKSV = activeProject === 'ksv' || current === 'KSV';
+  
+  // កំណត់ Link គោលដៅ
+  const targetUrl = isKSV ? 'http://localhost:5174' : 'http://localhost:5173';
+  const buttonLabel = isKSV ? '👉 ចូលទៅកាន់ CAI ' : '👈 ត្រឡប់ទៅ KSV ';
+  const buttonColor = isKSV ? '#2563eb' : '#16a34a';
 
-      <button
-        onClick={() => onChange('cai')}
+  return (
+    <div style={{ padding: '12px' }}>
+      <a
+        href={targetUrl}
         style={{
+          display: 'block',
+          width: '100%',
           padding: '10px 22px',
-          border: 0,
-          borderRadius: 8,
-          cursor: 'pointer',
+          borderRadius: '8px',
           color: '#fff',
-          background: activeProject === 'cai' ? '#16a34a' : '#374151',
+          background: buttonColor,
+          textAlign: 'center',
+          textDecoration: 'none',
+          fontWeight: 'bold',
+          fontSize: '14px'
         }}
       >
-        CAI
-      </button>
+        {buttonLabel}
+      </a>
     </div>
   );
-}
+          }
