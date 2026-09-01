@@ -1,1 +1,0 @@
-- [OpenAPI/Zod compatibility](openapi-zod-compat.md) — generated validators target Zod 3 APIs; keep contract constructs compatible with emitted helpers.
