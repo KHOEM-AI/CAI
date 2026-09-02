@@ -10,3 +10,4 @@ router.use(caiAuthRouter);
 router.use(caiScansRouter);
 
 export default router;
+
