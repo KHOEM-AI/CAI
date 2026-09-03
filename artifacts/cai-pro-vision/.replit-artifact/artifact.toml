@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "CAI Pro Vision"
+description = "A Khmer-first AI-assisted scanning and secure inventory app for counting wood, fruit, sugarcane, and other goods with GPS controls, audit history, and role-based access."
+version = "1.0.0"
+id = "artifacts/cai-pro-vision"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23246
+
+[services.development]
+run = "pnpm --filter @workspace/cai-pro-vision run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cai-pro-vision", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/cai-pro-vision/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23246"
+BASE_PATH = "/"

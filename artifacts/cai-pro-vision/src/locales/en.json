@@ -1,0 +1,14 @@
+{
+  "email_label": "Work email",
+  "password_label": "Password",
+  "take_photo": "Take photo",
+  "choose_camera_hint": "Choose Camera from the picker",
+  "category_label": "Category",
+  "batch_id_label": "Batch ID",
+  "total_count_label": "Total count",
+  "detected_types_label": "Detected types",
+  "location_label": "Location",
+  "confirm_data_label": "I confirm the data above is accurate",
+  "working_radius_label": "Working radius",
+  "metres_unit": "metres"
+}
