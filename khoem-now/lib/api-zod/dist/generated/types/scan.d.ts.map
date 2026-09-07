@@ -1,0 +1,1 @@
+{"version":3,"file":"scan.d.ts","sourceRoot":"","sources":["../../../src/generated/types/scan.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AAE7C,MAAM,MAAM,IAAI,GAAG,SAAS,GAAG;IAC7B,EAAE,EAAE,MAAM,CAAC;IACX,QAAQ,EAAE,MAAM,CAAC;IACjB,SAAS,EAAE,IAAI,CAAC;CACjB,CAAC"}
