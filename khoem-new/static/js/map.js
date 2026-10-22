@@ -122,7 +122,7 @@ const KhoemMap = {
     // GEOCODE SEARCH (Nominatim API)
     // ============================================================
     async geocodeSearch(placeName) {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(placeName)}`;
+        const url = `http://localhost:4000/api/nominatim?format=json&limit=1&q=${encodeURIComponent(placeName)}`;
         const response = await fetch(url, { headers: { "Accept-Language": "km,en" } });
         const results = await response.json();
 
@@ -141,7 +141,7 @@ const KhoemMap = {
     // GET ROUTE (OSRM API)
     // ============================================================
     async getRoute(originLat, originLng, destLat, destLng) {
-        const url = `https://router.project-osrm.org/route/v1/driving/${originLng},${originLat};${destLng},${destLat}?overview=full&steps=true&geometries=geojson`;
+        const url = `http://localhost:4000/api/osrm/${originLng},${originLat};${destLng},${destLat}?overview=full&steps=true&geometries=geojson`;
         const response = await fetch(url);
         const data = await response.json();
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 // ប្រភេទទិន្នន័យសម្រាប់សារនីមួយៗ (Message type)
 export interface ClaudeMessage {
@@ -20,8 +21,7 @@ export interface ClaudeResponse {
 export class ClaudeService {
   // ⚠️ កំណត់ត្រា៖ កុំដាក់ API key ផ្ទាល់ក្នុង frontend code ពេលដាក់ដំណើរការជាក់ស្តែង (production)!
   // គួរឆ្លងកាត់ backend server ផ្ទាល់ខ្លួន (Node.js/Express) ដើម្បីលាក់ key
-  private apiUrl = 'https://api.anthropic.com/v1/messages';
-  private apiKey = 'YOUR_API_KEY_HERE'; // ដាក់ API key របស់បងនៅទីនេះ (សម្រាប់ dev/test តែប៉ុណ្ណោះ)
+  private apiUrl = 'http://localhost:4000/api/chat';
 
   constructor(private http: HttpClient) {}
 
@@ -31,20 +31,17 @@ export class ClaudeService {
    * @param systemPrompt - សេចក្តីណែនាំកំណត់តួនាទី/អាកប្បកិរិយារបស់ Claude
    */
   sendMessage(messages: ClaudeMessage[], systemPrompt: string = ''): Observable<ClaudeResponse> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-api-key': this.apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true' // ត្រូវការសម្រាប់ហៅផ្ទាល់ពី browser
-    });
-
-    const body = {
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: messages
-    };
-
-    return this.http.post<ClaudeResponse>(this.apiUrl, body, { headers });
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { messages: messages };
+    return this.http
+      .post<{ reply: string }>(this.apiUrl, body, { headers })
+      .pipe(
+        map((r) => ({
+          content: [{ type: 'text', text: r.reply }],
+          id: '',
+          model: 'khoem-local',
+          stop_reason: 'end_turn',
+        }))
+      );
   }
 }

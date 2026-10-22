@@ -278,7 +278,7 @@ function CAI_Pro_App({ user, onLogout }: { user: UserProfile; onLogout: () => vo
         category: scanCategory,
         batchId,
         hashSignature,
-        qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(hashSignature)}`,
+        qrCodeUrl: `http://localhost:4000/api/qr/?size=140x140&data=${encodeURIComponent(hashSignature)}`,
         timestamp: new Date().toLocaleString('km-KH'),
         totalCount: finalItems.length,
         detectedTypes: Array.from(new Set(finalItems.map((i) => i.label))),
