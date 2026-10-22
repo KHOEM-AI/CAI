@@ -1,5 +1,0 @@
-modules = ["nodejs-24", "python-base-3.13"]
-
-[deployment]
-router = "application"
-
