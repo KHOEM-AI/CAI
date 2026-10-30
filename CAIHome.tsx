@@ -1,6 +1,6 @@
 import { useState } from "react";
 // @ts-ignore — plain ES module, no type declarations
-import { KEI_UI, PROJECTS } from "./kei_registry.mjs";
+import { CAI_UI, PROJECTS } from "./cai_registry.mjs";
 
 type Action = { id: string; label: string; sub: string };
 
@@ -18,11 +18,11 @@ const btn: React.CSSProperties = {
   cursor: "pointer",
 };
 
-export default function KEIHome({ onAction }: { onAction?: (id: string) => void }) {
-  const [tab, setTab] = useState<string>(KEI_UI.tabs[0]);
+export default function CAIHome({ onAction }: { onAction?: (id: string) => void }) {
+  const [tab, setTab] = useState<string>(CAI_UI.tabs[0]);
   const [nav, setNav] = useState<string>("Home");
   const fire = (id: string) => onAction?.(id);
-  const [primary, ...secondary]: Action[] = KEI_UI.actions;
+  const [primary, ...secondary]: Action[] = CAI_UI.actions;
 
   return (
     <div style={{ background: BG, color: "#fff", minHeight: "100vh", maxWidth: 480, margin: "0 auto", padding: 16, fontFamily: "system-ui, sans-serif" }}>
@@ -30,11 +30,11 @@ export default function KEIHome({ onAction }: { onAction?: (id: string) => void 
         <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: 1 }}>
           KHOEM<span style={{ color: GREEN }}>-AI</span>
         </div>
-        <div style={{ color: "#8a9a92", fontSize: 14 }}>{KEI_UI.tagline}</div>
+        <div style={{ color: "#8a9a92", fontSize: 14 }}>{CAI_UI.tagline}</div>
       </header>
 
       <div role="tablist" style={{ display: "flex", background: PANEL, borderRadius: 16, padding: 4, marginBottom: 14 }}>
-        {KEI_UI.tabs.map((t: string) => (
+        {CAI_UI.tabs.map((t: string) => (
           <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
             style={{ flex: 1, padding: 12, borderRadius: 12, border: 0, cursor: "pointer",
               background: tab === t ? "#12392a" : "transparent", color: tab === t ? GREEN : "#b8c4be", fontWeight: 600 }}>
@@ -44,7 +44,7 @@ export default function KEIHome({ onAction }: { onAction?: (id: string) => void 
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
-        {KEI_UI.features.map((f: string) => (
+        {CAI_UI.features.map((f: string) => (
           <span key={f} style={{ padding: "6px 12px", borderRadius: 999, border: "1px solid #1c2a24", fontSize: 13, color: "#cfe" }}>{f}</span>
         ))}
       </div>
@@ -65,7 +65,7 @@ export default function KEIHome({ onAction }: { onAction?: (id: string) => void 
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
-        {KEI_UI.cards.map((c: Action) => (
+        {CAI_UI.cards.map((c: Action) => (
           <button key={c.id} onClick={() => fire(c.id)} style={btn}>
             <strong>{c.label}</strong>
             <div style={{ fontSize: 12, color: "#8a9a92" }}>{c.sub}</div>
@@ -83,7 +83,7 @@ export default function KEIHome({ onAction }: { onAction?: (id: string) => void 
       </details>
 
       <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxWidth: 480, margin: "0 auto", display: "flex", background: PANEL, borderTop: "1px solid #1c2a24" }}>
-        {KEI_UI.nav.map((n: string) => (
+        {CAI_UI.nav.map((n: string) => (
           <button key={n} onClick={() => setNav(n)}
             style={{ flex: 1, padding: "14px 0", background: "transparent", border: 0, color: nav === n ? GREEN : "#8a9a92", cursor: "pointer" }}>
             {n}

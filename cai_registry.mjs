@@ -1,16 +1,18 @@
-// kei_registry.mjs — central data: roles of every Khoem project (single source of truth)
+// cai_registry.mjs — central data: roles of every Khoem project (single source of truth)
 export const PROJECTS = [
-  { id: "KI",        role: "API",                                   km: "ច្រកតភ្ជាប់ API" },
-  { id: "AI",        role: "UI",                                    km: "ផ្ទាំងអ្នកប្រើ (UI)" },
-  { id: "IQ-AI",     role: "Audio, video, images",                  km: "សំឡេង វីដេអូ រូបភាព" },
-  { id: "KSV",       role: "General electronic device control",     km: "បញ្ជាឧបករណ៍អេឡិចត្រូនិចទូទៅ" },
-  { id: "khoem-now", role: "Colors and lights",                     km: "ពណ៌ និងអំពូល" },
-  { id: "KHOEM_AI",  role: "Language and code",                     km: "ភាសា និងកូដ" },
-  { id: "KEI",       role: "General image scanning and location",   km: "ស្គែនរូបភាពទូទៅ និងទីតាំង" },
+  { id: "KI",        role: "API",                                 km: "ច្រកតភ្ជាប់ API" },
+  { id: "AI",        role: "UI",                                  km: "ផ្ទាំងអ្នកប្រើ (UI)" },
+  { id: "IQ-AI",     role: "Audio, video, images",                km: "សំឡេង វីដេអូ រូបភាព" },
+  { id: "KSV",       role: "General electronic device control",   km: "បញ្ជាឧបករណ៍អេឡិចត្រូនិចទូទៅ" },
+  { id: "EI-T",      role: "Numbers + scientific math",           km: "លេខ + គណិតវិទ្យាសាស្ត្រ" },
+  { id: "khoem-now", role: "Colors and lights",                   km: "ពណ៌ និងអំពូល" },
+  { id: "KHOEM_AI",  role: "Language and code",                   km: "ភាសា និងកូដ" },
+  { id: "KEI",       role: "Keyboard + protection system",        km: "ក្ដារចុច + ប្រព័ន្ធការពារ" },
+  { id: "CAI",       role: "Photo object counting + photo location scan", km: "ស្គេនរូបថតរាប់ចំនួន & ស្គែនរូបថតទីតាំង" },
 ];
 
 // KEI home-screen layout taken from the UI mockup
-export const KEI_UI = {
+export const CAI_UI = {
   brand: "KHOEM-AI",
   tagline: "Vision · Count · Locate",
   tabs: ["Camera", "360° Scan", "GPS"],
@@ -36,7 +38,7 @@ export function validate() {
   return true;
 }
 
-// CLI: node kei_registry.mjs [id]
+// CLI: node cai_registry.mjs [id]
 if (import.meta.url === `file://${process.argv[1]}`) {
   validate();
   const q = process.argv[2];

@@ -1,5 +1,5 @@
-// kei_core.cpp — KEI core: object counting (NMS) + GPS distance
-// Build: clang++ -std=c++17 -O2 kei_core.cpp -o kei_core && ./kei_core
+// cai_core.cpp — KEI core: object counting (NMS) + GPS distance
+// Build: clang++ -std=c++17 -O2 cai_core.cpp -o cai_core && ./cai_core
 #include <algorithm>
 #include <cmath>
 #include <iostream>
