@@ -16,7 +16,7 @@ header{display:flex;align-items:center;gap:10px}.logo{display:flex;gap:10px;alig
 .tabs button{border:0;border-radius:0;background:none;padding:13px 4px;font-weight:600}.tabs .on{background:linear-gradient(#0b3d26,#082a1b);color:var(--g);box-shadow:inset 0 -3px 0 var(--g)}
 .hero{position:relative;height:250px;margin-top:10px;display:flex;justify-content:center;align-items:center;overflow:hidden}
 .ring{position:absolute;border:2px solid #00e67655;border-radius:50%;box-shadow:0 0 22px #00e67666,inset 0 0 22px #00e67633;transform:rotateX(70deg)}
-.r1{width:290px;height:290px;animation:sp 12s linear infinite}.r2{width:220px;height:220px;animation:sp 8s linear infinite reverse}
+.r1{width:290px;height:290px}.r2{width:220px;height:220px}body.busy .r1{animation:sp 12s linear infinite}body.busy .r2{animation:sp 8s linear infinite reverse}
 @keyframes sp{to{transform:rotateX(70deg) rotateZ(360deg)}}
 .hero svg{position:relative;width:170px;filter:drop-shadow(0 0 18px #00e67688)}
 .t360{position:absolute;bottom:20px;font-size:34px;font-weight:800;text-shadow:0 0 14px var(--g)}
@@ -39,6 +39,10 @@ input[type=text],select{background:var(--pn2);color:inherit;border:1px solid var
 .nav .sc{width:62px;height:62px;border-radius:50%;border:3px solid var(--g);background:#06150e;color:var(--g);box-shadow:0 0 20px #00e67688;margin-top:-26px;font-size:26px}
 .hide{display:none}#st{margin-top:10px;color:var(--mu)}#toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:#000d;color:#fff;padding:8px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s}#toast.on{opacity:1}
 a{color:#5aa9ff}iframe{width:100%;height:230px;border:0;border-radius:12px;margin-top:8px}
+.warn{color:#ffc107;margin-top:6px}#st.ok{color:var(--g)}#st.er{color:#ff5252}
+.nav .sc.busy{animation:pl 1s infinite}@keyframes pl{50%{box-shadow:0 0 34px #00e676}}.nav .sc.done{background:var(--g);color:#04210f}
+button:disabled{opacity:.4;cursor:not-allowed}label{display:flex;gap:8px;align-items:center}
+@media(min-width:768px){#app{max-width:760px}.hero{height:290px}}
 </style></head><body><div id="app">
 <header><div class="logo"><svg width="46" height="52" viewBox="0 0 46 52"><path d="M23 2l19 8v16c0 13-8 21-19 24C12 47 4 39 4 26V10z" fill="#062b19" stroke="#00e676" stroke-width="3"/><path d="M16 14v24M16 26l14-12M16 26l14 12" stroke="#00e676" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
 <div><b>KHOEM<i>-AI</i></b><small>Vision · Count · Locate</small></div></div>
@@ -64,16 +68,16 @@ a{color:#5aa9ff}iframe{width:100%;height:230px;border:0;border-radius:12px;margi
  <div class="row" style="margin-top:8px"><button class="big" id="rn" style="width:auto;padding:12px 18px;margin:0"><b>Start</b></button><button id="rf">បញ្ចប់</button><span id="rp" class="mu"></span></div></div></section>
 
 <section id="v-gps" class="hide"><div class="card"><h3>GPS</h3><div id="gl" class="mu"></div><div id="gm"></div>
- <div class="row" style="margin-top:8px"><button id="gd">ទីតាំងឧបករណ៍ឥឡូវ</button><button id="gh">វាយដោយដៃ</button></div>
- <div class="mu" style="margin-top:6px">GPS ក្នុងរូប = កន្លែងដែលថតរូប មិនមែនទីតាំងពិតរបស់វត្ថុនីមួយៗ ។ Android អាចលុប GPS ពីរូបវិចិត្រសាល ។</div></div></section>
+ <div class="row" style="margin-top:8px"><button id="gmap">ផែនទី</button><button id="gplace">ឈ្មោះទីកន្លែង</button><button id="gd">ទីតាំងឧបករណ៍</button><button id="gh">វាយដោយដៃ</button></div>
+ <div class="mu" style="margin-top:6px">GPS ក្នុងរូប = កន្លែងដែលថតរូប មិនមែនទីតាំងពិតរបស់វត្ថុនីមួយៗ ។ Android/Chrome ច្រើនតែលុប GPS ពីរូបដែលជ្រើស ឬថតតាម browser ។ ទីតាំងឧបករណ៍/ដោយដៃមិនមែនជា GPS របស់រូបទេ ។ ផែនទី និងឈ្មោះទីកន្លែងផ្ញើកូអរដោនេទៅ OpenStreetMap តែពេលអ្នកចុច ។</div></div></section>
 
-<section id="v-hist" class="hide"><div class="card"><h3>History</h3><div id="hl"></div></div></section>
+<section id="v-hist" class="hide"><div class="card"><h3>History</h3><input id="hq" type="text" placeholder="ស្វែងរក (ពេលវេលា / ប្រភេទ)" style="width:100%;margin:6px 0"><div id="hl"></div></div></section>
 <section id="v-res" class="hide"><div class="card"><h3>Results</h3><div id="rl"></div></div></section>
 <section id="v-set" class="hide"><div class="card"><h3>Settings</h3>
  <div class="row">Confidence <input id="th" type="range" min="30" max="90" step="5" style="flex:1"><b id="thv"></b></div>
  <div class="row" style="margin-top:8px">Multi-photo <select id="ag"><option value="sum">បូក (sum)</option><option value="max">ធំបំផុតក្នុងរូបមួយ (max)</option></select></div>
  <div class="row" style="margin-top:8px">360° shots <select id="rs"><option>4</option><option>6</option><option selected>8</option><option>12</option></select></div>
- <div class="row" style="margin-top:8px"><button id="clr">លុបប្រវត្តិ</button><span id="kis" class="mu"></span></div></div></section>
+ <label style="margin-top:8px"><input type="checkbox" id="dd"> ដកប្រអប់ដែលប្រហែលស្ទួន (IoU &gt; 0.6)</label><label style="margin-top:8px"><input type="checkbox" id="sg"> រក្សា/នាំចេញ GPS (បិទជាលំនាំដើម)</label><div class="mu" style="margin-top:6px">រូបដើមមិនត្រូវបានកែទេ · វិភាគលើច្បាប់ចម្លងក្នុង Memory ។</div><div class="row" style="margin-top:8px"><button id="clr">លុបប្រវត្តិ</button><span id="kis" class="mu"></span></div></div></section>
 
 <div id="out"></div>
 <input id="fc" type="file" accept="image/*" capture="environment" hidden><input id="fg" type="file" accept="image/*" hidden><input id="fb" type="file" accept="image/*" multiple hidden><input id="fr" type="file" accept="image/*" capture="environment" hidden>
@@ -86,86 +90,127 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const ls={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const KM={person:'មនុស្ស',cat:'ឆ្មា',dog:'ឆ្កែ',bird:'បក្សី',horse:'សេះ',sheep:'ចៀម',cow:'គោ',elephant:'ដំរី',bottle:'ដប',cup:'ពែង',knife:'កាំបិត',scissors:'កន្ត្រៃ','cell phone':'ទូរស័ព្ទ',laptop:'កុំព្យូទ័រ',tv:'ទូរទស្សន៍',banana:'ចេក',apple:'ផ្លែប៉ោម',orange:'ក្រូច',car:'ឡាន',motorcycle:'ម៉ូតូ',bicycle:'កង់',truck:'ឡានដឹកទំនិញ',bus:'ឡានក្រុង','potted plant':'រុក្ខជាតិ'};
 const nm=l=>KM[l]?KM[l]+' · '+l:l;
-let cfg=Object.assign({th:50,agg:'sum',rs:8,light:0},ls.get('cai:cfg',{})),hist=ls.get('cai:hist',[]),ses=null,model=null,lastImg=null,ring=0,view='cam';
-const say=t=>$('#st').textContent=t,toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)};
+let cfg=Object.assign({th:50,agg:'sum',rs:8,light:0,dd:1,sg:0},ls.get('cai:cfg',{})),hist=ls.get('cai:hist',[]),ses=null,model=null,lastImg=null,ring=0,view='cam';
+const say=(t,k)=>{const e=$('#st');e.textContent=t;e.className=k||''},toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)};
 const load=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('ទាញមិនបាន'));document.head.appendChild(s)});
 async function getModel(){if(model)return model;say('កំពុងទាញម៉ូដែល (ត្រូវអ៊ីនធឺណិតលើកដំបូង)…');
  await load('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');await load('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
  model=await cocoSsd.load({base:'lite_mobilenet_v2'});return model}
-function exifGps(buf){try{const v=new DataView(buf);if(v.getUint16(0)!==0xFFD8)return null;let o=2;
- while(o<v.byteLength-4){const m=v.getUint16(o),len=v.getUint16(o+2);if(m===0xFFE1&&v.getUint32(o+4)===0x45786966)return tiff(v,o+10);if((m&0xFF00)!==0xFF00)break;o+=2+len}}catch(e){}return null}
-function tiff(v,t){const le=v.getUint16(t)===0x4949,g16=o=>v.getUint16(o,le),g32=o=>v.getUint32(o,le);
- const ifd=(o,cb)=>{const n=g16(o);for(let i=0;i<n;i++){const e=o+2+i*12;cb(g16(e),g32(e+4),e+8)}};
- let gp=0;ifd(t+g32(t+4),(tag,n,vo)=>{if(tag===0x8825)gp=g32(vo)});if(!gp)return null;
- const r={},rat=vo=>{const p=t+g32(vo),a=[];for(let i=0;i<3;i++)a.push(v.getUint32(p+i*8,le)/v.getUint32(p+i*8+4,le));return a};
- ifd(t+gp,(tag,n,vo)=>{if(tag===1)r.la=String.fromCharCode(v.getUint8(vo));if(tag===3)r.lo=String.fromCharCode(v.getUint8(vo));if(tag===2)r.lat=rat(vo);if(tag===4)r.lon=rat(vo)});
- if(!r.lat||!r.lon)return null;const d=a=>a[0]+a[1]/60+a[2]/3600,la=d(r.lat)*(r.la==='S'?-1:1),lo=d(r.lon)*(r.lo==='W'?-1:1);
- if(!isFinite(la)||!isFinite(lo)||(!la&&!lo))return null;return{lat:+la.toFixed(6),lon:+lo.toFixed(6),src:'EXIF'}}
+let mapOn=0,place='',cap={scans:false,scan:false};
+const cn=s=>s.runs[s.cur].counts;
+function busy(on,done){document.body.classList.toggle('busy',!!on);const b=$('#sc');b.classList.toggle('busy',!!on);b.classList.toggle('done',!!done);b.textContent=on?'◔':done?'✓':'⛶';if(done)setTimeout(()=>{b.classList.remove('done');b.textContent='⛶'},2500)}
+function exifAll(buf){try{const v=new DataView(buf);if(v.getUint16(0)!==0xFFD8)return{};let o=2;
+ while(o<v.byteLength-4){const m=v.getUint16(o),len=v.getUint16(o+2);if(m===0xFFE1&&v.getUint32(o+4)===0x45786966)return tiff(v,o+10);if((m&0xFF00)!==0xFF00)break;o+=2+len}}catch(e){}return{}}
+function tiff(v,t){const le=v.getUint16(t)===0x4949,g16=o=>v.getUint16(o,le),g32=o=>v.getUint32(o,le),out={};
+ const val=(ty,n,vo)=>{const sz={1:1,2:1,3:2,4:4,5:8}[ty]||1,p=n*sz>4?t+g32(vo):vo;
+  if(ty===2){let r='';for(let i=0;i<n-1;i++)r+=String.fromCharCode(v.getUint8(p+i));return r.trim()}
+  if(ty===3)return g16(p);if(ty===4)return g32(p);
+  if(ty===5){const a=[];for(let i=0;i<n;i++){const d=g32(p+i*8+4);a.push(d?g32(p+i*8)/d:0)}return a}return null};
+ const ifd=(o,cb)=>{const n=g16(o);for(let i=0;i<n;i++){const e=o+2+i*12;cb(g16(e),g16(e+2),g32(e+4),e+8)}};
+ let gp=0,ex=0;ifd(t+g32(t+4),(tag,ty,n,vo)=>{if(tag===0x8825)gp=g32(vo);else if(tag===0x8769)ex=g32(vo);else if(tag===0x10F)out.make=val(ty,n,vo);else if(tag===0x110)out.model=val(ty,n,vo)});
+ if(ex)ifd(t+ex,(tag,ty,n,vo)=>{const x=()=>val(ty,n,vo);if(tag===0x9003)out.date=x();else if(tag===0x8827)out.iso=x();else if(tag===0x829D)out.f=(x()||[])[0];else if(tag===0x829A)out.exp=(x()||[])[0];else if(tag===0x920A)out.focal=(x()||[])[0]});
+ if(gp){const r={};ifd(t+gp,(tag,ty,n,vo)=>{if(tag===1)r.la=String.fromCharCode(v.getUint8(vo));if(tag===3)r.lo=String.fromCharCode(v.getUint8(vo));if(tag===2)r.lat=val(ty,n,vo);if(tag===4)r.lon=val(ty,n,vo)});
+  if(r.lat&&r.lon){const d=a=>a[0]+a[1]/60+a[2]/3600,la=d(r.lat)*(r.la==='S'?-1:1),lo=d(r.lon)*(r.lo==='W'?-1:1);if(isFinite(la)&&isFinite(lo)&&(la||lo))out.gps={lat:+la.toFixed(6),lon:+lo.toFixed(6),src:'EXIF'}}}
+ return out}
 const devGps=()=>new Promise(ok=>{if(!navigator.geolocation)return ok(null);navigator.geolocation.getCurrentPosition(p=>ok({lat:+p.coords.latitude.toFixed(6),lon:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy),src:'device'}),()=>ok(null),{enableHighAccuracy:true,timeout:10000})});
 function thumb(im,boxes,max,q){const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=im.naturalWidth*s;c.height=im.naturalHeight*s;const x=c.getContext('2d'),fs=Math.max(11,c.width/32);
- x.drawImage(im,0,0,c.width,c.height);if(boxes){x.lineWidth=Math.max(2,c.width/200);x.strokeStyle=x.fillStyle='#00e676';x.font=fs+'px sans-serif';boxes.forEach(b=>{const[a,y,w,h]=b.bbox.map(n=>n*s);x.strokeRect(a,y,w,h);x.fillText(b.class,a+2,y+fs)})}
+ x.drawImage(im,0,0,c.width,c.height);if(boxes){x.lineWidth=Math.max(2,c.width/200);x.strokeStyle=x.fillStyle='#00e676';x.font=fs+'px sans-serif';boxes.forEach(b=>{const[a,y,w,h]=b.bbox.map(n=>n*s);x.strokeRect(a,y,w,h);x.fillText(b.class+(b.score?' '+Math.round(b.score*100)+'%':''),a+2,y+fs)})}
  return c.toDataURL('image/jpeg',q)}
-async function one(f,fresh){const gps0=exifGps(await f.arrayBuffer()),im=new Image();im.src=URL.createObjectURL(f);await im.decode();
- let gps=gps0;if(!gps&&fresh)gps=await devGps();const m=await getModel(),bx=await m.detect(im,100,cfg.th/100),counts={};
- bx.forEach(b=>counts[b.class]=(counts[b.class]||0)+1);lastImg=im;
- return{name:f.name,size:f.size,w:im.naturalWidth,h:im.naturalHeight,date:f.lastModified,gps,counts,prev:thumb(im,bx,720,.7),th:thumb(im,null,110,.6)}}
-async function run(files,mode,fresh,append){if(!append||!ses||ses.mode!==mode)ses={id:'s'+Date.now(),time:new Date().toISOString(),mode,shots:[],adj:{}};
- let i=0;for(const f of files){i++;say('កំពុងស្កេន '+i+'/'+files.length+'…');try{ses.shots.push(await one(f,fresh))}catch(e){say('ស្កេនមិនបាន: '+e.message);toast('កំហុស · '+e.message)}}
- say('ស្កេនរួច · សូមពិនិត្យ និងកែលេខ (+/−)');renderOut()}
-function totals(){const t={};if(!ses)return t;const ks=new Set();ses.shots.forEach(s=>Object.keys(s.counts).forEach(k=>ks.add(k)));Object.keys(ses.adj).forEach(k=>ks.add(k));
- ks.forEach(k=>{const a=ses.shots.map(s=>s.counts[k]||0),b=a.length?(cfg.agg==='max'?Math.max(...a):a.reduce((x,y)=>x+y,0)):0,v=b+(ses.adj[k]||0);if(v>0)t[k]=v});return t}
-const sgps=()=>ses&&(ses.gps||(ses.shots.find(s=>s.gps)||{}).gps)||null;
+function iou(a,b){const x=Math.max(0,Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0])),y=Math.max(0,Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1])),i=x*y;return i/(a[2]*a[3]+b[2]*b[3]-i||1)}
+function dedupe(bx){const keep=[],dup=[];bx.slice().sort((a,b)=>b.score-a.score).forEach(b=>{(keep.some(k=>k.class===b.class&&iou(k.bbox,b.bbox)>0.6)?dup:keep).push(b)});return{keep,dup}}
+function quality(im){const w=160,h=Math.max(8,Math.round(160*im.naturalHeight/im.naturalWidth)),c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(im,0,0,w,h);
+ const d=x.getImageData(0,0,w,h).data,g=[];let sm=0;for(let i=0;i<d.length;i+=4){const v=.3*d[i]+.59*d[i+1]+.11*d[i+2];g.push(v);sm+=v}
+ let L=0,n=0;for(let y=1;y<h-1;y++)for(let X=1;X<w-1;X++){const i=y*w+X,l=4*g[i]-g[i-1]-g[i+1]-g[i-w]-g[i+w];L+=l*l;n++}return{dark:sm/g.length<45,blur:L/n<150}}
+async function runDetect(im){const m=await getModel(),bx=await m.detect(im,100,cfg.th/100),dd=dedupe(bx),use=cfg.dd?dd.keep:bx,counts={},cf={};
+ use.forEach(b=>{counts[b.class]=(counts[b.class]||0)+1;(cf[b.class]=cf[b.class]||[]).push(b.score)});
+ const conf={};Object.keys(cf).forEach(k=>conf[k]={avg:cf[k].reduce((x,y)=>x+y,0)/cf[k].length,min:Math.min(...cf[k])});
+ return{time:Date.now(),counts,conf,dup:dd.dup.length,n:use.length,prev:thumb(im,use,720,.7)}}
+async function one(f){const buf=await f.arrayBuffer(),ex=exifAll(buf),im=new Image();im.src=URL.createObjectURL(new Blob([buf],{type:f.type}));await im.decode();
+ const r=await runDetect(im);lastImg=im;
+ return{name:f.name,size:f.size,w:im.naturalWidth,h:im.naturalHeight,date:f.lastModified,ex,gps:ex.gps||null,q:quality(im),runs:[r],cur:0,th:thumb(im,null,110,.6),im}}
+async function rescan(){const s=ses.shots[ses.shots.length-1];busy(1);say('កំពុងស្កេនឡើងវិញ…');
+ try{s.runs.push(await runDetect(s.im));s.cur=s.runs.length-1;busy(0,1);say('ស្កេនឡើងវិញរួច · លទ្ធផលចាស់នៅរក្សា','ok')}catch(e){busy(0,0);say('ស្កេនមិនបាន: '+e.message,'er')}renderOut()}
+async function run(files,mode,append){if(!append||!ses||ses.mode!==mode){ses={id:'s'+Date.now(),time:new Date().toISOString(),mode,shots:[],adj:{}};mapOn=0;place=''}
+ busy(1);let i=0,ok=0;for(const f of files){i++;if(!/^image\//.test(f.type)||f.size>25e6){toast('ឯកសារមិនត្រឹមត្រូវ (ត្រូវជារូប ≤ 25MB)');continue}
+  say('កំពុងវិភាគ '+i+'/'+files.length+'…');try{ses.shots.push(await one(f));ok++}catch(e){say('វិភាគមិនបាន: '+e.message,'er')}}
+ busy(0,ok);if(ok)say('វិភាគរួច · សូមពិនិត្យលទ្ធផល','ok');renderOut()}
+function totals(){const t={};if(!ses)return t;const ks=new Set();ses.shots.forEach(s=>Object.keys(cn(s)).forEach(k=>ks.add(k)));Object.keys(ses.adj).forEach(k=>ks.add(k));
+ ks.forEach(k=>{const a=ses.shots.map(s=>cn(s)[k]||0),b=a.length?(cfg.agg==='max'?Math.max(...a):a.reduce((x,y)=>x+y,0)):0,v=b+(ses.adj[k]||0);if(v>0)t[k]=v});return t}
+const sgps=()=>ses&&(ses.shots.find(s=>s.gps)||{}).gps||null,anyg=()=>sgps()||(ses&&ses.gps)||null;
 const mapUrl=g=>`https://www.openstreetmap.org/?mlat=${g.lat}&mlon=${g.lon}#map=18/${g.lat}/${g.lon}`;
-function renderOut(){const o=$('#out');if(!ses||!ses.shots.length){o.innerHTML='';return}const t=totals(),ks=Object.keys(t),g=sgps(),last=ses.shots[ses.shots.length-1];
+function renderOut(){const o=$('#out');if(!ses||!ses.shots.length){o.innerHTML='';return}const t=totals(),ks=Object.keys(t),last=ses.shots[ses.shots.length-1],r=last.runs[last.cur],g=sgps();
  $('#cph').style.backgroundImage=`url(${last.th})`;
- o.innerHTML=`<div class="card"><h3>Result · ${ses.shots.length} រូប · សរុប ${ks.reduce((a,k)=>a+t[k],0)}</h3><img class="pv" src="${last.prev}"><div class="th">${ses.shots.map(s=>`<img src="${s.th}">`).join('')}</div>
- <div id="tb" style="margin-top:8px">${ks.length?ks.map(k=>`<div class="r"><span>${esc(nm(k))}</span><span><button data-k="${esc(k)}" data-d="-1">−</button><b>${t[k]}</b><button data-k="${esc(k)}" data-d="1">+</button></span></div>`).join(''):'<div class="mu">គ្មានវត្ថុ</div>'}</div>
+ const cf=k=>{const c=r.conf[k];return c?`<span class="mu"> ${Math.round(c.avg*100)}%${c.min<.6?' <span class="warn">⚠ min '+Math.round(c.min*100)+'%</span>':''}</span>`:''},W=[];
+ if(!r.n)W.push('AI មិនឃើញវត្ថុក្នុងរូបនេះ · សាកស្កេនឡើងវិញ ឬបន្ថែមដោយដៃ');
+ if(last.q.dark)W.push('រូបងងឹតពេក (ប៉ាន់ស្មាន)');if(last.q.blur)W.push('រូបអាចព្រិល (ប៉ាន់ស្មាន)');
+ if(Object.values(r.conf).some(c=>c.min<.6))W.push('មានវត្ថុដែល AI មិនសូវប្រាកដ (<60%) · សូមពិនិត្យ ឬស្កេនឡើងវិញ');
+ if(r.dup)W.push(cfg.dd?'បានដក '+r.dup+' ប្រអប់ដែលប្រហែលស្ទួន':'មាន '+r.dup+' ប្រអប់ដែលប្រហែលស្ទួន');
+ if(ses.shots.length>1)W.push('រូបច្រើន៖ វត្ថុដូចគ្នាក្នុងរូបជាន់គ្នាអាចរាប់ស្ទួន (មិនអាចពិនិត្យដោយស្វ័យប្រវត្តិ)');
+ o.innerHTML=`<div class="card"><h3>Result · ${ses.shots.length} រូប · សរុប ${ks.reduce((a,k)=>a+t[k],0)}</h3><img class="pv" src="${r.prev}"><div class="th">${ses.shots.map(s=>`<img src="${s.th}">`).join('')}</div>
+ ${W.map(w=>`<div class="warn">⚠ ${w}</div>`).join('')}
+ <div id="tb" style="margin-top:8px">${ks.length?ks.map(k=>`<div class="r"><span>${esc(nm(k))}${cf(k)}</span><span><button data-k="${esc(k)}" data-d="-1">−</button><b>${t[k]}</b><button data-k="${esc(k)}" data-d="1">+</button></span></div>`).join(''):'<div class="mu">គ្មានវត្ថុ</div>'}</div>
+ <div class="mu" style="margin-top:4px">% = កម្រិតជឿជាក់របស់ AI មិនមែនភាពត្រឹមត្រូវដែលធានាទេ</div>
+ ${last.runs.length>1?`<div class="row" style="margin-top:6px">${last.runs.map((x,i)=>`<button data-run="${i}" ${i===last.cur?'style="border-color:var(--g)"':''}>#${i+1} · ${x.n}</button>`).join('')}</div>`:''}
  <div class="row" style="margin-top:8px"><input id="nl" type="text" placeholder="បន្ថែមដោយដៃ (ឧ. ដើមឈើ)" style="flex:1"><button id="na">+</button></div>
- <div style="margin-top:8px">${g?`📍 ${g.lat}, ${g.lon} <span class="mu">(${esc(g.src)}${g.acc?' ±'+g.acc+'ម':''})</span> <a href="${mapUrl(g)}" target="_blank" rel="noopener">ផែនទី</a>`:'📍 គ្មានទីតាំង'}</div>
- <div class="row" style="margin-top:10px"><button class="pri big" id="sv" style="width:auto;padding:10px 18px;margin:0"><b style="font-size:15px">Save</b></button><button id="ai">AI ជួយ</button><button id="cp">CSV</button></div></div>`;
+ <div style="margin-top:8px">${g?`📍 ${g.lat}, ${g.lon} <span class="mu">(GPS ក្នុងរូប)</span> <a href="${mapUrl(g)}" target="_blank" rel="noopener">ផែនទី</a>`:'📍 មិនអាចកំណត់ទីតាំងពី GPS របស់រូបនេះបានទេ'}${ses.gps?`<br><span class="mu">ទីតាំងដែលអ្នកបញ្ចូល (មិនមែនពី GPS របស់រូប): ${ses.gps.lat}, ${ses.gps.lon}</span>`:''}</div>
+ <div class="row" style="margin-top:10px"><button class="big" id="sv" style="width:auto;padding:10px 18px;margin:0"><b style="font-size:15px">Save</b></button><button id="rsc">Rescan</button><button id="ai" ${cap.scan?'':'disabled title="KI មិនទាន់មាន /scan"'}>AI ជួយ${cap.scan?'':' (មិនទាន់មាន)'}</button><button id="e1">CSV</button><button id="e2">JSON</button></div>
+ <div class="mu" style="margin-top:6px">Rescan៖ ប្តូរ Confidence ក្នុង Settings រួចស្កេនម្តងទៀត · លទ្ធផលចាស់នៅរក្សា</div></div>`;
  $('#tb').onclick=e=>{const b=e.target.closest('button');if(!b)return;ses.adj[b.dataset.k]=(ses.adj[b.dataset.k]||0)+Number(b.dataset.d);renderOut()};
+ $$('[data-run]').forEach(b=>b.onclick=()=>{last.cur=+b.dataset.run;renderOut()});
  $('#na').onclick=()=>{const l=$('#nl').value.trim().slice(0,60);if(l){ses.adj[l]=(ses.adj[l]||0)+1;renderOut()}};
- $('#sv').onclick=save;$('#cp').onclick=csv;$('#ai').onclick=askAI;renderGps()}
-async function save(){const t=totals(),g=sgps(),rec={id:ses.id,time:ses.time,mode:ses.mode,n:ses.shots.length,gps:g,counts:t,th:ses.shots[0].th};
+ $('#sv').onclick=save;$('#rsc').onclick=rescan;$('#ai').onclick=askAI;$('#e1').onclick=()=>exp('csv');$('#e2').onclick=()=>exp('json');renderGps()}
+async function save(){const t=totals(),g=cfg.sg?sgps():null,rec={id:ses.id,time:ses.time,mode:ses.mode,n:ses.shots.length,hasGps:!!sgps(),gps:g,counts:t,th:ses.shots[0].th};
  hist=hist.filter(h=>h.id!==rec.id);hist.push(rec);hist=hist.slice(-30);ls.set('cai:hist',hist);toast('រក្សាទុកក្នុងទូរស័ព្ទ ✔');
- try{const r=await fetch(KI+'/scans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:rec.id,time:rec.time,name:ses.mode,gps:g,counts:t})});say(r.ok?'រក្សាទុកក្នុង KI ✔':'KI មិនទាន់មាន route /scans ('+r.status+')')}catch(e){say('KI មិនឆ្លើយតប · រក្សាក្នុងទូរស័ព្ទរួច')}}
-async function csv(){const t=totals(),g=sgps(),s='label,count\n'+Object.entries(t).map(([k,v])=>'"'+k.replace(/"/g,'""')+'",'+v).join('\n')+(g?'\ngps,"'+g.lat+','+g.lon+'"':'');
- try{await navigator.clipboard.writeText(s);toast('បានចម្លង CSV')}catch(e){toast('ចម្លងមិនបាន')}}
+ if(!cap.scans)return say('រក្សាទុកក្នុងទូរស័ព្ទរួច (KI មិនទាន់មាន /scans)','ok');
+ try{const r=await fetch(KI+'/scans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:rec.id,time:rec.time,name:rec.mode,gps:g,counts:t})});say(r.ok?'រក្សាទុកក្នុង KI ✔':'KI error '+r.status,r.ok?'ok':'er')}catch(e){say('KI មិនឆ្លើយតប · រក្សាក្នុងទូរស័ព្ទរួច','er')}}
+function dl(n,x,ty){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([x],{type:ty}));a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+function exp(kind){const t=totals(),g=cfg.sg?sgps():null;
+ if(kind==='json')dl('cai-'+ses.id+'.json',JSON.stringify({time:ses.time,mode:ses.mode,counts:t,gps:g},null,2),'application/json');
+ else dl('cai-'+ses.id+'.csv','label,count\n'+Object.entries(t).map(([k,v])=>'"'+k.replace(/"/g,'""')+'",'+v).join('\n')+(g?'\ngps,"'+g.lat+','+g.lon+'"':''),'text/csv');toast('នាំចេញរួច'+(cfg.sg?'':' (គ្មាន GPS)'))}
+async function probe(){try{cap.scans=(await fetch(KI+'/scans')).ok}catch(e){cap.scans=false}
+ try{cap.scan=(await fetch(KI+'/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status!==404}catch(e){cap.scan=false}renderOut();if(view==='set')rSet()}
 async function askAI(){if(!lastImg)return;say('AI កំពុងមើលរូបចុងក្រោយ…');const s=Math.min(1,1280/Math.max(lastImg.naturalWidth,lastImg.naturalHeight)),c=document.createElement('canvas');c.width=lastImg.naturalWidth*s;c.height=lastImg.naturalHeight*s;c.getContext('2d').drawImage(lastImg,0,0,c.width,c.height);
  try{const r=await fetch(KI+'/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:c.toDataURL('image/jpeg',.8).split(',')[1],media_type:'image/jpeg'})}),j=await r.json();if(!r.ok)throw new Error(j.error||'HTTP '+r.status);
   const it=j.items||[];if(!it.length)return say('AI មិនឃើញអ្វី');it.forEach(a=>{ses.adj[a.label]=(ses.adj[a.label]||0)+a.count});say('AI បានបន្ថែម '+it.length+' ប្រភេទ (កែបាន)');renderOut()}catch(e){say('AI មិនទាន់ដំណើរការ: '+e.message)}}
-function renderGps(){const g=sgps(),gl=$('#gl'),gm=$('#gm');if(!gl)return;
- gl.innerHTML=ses&&ses.shots.length?ses.shots.map((s,i)=>`រូប ${i+1}: ${s.gps?s.gps.lat+', '+s.gps.lon+' ('+esc(s.gps.src)+')':'គ្មាន GPS'}`).join('<br>')+(ses.gps?'<br>ដោយដៃ/ឧបករណ៍: '+ses.gps.lat+', '+ses.gps.lon:''):'មិនទាន់មានរូប';
- gm.innerHTML=g?`<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${g.lon-.004},${g.lat-.003},${g.lon+.004},${g.lat+.003}&layer=mapnik&marker=${g.lat},${g.lon}"></iframe>`:''}
-function info(){const i=$('#info');if(!ses||!ses.shots.length){i.classList.remove('hide');i.textContent='មិនទាន់មានរូប';return}const s=ses.shots[ses.shots.length-1];
- i.classList.remove('hide');i.innerHTML=`<h3>Photo Info</h3>${esc(s.name)}<br>${s.w}×${s.h} · ${Math.round(s.size/1024)} KB<br>${s.date?new Date(s.date).toLocaleString():''}<br>GPS: ${s.gps?s.gps.lat+', '+s.gps.lon+' ('+esc(s.gps.src)+')':'គ្មាន'}`}
+function renderGps(){const gl=$('#gl'),gm=$('#gm'),g=anyg();if(!gl)return;
+ gl.innerHTML=(ses&&ses.shots.length?ses.shots.map((s,i)=>`រូប ${i+1}: ${s.gps?esc(s.gps.lat+', '+s.gps.lon)+' (GPS ក្នុងរូប)':'មិនអាចកំណត់ទីតាំងពី GPS របស់រូបនេះបានទេ'}`).join('<br>')+(ses.gps?`<br>ទីតាំងដែលអ្នកបញ្ចូល (មិនមែនពី GPS របស់រូប): ${esc(ses.gps.lat+', '+ses.gps.lon)}`:''):'មិនទាន់មានរូប')+(place?'<br>📌 '+esc(place):'');
+ gm.innerHTML=g&&mapOn?`<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${g.lon-.004},${g.lat-.003},${g.lon+.004},${g.lat+.003}&layer=mapnik&marker=${g.lat},${g.lon}"></iframe>`:''}
+function info(){const i=$('#info');i.classList.remove('hide');if(!ses||!ses.shots.length){i.textContent='មិនទាន់មានរូប';return}
+ const s=ses.shots[ses.shots.length-1],e=s.ex||{},L=[['ឯកសារ',s.name],['ទំហំ',s.w+'×'+s.h+' · '+Math.round(s.size/1024)+' KB'],['កាមេរ៉ា',[e.make,e.model].filter(Boolean).join(' ')],['ថតនៅ',e.date],['ISO',e.iso],['f/',e.f&&e.f.toFixed(1)],['Exposure',e.exp&&(e.exp<1?'1/'+Math.round(1/e.exp):e.exp)+'s'],['Focal',e.focal&&e.focal.toFixed(1)+' mm'],['GPS',s.gps?s.gps.lat+', '+s.gps.lon:'គ្មាន']].filter(x=>x[1]);
+ i.innerHTML='<h3>Photo Info</h3>'+L.map(x=>`<div class="r"><span>${x[0]}</span><span>${esc(x[1])}</span></div>`).join('')}
 function show(v){view=v;['cam','r360','gps','hist','res','set'].forEach(x=>$('#v-'+x).classList.toggle('hide',x!==v));
  $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$$('.nav button[data-n]').forEach(b=>b.classList.toggle('on',b.dataset.n===v));
  $('#out').classList.toggle('hide',!['cam','r360'].includes(v));if(v==='hist')rHist();if(v==='res')rRes();if(v==='gps')renderGps();if(v==='set')rSet();scrollTo(0,0)}
-function rHist(){$('#hl').innerHTML=hist.length?hist.slice().reverse().map(h=>`<div class="r"><span style="display:flex;gap:8px;align-items:center"><img src="${h.th}" style="height:44px;border-radius:8px"><span>${new Date(h.time).toLocaleString()}<br><span class="mu">${esc(h.mode)} · ${h.n} រូប · សរុប ${Object.values(h.counts).reduce((a,b)=>a+b,0)}</span></span></span>${h.gps?`<a href="${mapUrl(h.gps)}" target="_blank" rel="noopener">📍</a>`:''}</div>`).join(''):'<div class="mu">មិនទាន់មានប្រវត្តិ</div>'}
+function rHist(){const q=($('#hq').value||'').toLowerCase(),L=hist.map((h,i)=>({h,i})).reverse().filter(({h})=>!q||(new Date(h.time).toLocaleString()+' '+h.mode+' '+Object.keys(h.counts).map(nm).join(' ')).toLowerCase().includes(q));
+ $('#hl').innerHTML=L.length?L.map(({h,i})=>`<div class="r"><span style="display:flex;gap:8px;align-items:center"><img src="${h.th}" style="height:44px;border-radius:8px"><span>${new Date(h.time).toLocaleString()}<br><span class="mu">${esc(h.mode)} · ${h.n} រូប · សរុប ${Object.values(h.counts).reduce((a,b)=>a+b,0)} · ${h.hasGps?'មាន GPS':'គ្មាន GPS'}</span></span></span><span>${h.gps?`<a href="${mapUrl(h.gps)}" target="_blank" rel="noopener">📍</a> `:''}<button data-del="${i}">🗑</button></span></div>`).join(''):'<div class="mu">គ្មានប្រវត្តិ</div>'}
 function rRes(){const t={};hist.forEach(h=>Object.entries(h.counts).forEach(([k,v])=>t[k]=(t[k]||0)+v));const e=Object.entries(t).sort((a,b)=>b[1]-a[1]),mx=e.length?e[0][1]:1;
  $('#rl').innerHTML=e.length?e.map(([k,v])=>`<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><span>${esc(nm(k))}</span><b>${v}</b></div><div class="bar" style="width:${Math.max(4,v/mx*100)}%"></div></div>`).join(''):'<div class="mu">មិនទាន់មានលទ្ធផល</div>'}
-async function rSet(){$('#th').value=cfg.th;$('#thv').textContent=cfg.th+'%';$('#ag').value=cfg.agg;$('#rs').value=cfg.rs;
- try{const r=await fetch(KI+'/healthz');$('#kis').textContent=r.ok?'● KI ភ្ជាប់':'● KI error'}catch(e){$('#kis').textContent='● KI offline'}}
+async function rSet(){$('#dd').checked=!!cfg.dd;$('#sg').checked=!!cfg.sg;$('#th').value=cfg.th;$('#thv').textContent=cfg.th+'%';$('#ag').value=cfg.agg;$('#rs').value=cfg.rs;
+ try{const r=await fetch(KI+'/healthz');$('#kis').textContent=(r.ok?'● KI ភ្ជាប់':'● KI error')+' · /scans '+(cap.scans?'✔':'✘')+' · /scan '+(cap.scan?'✔':'✘')}catch(e){$('#kis').textContent='● KI offline'}}
 const sv=()=>ls.set('cai:cfg',cfg);
 $('#th').oninput=e=>{cfg.th=+e.target.value;$('#thv').textContent=cfg.th+'%';sv()};$('#ag').onchange=e=>{cfg.agg=e.target.value;sv();renderOut()};$('#rs').onchange=e=>{cfg.rs=+e.target.value;sv()};
 $('#clr').onclick=()=>{if(confirm('លុបប្រវត្តិទាំងអស់?')){hist=[];ls.set('cai:hist',[]);rHist()}};
 $$('.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.v));$$('.nav button[data-n]').forEach(b=>b.onclick=()=>show(b.dataset.n));
 const cam=()=>$('#fc').click(),gal=()=>$('#fg').click();
 $('#open').onclick=cam;$('#sc').onclick=()=>{show('cam');cam()};$('#gal').onclick=gal;$('#bulk').onclick=()=>$('#fb').click();$('#clc').onclick=()=>show('gps');
-$('#fc').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],'single',true);e.target.value=''};
+$('#fc').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],'single');e.target.value=''};
 $('#fg').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],'single',false);e.target.value=''};
 $('#fb').onchange=e=>{if(e.target.files.length)run([...e.target.files],'bulk',false);e.target.value=''};
 $$('.side button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='cam')cam();else if(a==='gal')gal();else if(a==='r360')show('r360');else if(a==='gps')show('gps');
- else if(a==='map'){const g=sgps();g?window.open(mapUrl(g),'_blank','noopener'):toast('មិនទាន់មានទីតាំង')}else info()});
+ else if(a==='map'){const g=anyg();g?window.open(mapUrl(g),'_blank','noopener'):toast('មិនទាន់មានទីតាំង')}else info()});
 function rp(){$('#rp').textContent=ring?'រូប '+ring+'/'+cfg.rs:'';$('#rn').innerHTML='<b>'+(ring?'Next ('+(ring+1)+')':'Start')+'</b>'}
 $('#rn').onclick=()=>{if(ring>=cfg.rs)return toast('គ្រប់ហើយ ចុច "បញ្ចប់"');$('#fr').click()};
-$('#fr').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;await run([f],'360',true,ring>0);ring++;rp();if(ring>=cfg.rs)say('ថតគ្រប់ '+cfg.rs+' រូប · ចុច "បញ្ចប់"')};
+$('#fr').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;await run([f],'360',ring>0);ring++;rp();if(ring>=cfg.rs)say('ថតគ្រប់ '+cfg.rs+' រូប · ចុច "បញ្ចប់"')};
 $('#rf').onclick=()=>{ring=0;rp();toast('បញ្ចប់ 360° · កែលេខ +/− ហើយ Save')};
 $('#gd').onclick=async()=>{say('កំពុងយកទីតាំង…');const g=await devGps();if(g&&ses){ses.gps=g;renderOut()}else if(!ses)toast('ថតរូបជាមុន');say(g?'បានទីតាំង':'យកទីតាំងមិនបាន (បើកការអនុញ្ញាត GPS)');renderGps()};
 $('#gh').onclick=()=>{if(!ses)return toast('ថតរូបជាមុន');const t=prompt('lat,lon (ឧ. 11.5564,104.9282)');if(!t)return;const[a,b]=t.split(',').map(Number);
  if(isFinite(a)&&isFinite(b)&&Math.abs(a)<=90&&Math.abs(b)<=180){ses.gps={lat:a,lon:b,src:'manual'};renderOut()}else toast('ទម្រង់មិនត្រឹមត្រូវ')};
 $('#bset').onclick=()=>show('set');$('#bmore').onclick=()=>toast('KHOEM-AI · CAI v2');
 $('#bmoon').onclick=()=>{cfg.light=cfg.light?0:1;document.body.classList.toggle('light',!!cfg.light);sv()};
-document.body.classList.toggle('light',!!cfg.light);rp();
+$('#hq').oninput=rHist;$('#hl').onclick=e=>{const b=e.target.closest('[data-del]');if(b&&confirm('លុបធាតុនេះ?')){hist.splice(+b.dataset.del,1);ls.set('cai:hist',hist);rHist()}};
+$('#dd').onchange=e=>{cfg.dd=e.target.checked?1:0;sv()};$('#sg').onchange=e=>{cfg.sg=e.target.checked?1:0;sv()};
+$('#gmap').onclick=()=>{if(!anyg())return toast('មិនទាន់មានទីតាំង');mapOn=1;renderGps()};
+$('#gplace').onclick=async()=>{const g=anyg();if(!g)return toast('មិនទាន់មានទីតាំង');if(!confirm('ផ្ញើកូអរដោនេទៅ OpenStreetMap ដើម្បីរកឈ្មោះទីកន្លែង?'))return;
+ try{const j=await(await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+g.lat+'&lon='+g.lon+'&accept-language=km,en')).json();place=j.display_name||'រកមិនឃើញឈ្មោះ'}catch(e){place='រកមិនបាន (ត្រូវអ៊ីនធឺណិត)'}renderGps()};
+document.body.classList.toggle('light',!!cfg.light);rp();probe();
 </script></body></html>
