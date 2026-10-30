@@ -3,8 +3,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Photo Scan - Count and Location</title>
 <style>
-:root{--bg:#050a08;--pn:#0d1613;--pn2:#12201b;--ln:#1d3a2f;--tx:#e8f5ee;--mu:#86a395;--g:#00e676;--g2:#00a152}
-body.light{--bg:#eef6f1;--pn:#fff;--pn2:#e3f0e8;--ln:#b9d6c5;--tx:#10241a;--mu:#52705f}
+:root{--bg:#bfe6ff;--pn:#ffffff;--pn2:#e8f5ff;--ln:#8cc7ee;--tx:#0b2a44;--mu:#4a6f8c;--g:#0a84ff;--g2:#0a6fd8}
+body.light{--bg:#06203a;--pn:#0c2f52;--pn2:#12406c;--ln:#1e5a94;--tx:#e6f3ff;--mu:#8fb6da}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,"Noto Sans Khmer",sans-serif}
 #app{max-width:520px;margin:0 auto;padding:12px 12px 40px}
@@ -28,6 +28,20 @@ input[type=text]{background:var(--pn2);color:inherit;border:1px solid var(--ln);
 iframe{width:100%;height:260px;border:0;border-radius:12px;margin-top:8px}
 a{color:#5aa9ff}.hide{display:none}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#000d;color:#fff;padding:8px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:9}#toast.on{opacity:1}
+
+html{background:#8fd3ff}
+body{background:linear-gradient(180deg,#8fd3ff,#e3f4ff) fixed}
+body.light{background:linear-gradient(180deg,#06203a,#0b3a63) fixed}
+button{box-shadow:0 4px 0 rgba(10,70,130,.25),0 8px 14px rgba(10,70,130,.18);transition:transform .08s,box-shadow .08s}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(10,70,130,.25)}
+.big,.pri{background:linear-gradient(#5bbcff,#0a74e0);border:2px solid #0a5cb5;color:#fff;box-shadow:0 6px 0 #084a94,0 12px 20px rgba(10,90,180,.35)}
+.big:active,.pri:active{transform:translateY(4px);box-shadow:0 2px 0 #084a94}
+.big .ic{background:#e3f4ff;color:#0a5cb5}
+.two button{background:linear-gradient(#ffffff,#d4ecff);border:1px solid #8cc7ee;box-shadow:0 5px 0 #8cc7ee,0 10px 16px rgba(10,70,130,.18)}
+.two button:active{transform:translateY(4px);box-shadow:0 1px 0 #8cc7ee}
+.card{box-shadow:0 6px 0 rgba(10,70,130,.12),0 12px 22px rgba(10,70,130,.14)}
+body.light .two button{background:linear-gradient(#17508a,#0f3d6e);border-color:#1e5a94;box-shadow:0 5px 0 #0a2c52}
+body.light .card{box-shadow:0 6px 0 rgba(0,0,0,.25)}
 </style></head><body><div id="app">
 <header><button id="back" aria-label="Back">&larr;</button>
 <div class="t"><b>Photo Scan</b><small>Count objects &middot; Find location</small></div>
