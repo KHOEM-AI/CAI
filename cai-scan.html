@@ -36,6 +36,10 @@ a{color:#5aa9ff}.hide{display:none}
 <button class="big" id="cam"><span class="ic">&#128247;</span><span><b>Open Camera</b><small>Take a photo and scan it</small></span></button>
 <div class="two"><button id="gal"><b>From Gallery</b><small>Choose one photo</small></button><button id="bulk"><b>Multi-Photo</b><small>Choose several photos</small></button></div>
 <div id="out"></div>
+<div class="card"><h3>My Location</h3>
+<div id="hl2" class="mu">Tap the button to show where you are.</div>
+<div id="hm"></div>
+<div class="row"><button id="hgo">Show my location</button></div></div>
 <div class="card"><h3>History</h3><div id="hl"></div><div class="row"><button id="clr">Clear history</button></div></div>
 <input id="fc" type="file" accept="image/*" capture="environment" hidden>
 <input id="fg" type="file" accept="image/*" hidden>
@@ -129,5 +133,8 @@ $('#fb').onchange=e=>{if(e.target.files.length)run([...e.target.files],false);e.
 $('#clr').onclick=()=>{if(confirm('Clear all history?')){hist=[];ls.set('cai:hist',[]);rHist()}};
 $('#back').onclick=()=>{history.length>1?history.back():location.href='http://'+location.hostname+':5175/'};
 $('#theme').onclick=()=>{cfg.light=cfg.light?0:1;document.body.classList.toggle('light',!!cfg.light);ls.set('cai:cfg',cfg)};
+$('#hgo').onclick=async()=>{say('Getting location...');const p=await devGps();
+ if(p){$('#hl2').innerHTML=p.lat+', '+p.lon+' <span class="mu">(+/-'+p.acc+'m)</span> <a href="'+mapUrl(p)+'" target="_blank" rel="noopener">Open map</a>';$('#hm').innerHTML=embed(p);say('Location found.')}
+ else say('Could not get location. Allow location permission.')};
 document.body.classList.toggle('light',!!cfg.light);rHist();
 </script></body></html>
