@@ -1,97 +1,65 @@
 <!DOCTYPE html>
-<html lang="km"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KHOEM-AI · Vision · Count · Locate</title>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Photo Scan - Count and Location</title>
 <style>
-:root{--bg:#050a08;--pn:#0d1613;--pn2:#12201b;--ln:#1d3a2f;--tx:#e8f5ee;--mu:#86a395;--g:#00e676;--g2:#00a152;--bl:#1565c0}
+:root{--bg:#050a08;--pn:#0d1613;--pn2:#12201b;--ln:#1d3a2f;--tx:#e8f5ee;--mu:#86a395;--g:#00e676;--g2:#00a152}
 body.light{--bg:#eef6f1;--pn:#fff;--pn2:#e3f0e8;--ln:#b9d6c5;--tx:#10241a;--mu:#52705f}
-*{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--tx);font:14px/1.4 Inter,"Noto Sans Khmer",system-ui,sans-serif;padding-bottom:84px}
-#app{max-width:520px;margin:auto;padding:12px}
-button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--pn2);border-radius:12px;padding:9px 12px}
-header{display:flex;align-items:center;gap:10px}.logo{display:flex;gap:10px;align-items:center;flex:1}
-.logo b{font-size:23px;letter-spacing:1px}.logo b i{color:var(--g);font-style:normal}.logo small{display:block;color:var(--mu);font-size:12px}
-.hb{display:flex;gap:6px}.hb button{width:40px;height:40px;padding:0;border-radius:12px}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--pn);border:1px solid var(--ln);border-radius:16px;margin-top:12px;overflow:hidden}
-.tabs button{border:0;border-radius:0;background:none;padding:13px 4px;font-weight:600}.tabs .on{background:linear-gradient(#0b3d26,#082a1b);color:var(--g);box-shadow:inset 0 -3px 0 var(--g)}
-.hero{position:relative;height:250px;margin-top:10px;display:flex;justify-content:center;align-items:center;overflow:hidden}
-.ring{position:absolute;border:2px solid #00e67655;border-radius:50%;box-shadow:0 0 22px #00e67666,inset 0 0 22px #00e67633;transform:rotateX(70deg)}
-.r1{width:290px;height:290px;animation:sp 12s linear infinite}.r2{width:220px;height:220px;animation:sp 8s linear infinite reverse}
-@keyframes sp{to{transform:rotateX(70deg) rotateZ(360deg)}}
-.hero svg{position:relative;width:170px;filter:drop-shadow(0 0 18px #00e67688)}
-.t360{position:absolute;bottom:20px;font-size:34px;font-weight:800;text-shadow:0 0 14px var(--g)}
-.side{position:absolute;top:0;display:flex;flex-direction:column;gap:10px}.side.l{left:0}.side.r{right:0}
-.side button{width:68px;padding:8px 2px;font-size:11px;text-align:center;border-radius:14px;line-height:1.2}.side span{display:block;font-size:22px}
-.big{width:100%;margin-top:6px;padding:18px;border-radius:40px;border:2px solid var(--g);background:linear-gradient(#0f6b3c,#0a4a2a);display:flex;align-items:center;gap:14px;box-shadow:0 0 22px #00e67655;text-align:left}
-.big .ic{width:54px;height:54px;border-radius:50%;background:#bfffd9;color:#06331c;display:flex;align-items:center;justify-content:center;font-size:26px}
-.big b{font-size:21px;display:block}.big small{opacity:.85}.big .go{margin-left:auto;background:#0b1f16;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.two button{text-align:left;padding:12px;border-radius:18px}.two small{display:block;color:var(--mu)}
-.two .bk{border-color:#1e88e5;background:#0d2a4a}
-.card{background:var(--pn);border:1px solid var(--ln);border-radius:16px;padding:10px;margin-top:12px}
-.card img,.card .ph{width:100%;height:110px;object-fit:cover;border-radius:10px;background:#0a1410 center/cover}
-.card h3{margin:8px 0 2px;font-size:15px}.mu{color:var(--mu);font-size:12px}
-.r{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--ln)}.r b{display:inline-block;min-width:34px;text-align:center}.r button{padding:2px 11px}
-input[type=text],select{background:var(--pn2);color:inherit;border:1px solid var(--ln);border-radius:10px;padding:8px;font:inherit}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.bar{height:10px;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:6px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,"Noto Sans Khmer",sans-serif}
+#app{max-width:520px;margin:0 auto;padding:12px 12px 40px}
+button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--pn2);border-radius:12px;padding:10px 12px}
+header{display:flex;align-items:center;gap:10px}
+header .t{flex:1}header b{font-size:22px;letter-spacing:.5px}header small{display:block;color:var(--mu);font-size:12px}
+header button{width:42px;height:42px;padding:0}
+#st{margin:12px 0;color:var(--mu)}
+.big{width:100%;padding:16px;border-radius:40px;border:2px solid var(--g);background:linear-gradient(#0f6b3c,#0a4a2a);display:flex;align-items:center;gap:14px;text-align:left;color:#fff;box-shadow:0 0 22px #00e67655}
+.big .ic{width:52px;height:52px;border-radius:50%;background:#bfffd9;color:#06331c;display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+.big b{font-size:20px;display:block}.big small{opacity:.85}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.two button{text-align:left;padding:14px;border-radius:18px}.two small{display:block;color:var(--mu)}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:16px;padding:12px;margin-top:14px}
+.card h3{margin:0 0 8px;font-size:16px}.mu{color:var(--mu);font-size:13px}
 .pv{width:100%;border-radius:12px;display:block}.th{display:flex;gap:6px;overflow:auto;margin-top:6px}.th img{height:54px;border-radius:8px}
-.nav{position:fixed;left:0;right:0;bottom:0;background:var(--pn);border-top:1px solid var(--ln);display:flex;justify-content:space-around;align-items:center;padding:6px 0 10px}
-.nav button{background:none;border:0;color:var(--mu);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px}.nav button span{font-size:22px}.nav .on{color:var(--g)}
-.nav .sc{width:62px;height:62px;border-radius:50%;border:3px solid var(--g);background:#06150e;color:var(--g);box-shadow:0 0 20px #00e67688;margin-top:-26px;font-size:26px}
-.hide{display:none}#st{margin-top:10px;color:var(--mu)}#toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:#000d;color:#fff;padding:8px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s}#toast.on{opacity:1}
-a{color:#5aa9ff}iframe{width:100%;height:230px;border:0;border-radius:12px;margin-top:8px}
+.r{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--ln)}
+.r b{display:inline-block;min-width:36px;text-align:center}.r button{padding:3px 12px}
+input[type=text]{background:var(--pn2);color:inherit;border:1px solid var(--ln);border-radius:10px;padding:9px;font:inherit;flex:1;min-width:0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.pri{background:linear-gradient(#0f6b3c,#0a4a2a);border-color:var(--g);color:#fff;font-weight:700}
+iframe{width:100%;height:260px;border:0;border-radius:12px;margin-top:8px}
+a{color:#5aa9ff}.hide{display:none}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#000d;color:#fff;padding:8px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:9}#toast.on{opacity:1}
 </style></head><body><div id="app">
-<header><div class="logo"><svg width="46" height="52" viewBox="0 0 46 52"><path d="M23 2l19 8v16c0 13-8 21-19 24C12 47 4 39 4 26V10z" fill="#062b19" stroke="#00e676" stroke-width="3"/><path d="M16 14v24M16 26l14-12M16 26l14 12" stroke="#00e676" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
-<div><b>KHOEM<i>-AI</i></b><small>Vision · Count · Locate</small></div></div>
-<div class="hb"><button id="bset">⚙</button><button id="bmoon">☾</button><button id="bmore">⋯</button></div></header>
-<nav class="tabs"><button data-v="cam" class="on">📷 Camera</button><button data-v="r360">🧊 360° Scan</button><button data-v="gps">📍 GPS</button></nav>
-<div id="st">ថតរូប ឬជ្រើសរូបដើម្បីចាប់ផ្តើម</div>
-
-<section id="v-cam">
- <div class="hero"><div class="ring r1"></div><div class="ring r2"></div>
-  <svg viewBox="0 0 200 150"><rect x="14" y="40" width="172" height="96" rx="14" fill="#15211c" stroke="#00e67688" stroke-width="3"/><rect x="62" y="22" width="52" height="24" rx="6" fill="#1b2c25"/><circle cx="100" cy="88" r="40" fill="#0a120f" stroke="#00e676" stroke-width="5"/><circle cx="100" cy="88" r="26" fill="#08301d" stroke="#00e67699" stroke-width="3"/><path d="M92 74v28M92 88l13-12M92 88l13 12" stroke="#00e676" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
-  <div class="t360">360°</div>
-  <div class="side l"><button data-a="cam"><span>🤖</span>Count</button><button data-a="gal"><span>🧊</span>Detect Objects</button><button data-a="r360"><span>🎯</span>360° Scan</button></div>
-  <div class="side r"><button data-a="gps"><span>📍</span>GPS Location</button><button data-a="map"><span>🗺</span>Show on Map</button><button data-a="info"><span>🖼</span>Photo Info</button></div></div>
- <button class="big" id="open"><div class="ic">📷</div><div><b>Open Camera</b><small>Take a photo &amp; AI scan (360°)</small></div><div class="go">›</div></button>
- <div class="two"><button id="gal"><b>🖼 Choose from Gallery</b><small>Select photo &amp; scan</small></button><button id="bulk" class="bk"><b>🗂 Bulk Scan</b><small>Multi-Photo (360°)</small></button></div>
- <div class="two"><div class="card" style="margin:0"><div class="ph" id="cph"></div><h3>Object Counting</h3><div class="mu">Detect and count objects from photo</div></div>
-  <div class="card" style="margin:0" id="clc"><div class="ph" style="display:flex;align-items:center;justify-content:center;font-size:40px">📍</div><h3>Photo Location</h3><div class="mu">Get GPS location from photo</div></div></div>
- <div id="info" class="card hide"></div>
-</section>
-
-<section id="v-r360" class="hide"><div class="card"><h3>360° Scan</h3>
- <div class="mu">បង្វិលខ្លួនជុំវិញ ថតរូបម្តងមួយៗ ។ រូបជាន់គ្នាអាចធ្វើឱ្យរាប់ស្ទួន ដូច្នេះកែលេខ +/− ក្រោយ ។</div>
- <div class="row" style="margin-top:8px"><button class="big" id="rn" style="width:auto;padding:12px 18px;margin:0"><b>Start</b></button><button id="rf">បញ្ចប់</button><span id="rp" class="mu"></span></div></div></section>
-
-<section id="v-gps" class="hide"><div class="card"><h3>GPS</h3><div id="gl" class="mu"></div><div id="gm"></div>
- <div class="row" style="margin-top:8px"><button id="gd">ទីតាំងឧបករណ៍ឥឡូវ</button><button id="gh">វាយដោយដៃ</button></div>
- <div class="mu" style="margin-top:6px">GPS ក្នុងរូប = កន្លែងដែលថតរូប មិនមែនទីតាំងពិតរបស់វត្ថុនីមួយៗ ។ Android អាចលុប GPS ពីរូបវិចិត្រសាល ។</div></div></section>
-
-<section id="v-hist" class="hide"><div class="card"><h3>History</h3><div id="hl"></div></div></section>
-<section id="v-res" class="hide"><div class="card"><h3>Results</h3><div id="rl"></div></div></section>
-<section id="v-set" class="hide"><div class="card"><h3>Settings</h3>
- <div class="row">Confidence <input id="th" type="range" min="30" max="90" step="5" style="flex:1"><b id="thv"></b></div>
- <div class="row" style="margin-top:8px">Multi-photo <select id="ag"><option value="sum">បូក (sum)</option><option value="max">ធំបំផុតក្នុងរូបមួយ (max)</option></select></div>
- <div class="row" style="margin-top:8px">360° shots <select id="rs"><option>4</option><option>6</option><option selected>8</option><option>12</option></select></div>
- <div class="row" style="margin-top:8px"><button id="clr">លុបប្រវត្តិ</button><span id="kis" class="mu"></span></div></div></section>
-
+<header><button id="back" aria-label="Back">&larr;</button>
+<div class="t"><b>Photo Scan</b><small>Count objects &middot; Find location</small></div>
+<button id="theme" aria-label="Theme">&#9790;</button></header>
+<div id="st">Take a photo or choose one to start.</div>
+<button class="big" id="cam"><span class="ic">&#128247;</span><span><b>Open Camera</b><small>Take a photo and scan it</small></span></button>
+<div class="two"><button id="gal"><b>From Gallery</b><small>Choose one photo</small></button><button id="bulk"><b>Multi-Photo</b><small>Choose several photos</small></button></div>
 <div id="out"></div>
-<input id="fc" type="file" accept="image/*" capture="environment" hidden><input id="fg" type="file" accept="image/*" hidden><input id="fb" type="file" accept="image/*" multiple hidden><input id="fr" type="file" accept="image/*" capture="environment" hidden>
-</div>
-<nav class="nav"><button data-n="cam" class="on"><span>🏠</span>Home</button><button data-n="hist"><span>🕘</span>History</button><button class="sc" id="sc">⛶</button><button data-n="res"><span>📊</span>Results</button><button data-n="set"><span>⚙</span>Settings</button></nav>
-<div id="toast"></div>
+<div class="card"><h3>History</h3><div id="hl"></div><div class="row"><button id="clr">Clear history</button></div></div>
+<input id="fc" type="file" accept="image/*" capture="environment" hidden>
+<input id="fg" type="file" accept="image/*" hidden>
+<input id="fb" type="file" accept="image/*" multiple hidden>
+</div><div id="toast"></div>
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],KI='http://'+(location.hostname||'localhost')+':5001/api';
+const $=s=>document.querySelector(s);
+const KI='http://'+(location.hostname||'localhost')+':5001/api';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const KM={person:'មនុស្ស',cat:'ឆ្មា',dog:'ឆ្កែ',bird:'បក្សី',horse:'សេះ',sheep:'ចៀម',cow:'គោ',elephant:'ដំរី',bottle:'ដប',cup:'ពែង',knife:'កាំបិត',scissors:'កន្ត្រៃ','cell phone':'ទូរស័ព្ទ',laptop:'កុំព្យូទ័រ',tv:'ទូរទស្សន៍',banana:'ចេក',apple:'ផ្លែប៉ោម',orange:'ក្រូច',car:'ឡាន',motorcycle:'ម៉ូតូ',bicycle:'កង់',truck:'ឡានដឹកទំនិញ',bus:'ឡានក្រុង','potted plant':'រុក្ខជាតិ'};
-const nm=l=>KM[l]?KM[l]+' · '+l:l;
-let cfg=Object.assign({th:50,agg:'sum',rs:8,light:0},ls.get('cai:cfg',{})),hist=ls.get('cai:hist',[]),ses=null,model=null,lastImg=null,ring=0,view='cam';
-const say=t=>$('#st').textContent=t,toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)};
-const load=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('ទាញមិនបាន'));document.head.appendChild(s)});
-async function getModel(){if(model)return model;say('កំពុងទាញម៉ូដែល (ត្រូវអ៊ីនធឺណិតលើកដំបូង)…');
- await load('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');await load('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
+let cfg=Object.assign({th:50,light:0},ls.get('cai:cfg',{})),hist=ls.get('cai:hist',[]),ses=null,model=null;
+const say=t=>{$('#st').textContent=t};
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2000)};
+
+/* scale the 520px layout to fill any screen: phone, tablet, PC, TV */
+const fit=()=>{document.documentElement.style.zoom=Math.min(3,Math.max(1,innerWidth/520))};
+addEventListener('resize',fit);fit();
+
+const load=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('Download failed'));document.head.appendChild(s)});
+async function getModel(){if(model)return model;say('Downloading model (internet needed the first time)...');
+ await load('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+ await load('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
  model=await cocoSsd.load({base:'lite_mobilenet_v2'});return model}
+
 function exifGps(buf){try{const v=new DataView(buf);if(v.getUint16(0)!==0xFFD8)return null;let o=2;
  while(o<v.byteLength-4){const m=v.getUint16(o),len=v.getUint16(o+2);if(m===0xFFE1&&v.getUint32(o+4)===0x45786966)return tiff(v,o+10);if((m&0xFF00)!==0xFF00)break;o+=2+len}}catch(e){}return null}
 function tiff(v,t){const le=v.getUint16(t)===0x4949,g16=o=>v.getUint16(o,le),g32=o=>v.getUint32(o,le);
@@ -100,72 +68,66 @@ function tiff(v,t){const le=v.getUint16(t)===0x4949,g16=o=>v.getUint16(o,le),g32
  const r={},rat=vo=>{const p=t+g32(vo),a=[];for(let i=0;i<3;i++)a.push(v.getUint32(p+i*8,le)/v.getUint32(p+i*8+4,le));return a};
  ifd(t+gp,(tag,n,vo)=>{if(tag===1)r.la=String.fromCharCode(v.getUint8(vo));if(tag===3)r.lo=String.fromCharCode(v.getUint8(vo));if(tag===2)r.lat=rat(vo);if(tag===4)r.lon=rat(vo)});
  if(!r.lat||!r.lon)return null;const d=a=>a[0]+a[1]/60+a[2]/3600,la=d(r.lat)*(r.la==='S'?-1:1),lo=d(r.lon)*(r.lo==='W'?-1:1);
- if(!isFinite(la)||!isFinite(lo)||(!la&&!lo))return null;return{lat:+la.toFixed(6),lon:+lo.toFixed(6),src:'EXIF'}}
-const devGps=()=>new Promise(ok=>{if(!navigator.geolocation)return ok(null);navigator.geolocation.getCurrentPosition(p=>ok({lat:+p.coords.latitude.toFixed(6),lon:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy),src:'device'}),()=>ok(null),{enableHighAccuracy:true,timeout:10000})});
-function thumb(im,boxes,max,q){const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=im.naturalWidth*s;c.height=im.naturalHeight*s;const x=c.getContext('2d'),fs=Math.max(11,c.width/32);
- x.drawImage(im,0,0,c.width,c.height);if(boxes){x.lineWidth=Math.max(2,c.width/200);x.strokeStyle=x.fillStyle='#00e676';x.font=fs+'px sans-serif';boxes.forEach(b=>{const[a,y,w,h]=b.bbox.map(n=>n*s);x.strokeRect(a,y,w,h);x.fillText(b.class,a+2,y+fs)})}
+ if(!isFinite(la)||!isFinite(lo)||(!la&&!lo))return null;return{lat:+la.toFixed(6),lon:+lo.toFixed(6),src:'photo'}}
+const devGps=()=>new Promise(ok=>{if(!navigator.geolocation)return ok(null);
+ navigator.geolocation.getCurrentPosition(p=>ok({lat:+p.coords.latitude.toFixed(6),lon:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy),src:'device'}),()=>ok(null),{enableHighAccuracy:true,timeout:10000})});
+
+function thumb(im,boxes,max,q){const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');
+ c.width=im.naturalWidth*s;c.height=im.naturalHeight*s;const x=c.getContext('2d'),fs=Math.max(11,c.width/32);x.drawImage(im,0,0,c.width,c.height);
+ if(boxes){x.lineWidth=Math.max(2,c.width/200);x.strokeStyle=x.fillStyle='#00e676';x.font=fs+'px sans-serif';
+  boxes.forEach(b=>{const[a,y,w,h]=b.bbox.map(n=>n*s);x.strokeRect(a,y,w,h);x.fillText(b.class,a+2,y+fs)})}
  return c.toDataURL('image/jpeg',q)}
+
 async function one(f,fresh){const gps0=exifGps(await f.arrayBuffer()),im=new Image();im.src=URL.createObjectURL(f);await im.decode();
- let gps=gps0;if(!gps&&fresh)gps=await devGps();const m=await getModel(),bx=await m.detect(im,100,cfg.th/100),counts={};
- bx.forEach(b=>counts[b.class]=(counts[b.class]||0)+1);lastImg=im;
- return{name:f.name,size:f.size,w:im.naturalWidth,h:im.naturalHeight,date:f.lastModified,gps,counts,prev:thumb(im,bx,720,.7),th:thumb(im,null,110,.6)}}
-async function run(files,mode,fresh,append){if(!append||!ses||ses.mode!==mode)ses={id:'s'+Date.now(),time:new Date().toISOString(),mode,shots:[],adj:{}};
- let i=0;for(const f of files){i++;say('កំពុងស្កេន '+i+'/'+files.length+'…');try{ses.shots.push(await one(f,fresh))}catch(e){say('ស្កេនមិនបាន: '+e.message);toast('កំហុស · '+e.message)}}
- say('ស្កេនរួច · សូមពិនិត្យ និងកែលេខ (+/−)');renderOut()}
-function totals(){const t={};if(!ses)return t;const ks=new Set();ses.shots.forEach(s=>Object.keys(s.counts).forEach(k=>ks.add(k)));Object.keys(ses.adj).forEach(k=>ks.add(k));
- ks.forEach(k=>{const a=ses.shots.map(s=>s.counts[k]||0),b=a.length?(cfg.agg==='max'?Math.max(...a):a.reduce((x,y)=>x+y,0)):0,v=b+(ses.adj[k]||0);if(v>0)t[k]=v});return t}
+ let gps=gps0;if(!gps&&fresh)gps=await devGps();
+ const m=await getModel(),bx=await m.detect(im,100,cfg.th/100),counts={};bx.forEach(b=>counts[b.class]=(counts[b.class]||0)+1);
+ return{name:f.name,w:im.naturalWidth,h:im.naturalHeight,size:f.size,gps,counts,prev:thumb(im,bx,900,.72),th:thumb(im,null,110,.6)}}
+
+async function run(files,fresh){ses={id:'s'+Date.now(),time:new Date().toISOString(),shots:[],adj:{},gps:null};
+ let i=0;for(const f of files){i++;say('Scanning '+i+' of '+files.length+'...');
+  try{ses.shots.push(await one(f,fresh))}catch(e){say('Scan failed: '+e.message);toast('Error: '+e.message)}}
+ if(ses.shots.length){say('Done. Check the numbers, fix with + and -, then Save.');renderOut();$('#out').scrollIntoView({behavior:'smooth'})}}
+
+function totals(){const t={};if(!ses)return t;const ks=new Set(Object.keys(ses.adj));ses.shots.forEach(s=>Object.keys(s.counts).forEach(k=>ks.add(k)));
+ ks.forEach(k=>{const v=ses.shots.reduce((a,s)=>a+(s.counts[k]||0),0)+(ses.adj[k]||0);if(v>0)t[k]=v});return t}
 const sgps=()=>ses&&(ses.gps||(ses.shots.find(s=>s.gps)||{}).gps)||null;
 const mapUrl=g=>`https://www.openstreetmap.org/?mlat=${g.lat}&mlon=${g.lon}#map=18/${g.lat}/${g.lon}`;
-function renderOut(){const o=$('#out');if(!ses||!ses.shots.length){o.innerHTML='';return}const t=totals(),ks=Object.keys(t),g=sgps(),last=ses.shots[ses.shots.length-1];
- $('#cph').style.backgroundImage=`url(${last.th})`;
- o.innerHTML=`<div class="card"><h3>Result · ${ses.shots.length} រូប · សរុប ${ks.reduce((a,k)=>a+t[k],0)}</h3><img class="pv" src="${last.prev}"><div class="th">${ses.shots.map(s=>`<img src="${s.th}">`).join('')}</div>
- <div id="tb" style="margin-top:8px">${ks.length?ks.map(k=>`<div class="r"><span>${esc(nm(k))}</span><span><button data-k="${esc(k)}" data-d="-1">−</button><b>${t[k]}</b><button data-k="${esc(k)}" data-d="1">+</button></span></div>`).join(''):'<div class="mu">គ្មានវត្ថុ</div>'}</div>
- <div class="row" style="margin-top:8px"><input id="nl" type="text" placeholder="បន្ថែមដោយដៃ (ឧ. ដើមឈើ)" style="flex:1"><button id="na">+</button></div>
- <div style="margin-top:8px">${g?`📍 ${g.lat}, ${g.lon} <span class="mu">(${esc(g.src)}${g.acc?' ±'+g.acc+'ម':''})</span> <a href="${mapUrl(g)}" target="_blank" rel="noopener">ផែនទី</a>`:'📍 គ្មានទីតាំង'}</div>
- <div class="row" style="margin-top:10px"><button class="pri big" id="sv" style="width:auto;padding:10px 18px;margin:0"><b style="font-size:15px">Save</b></button><button id="ai">AI ជួយ</button><button id="cp">CSV</button></div></div>`;
+const embed=g=>`<iframe loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${g.lon-.004},${g.lat-.003},${g.lon+.004},${g.lat+.003}&layer=mapnik&marker=${g.lat},${g.lon}"></iframe>`;
+
+function renderOut(){const o=$('#out');if(!ses||!ses.shots.length){o.innerHTML='';return}
+ const t=totals(),ks=Object.keys(t),g=sgps(),last=ses.shots[ses.shots.length-1],sum=ks.reduce((a,k)=>a+t[k],0);
+ o.innerHTML=`<div class="card"><h3>Result &middot; ${ses.shots.length} photo(s) &middot; total ${sum}</h3>
+ <img class="pv" src="${last.prev}"><div class="th">${ses.shots.map(s=>`<img src="${s.th}">`).join('')}</div>
+ <div id="tb" style="margin-top:8px">${ks.length?ks.map(k=>`<div class="r"><span>${esc(k)}</span><span><button data-k="${esc(k)}" data-d="-1">-</button><b>${t[k]}</b><button data-k="${esc(k)}" data-d="1">+</button></span></div>`).join(''):'<div class="mu">No objects found. Add one below.</div>'}</div>
+ <div class="row"><input id="nl" type="text" placeholder="Add item manually"><button id="na">+</button></div></div>
+ <div class="card"><h3>Location</h3>
+ <div>${g?`${g.lat}, ${g.lon} <span class="mu">(${esc(g.src)}${g.acc?' +/-'+g.acc+'m':''})</span> <a href="${mapUrl(g)}" target="_blank" rel="noopener">Open map</a>`:'<span class="mu">No location in this photo.</span>'}</div>
+ ${g?embed(g):''}
+ <div class="row"><button id="gd">Use my location</button><button id="gh">Enter manually</button></div>
+ <div class="mu" style="margin-top:6px">Location is where the photo was taken. Gallery photos often have it removed by the phone; use Camera or Enter manually.</div></div>
+ <div class="row"><button class="pri big" id="sv" style="width:auto;padding:12px 26px;border-radius:14px"><b style="font-size:16px">Save</b></button><button id="cp">Copy CSV</button></div>`;
  $('#tb').onclick=e=>{const b=e.target.closest('button');if(!b)return;ses.adj[b.dataset.k]=(ses.adj[b.dataset.k]||0)+Number(b.dataset.d);renderOut()};
  $('#na').onclick=()=>{const l=$('#nl').value.trim().slice(0,60);if(l){ses.adj[l]=(ses.adj[l]||0)+1;renderOut()}};
- $('#sv').onclick=save;$('#cp').onclick=csv;$('#ai').onclick=askAI;renderGps()}
-async function save(){const t=totals(),g=sgps(),rec={id:ses.id,time:ses.time,mode:ses.mode,n:ses.shots.length,gps:g,counts:t,th:ses.shots[0].th};
- hist=hist.filter(h=>h.id!==rec.id);hist.push(rec);hist=hist.slice(-30);ls.set('cai:hist',hist);toast('រក្សាទុកក្នុងទូរស័ព្ទ ✔');
- try{const r=await fetch(KI+'/scans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:rec.id,time:rec.time,name:ses.mode,gps:g,counts:t})});say(r.ok?'រក្សាទុកក្នុង KI ✔':'KI មិនទាន់មាន route /scans ('+r.status+')')}catch(e){say('KI មិនឆ្លើយតប · រក្សាក្នុងទូរស័ព្ទរួច')}}
+ $('#gd').onclick=async()=>{say('Getting location...');const p=await devGps();if(p){ses.gps=p;renderOut();say('Location set.')}else say('Could not get location. Allow location permission.')};
+ $('#gh').onclick=()=>{const t=prompt('latitude,longitude  (example: 11.5564,104.9282)');if(!t)return;const[a,b]=t.split(',').map(Number);
+  if(isFinite(a)&&isFinite(b)&&Math.abs(a)<=90&&Math.abs(b)<=180){ses.gps={lat:a,lon:b,src:'manual'};renderOut()}else toast('Wrong format')};
+ $('#sv').onclick=save;$('#cp').onclick=csv}
+
+async function save(){const t=totals(),g=sgps(),rec={id:ses.id,time:ses.time,n:ses.shots.length,gps:g,counts:t,th:ses.shots[0].th};
+ hist=hist.filter(h=>h.id!==rec.id);hist.push(rec);hist=hist.slice(-30);ls.set('cai:hist',hist);rHist();toast('Saved on this device');
+ try{const r=await fetch(KI+'/scans',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:rec.id,time:rec.time,name:'photo-scan',gps:g,counts:t})});
+  say(r.ok?'Saved to KI server.':'KI server error '+r.status)}catch(e){say('KI server not reachable. Saved on this device only.')}}
 async function csv(){const t=totals(),g=sgps(),s='label,count\n'+Object.entries(t).map(([k,v])=>'"'+k.replace(/"/g,'""')+'",'+v).join('\n')+(g?'\ngps,"'+g.lat+','+g.lon+'"':'');
- try{await navigator.clipboard.writeText(s);toast('បានចម្លង CSV')}catch(e){toast('ចម្លងមិនបាន')}}
-async function askAI(){if(!lastImg)return;say('AI កំពុងមើលរូបចុងក្រោយ…');const s=Math.min(1,1280/Math.max(lastImg.naturalWidth,lastImg.naturalHeight)),c=document.createElement('canvas');c.width=lastImg.naturalWidth*s;c.height=lastImg.naturalHeight*s;c.getContext('2d').drawImage(lastImg,0,0,c.width,c.height);
- try{const r=await fetch(KI+'/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:c.toDataURL('image/jpeg',.8).split(',')[1],media_type:'image/jpeg'})}),j=await r.json();if(!r.ok)throw new Error(j.error||'HTTP '+r.status);
-  const it=j.items||[];if(!it.length)return say('AI មិនឃើញអ្វី');it.forEach(a=>{ses.adj[a.label]=(ses.adj[a.label]||0)+a.count});say('AI បានបន្ថែម '+it.length+' ប្រភេទ (កែបាន)');renderOut()}catch(e){say('AI មិនទាន់ដំណើរការ: '+e.message)}}
-function renderGps(){const g=sgps(),gl=$('#gl'),gm=$('#gm');if(!gl)return;
- gl.innerHTML=ses&&ses.shots.length?ses.shots.map((s,i)=>`រូប ${i+1}: ${s.gps?s.gps.lat+', '+s.gps.lon+' ('+esc(s.gps.src)+')':'គ្មាន GPS'}`).join('<br>')+(ses.gps?'<br>ដោយដៃ/ឧបករណ៍: '+ses.gps.lat+', '+ses.gps.lon:''):'មិនទាន់មានរូប';
- gm.innerHTML=g?`<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${g.lon-.004},${g.lat-.003},${g.lon+.004},${g.lat+.003}&layer=mapnik&marker=${g.lat},${g.lon}"></iframe>`:''}
-function info(){const i=$('#info');if(!ses||!ses.shots.length){i.classList.remove('hide');i.textContent='មិនទាន់មានរូប';return}const s=ses.shots[ses.shots.length-1];
- i.classList.remove('hide');i.innerHTML=`<h3>Photo Info</h3>${esc(s.name)}<br>${s.w}×${s.h} · ${Math.round(s.size/1024)} KB<br>${s.date?new Date(s.date).toLocaleString():''}<br>GPS: ${s.gps?s.gps.lat+', '+s.gps.lon+' ('+esc(s.gps.src)+')':'គ្មាន'}`}
-function show(v){view=v;['cam','r360','gps','hist','res','set'].forEach(x=>$('#v-'+x).classList.toggle('hide',x!==v));
- $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$$('.nav button[data-n]').forEach(b=>b.classList.toggle('on',b.dataset.n===v));
- $('#out').classList.toggle('hide',!['cam','r360'].includes(v));if(v==='hist')rHist();if(v==='res')rRes();if(v==='gps')renderGps();if(v==='set')rSet();scrollTo(0,0)}
-function rHist(){$('#hl').innerHTML=hist.length?hist.slice().reverse().map(h=>`<div class="r"><span style="display:flex;gap:8px;align-items:center"><img src="${h.th}" style="height:44px;border-radius:8px"><span>${new Date(h.time).toLocaleString()}<br><span class="mu">${esc(h.mode)} · ${h.n} រូប · សរុប ${Object.values(h.counts).reduce((a,b)=>a+b,0)}</span></span></span>${h.gps?`<a href="${mapUrl(h.gps)}" target="_blank" rel="noopener">📍</a>`:''}</div>`).join(''):'<div class="mu">មិនទាន់មានប្រវត្តិ</div>'}
-function rRes(){const t={};hist.forEach(h=>Object.entries(h.counts).forEach(([k,v])=>t[k]=(t[k]||0)+v));const e=Object.entries(t).sort((a,b)=>b[1]-a[1]),mx=e.length?e[0][1]:1;
- $('#rl').innerHTML=e.length?e.map(([k,v])=>`<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><span>${esc(nm(k))}</span><b>${v}</b></div><div class="bar" style="width:${Math.max(4,v/mx*100)}%"></div></div>`).join(''):'<div class="mu">មិនទាន់មានលទ្ធផល</div>'}
-async function rSet(){$('#th').value=cfg.th;$('#thv').textContent=cfg.th+'%';$('#ag').value=cfg.agg;$('#rs').value=cfg.rs;
- try{const r=await fetch(KI+'/healthz');$('#kis').textContent=r.ok?'● KI ភ្ជាប់':'● KI error'}catch(e){$('#kis').textContent='● KI offline'}}
-const sv=()=>ls.set('cai:cfg',cfg);
-$('#th').oninput=e=>{cfg.th=+e.target.value;$('#thv').textContent=cfg.th+'%';sv()};$('#ag').onchange=e=>{cfg.agg=e.target.value;sv();renderOut()};$('#rs').onchange=e=>{cfg.rs=+e.target.value;sv()};
-$('#clr').onclick=()=>{if(confirm('លុបប្រវត្តិទាំងអស់?')){hist=[];ls.set('cai:hist',[]);rHist()}};
-$$('.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.v));$$('.nav button[data-n]').forEach(b=>b.onclick=()=>show(b.dataset.n));
-const cam=()=>$('#fc').click(),gal=()=>$('#fg').click();
-$('#open').onclick=cam;$('#sc').onclick=()=>{show('cam');cam()};$('#gal').onclick=gal;$('#bulk').onclick=()=>$('#fb').click();$('#clc').onclick=()=>show('gps');
-$('#fc').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],'single',true);e.target.value=''};
-$('#fg').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],'single',false);e.target.value=''};
-$('#fb').onchange=e=>{if(e.target.files.length)run([...e.target.files],'bulk',false);e.target.value=''};
-$$('.side button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='cam')cam();else if(a==='gal')gal();else if(a==='r360')show('r360');else if(a==='gps')show('gps');
- else if(a==='map'){const g=sgps();g?window.open(mapUrl(g),'_blank','noopener'):toast('មិនទាន់មានទីតាំង')}else info()});
-function rp(){$('#rp').textContent=ring?'រូប '+ring+'/'+cfg.rs:'';$('#rn').innerHTML='<b>'+(ring?'Next ('+(ring+1)+')':'Start')+'</b>'}
-$('#rn').onclick=()=>{if(ring>=cfg.rs)return toast('គ្រប់ហើយ ចុច "បញ្ចប់"');$('#fr').click()};
-$('#fr').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;await run([f],'360',true,ring>0);ring++;rp();if(ring>=cfg.rs)say('ថតគ្រប់ '+cfg.rs+' រូប · ចុច "បញ្ចប់"')};
-$('#rf').onclick=()=>{ring=0;rp();toast('បញ្ចប់ 360° · កែលេខ +/− ហើយ Save')};
-$('#gd').onclick=async()=>{say('កំពុងយកទីតាំង…');const g=await devGps();if(g&&ses){ses.gps=g;renderOut()}else if(!ses)toast('ថតរូបជាមុន');say(g?'បានទីតាំង':'យកទីតាំងមិនបាន (បើកការអនុញ្ញាត GPS)');renderGps()};
-$('#gh').onclick=()=>{if(!ses)return toast('ថតរូបជាមុន');const t=prompt('lat,lon (ឧ. 11.5564,104.9282)');if(!t)return;const[a,b]=t.split(',').map(Number);
- if(isFinite(a)&&isFinite(b)&&Math.abs(a)<=90&&Math.abs(b)<=180){ses.gps={lat:a,lon:b,src:'manual'};renderOut()}else toast('ទម្រង់មិនត្រឹមត្រូវ')};
-$('#bset').onclick=()=>show('set');$('#bmore').onclick=()=>toast('KHOEM-AI · CAI v2');
-$('#bmoon').onclick=()=>{cfg.light=cfg.light?0:1;document.body.classList.toggle('light',!!cfg.light);sv()};
-document.body.classList.toggle('light',!!cfg.light);rp();
+ try{await navigator.clipboard.writeText(s);toast('CSV copied')}catch(e){toast('Copy failed')}}
+
+function rHist(){$('#hl').innerHTML=hist.length?hist.slice().reverse().map(h=>`<div class="r"><span style="display:flex;gap:8px;align-items:center"><img src="${h.th}" style="height:44px;border-radius:8px"><span>${new Date(h.time).toLocaleString()}<br><span class="mu">${h.n} photo(s) &middot; total ${Object.values(h.counts).reduce((a,b)=>a+b,0)}</span></span></span>${h.gps?`<a href="${mapUrl(h.gps)}" target="_blank" rel="noopener">Map</a>`:''}</div>`).join(''):'<div class="mu">No history yet.</div>'}
+
+$('#cam').onclick=()=>$('#fc').click();$('#gal').onclick=()=>$('#fg').click();$('#bulk').onclick=()=>$('#fb').click();
+$('#fc').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],true);e.target.value=''};
+$('#fg').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],false);e.target.value=''};
+$('#fb').onchange=e=>{if(e.target.files.length)run([...e.target.files],false);e.target.value=''};
+$('#clr').onclick=()=>{if(confirm('Clear all history?')){hist=[];ls.set('cai:hist',[]);rHist()}};
+$('#back').onclick=()=>{history.length>1?history.back():location.href='http://'+location.hostname+':5175/'};
+$('#theme').onclick=()=>{cfg.light=cfg.light?0:1;document.body.classList.toggle('light',!!cfg.light);ls.set('cai:cfg',cfg)};
+document.body.classList.toggle('light',!!cfg.light);rHist();
 </script></body></html>
