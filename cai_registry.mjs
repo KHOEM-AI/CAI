@@ -29,6 +29,9 @@ export const CAI_UI = {
   nav: ["Home", "History", "Scan", "Results", "Settings"],
 };
 
+// page links (relative: work on :5180 and under AI/public/cai/)
+export const CAI_LINKS = { home: "index.html", scan: "cai-scan.html", api: ":5001/api", ui: ":5175" };
+
 export const getProject = (id) => PROJECTS.find((p) => p.id.toLowerCase() === id.toLowerCase());
 
 export function validate() {

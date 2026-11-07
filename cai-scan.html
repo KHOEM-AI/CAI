@@ -42,7 +42,10 @@ button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(10,70,130,.25)}
 .card{box-shadow:0 6px 0 rgba(10,70,130,.12),0 12px 22px rgba(10,70,130,.14)}
 body.light .two button{background:linear-gradient(#17508a,#0f3d6e);border-color:#1e5a94;box-shadow:0 5px 0 #0a2c52}
 body.light .card{box-shadow:0 6px 0 rgba(0,0,0,.25)}
-</style></head><body><div id="app">
+</style></head><body>
+<!--cai-nav--><nav id="cainav" style="display:flex;gap:8px;padding:8px;font:14px system-ui">
+<a href="index.html">🏠 Home</a><a href="cai-scan.html">📷 Scan</a><a id="cai-ui" href="#">🧩 AI UI</a></nav>
+<script>(function(){var a=document.getElementById('cai-ui');a.href=location.port==='5175'?'/':'http://'+location.hostname+':5175/'})()</script><!--/cai-nav--><div id="app">
 <header><button id="back" aria-label="Back">&larr;</button>
 <div class="t"><b>Photo Scan</b><small>Count objects &middot; Find location</small></div>
 <button id="theme" aria-label="Theme">&#9790;</button></header>
@@ -145,7 +148,7 @@ $('#fc').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],true);e.targe
 $('#fg').onchange=e=>{if(e.target.files[0])run([e.target.files[0]],false);e.target.value=''};
 $('#fb').onchange=e=>{if(e.target.files.length)run([...e.target.files],false);e.target.value=''};
 $('#clr').onclick=()=>{if(confirm('Clear all history?')){hist=[];ls.set('cai:hist',[]);rHist()}};
-$('#back').onclick=()=>{history.length>1?history.back():location.href='http://'+location.hostname+':5175/'};
+$('#back').onclick=()=>{history.length>1?history.back():location.href='index.html'};
 $('#theme').onclick=()=>{cfg.light=cfg.light?0:1;document.body.classList.toggle('light',!!cfg.light);ls.set('cai:cfg',cfg)};
 $('#hgo').onclick=async()=>{say('Getting location...');const p=await devGps();
  if(p){$('#hl2').innerHTML=p.lat+', '+p.lon+' <span class="mu">(+/-'+p.acc+'m)</span> <a href="'+mapUrl(p)+'" target="_blank" rel="noopener">Open map</a>';$('#hm').innerHTML=embed(p);say('Location found.')}

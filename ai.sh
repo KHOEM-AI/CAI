@@ -12,7 +12,7 @@ start_cai() {
   ( cd "$ROOT" && exec python "$ROOT/serve.py" "$PORT" >"$HOME/cai.log" 2>&1 ) &
   echo $! > "$PIDF"
   for _ in $(seq 1 15); do
-    curl -fs -m 2 "$URL" >/dev/null 2>&1 && { echo "  ✔ CAI scan       :$PORT"; return 0; }
+    curl -fs -m 2 "$URL" >/dev/null 2>&1 && { echo "  ✔ CAI scan       :$PORT  (/index.html · /cai-scan.html)"; return 0; }
     sleep 1
   done
   echo "  ✘ CAI not ready (log: ~/cai.log)"; return 1
@@ -22,5 +22,6 @@ case "${1:-run}" in
   stop)    stop_cai; echo "CAI stopped" ;;
   restart) stop_cai; start_cai ;;
   run)     start_cai && { trap 'stop_cai; exit' INT TERM; wait "$(cat "$PIDF")"; } ;;
-  *) echo "usage: $0 [start|run|stop|restart]"; exit 1 ;;
+  sync)    D="${CAI_UI_DIR:-$HOME/ai-project/AI/public/cai}"; mkdir -p "$D" && cp "$ROOT/index.html" "$ROOT/cai-scan.html" "$D/" && echo "  ✔ synced → $D" ;;
+  *) echo "usage: $0 [start|run|stop|restart|sync]"; exit 1 ;;
 esac
