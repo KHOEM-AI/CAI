@@ -1,6 +1,6 @@
 import { useState } from "react";
 // @ts-ignore — plain ES module, no type declarations
-import { CAI_UI, PROJECTS } from "./cai_registry.mjs";
+import { CAI_UI, CAI_LINKS, PROJECTS } from "./cai_registry.mjs";
 
 type Action = { id: string; label: string; sub: string };
 
@@ -18,10 +18,11 @@ const btn: React.CSSProperties = {
   cursor: "pointer",
 };
 
-export default function CAIHome({ onAction }: { onAction?: (id: string) => void }) {
+export default function CAIHome({ onAction, base = "/cai/" }: { onAction?: (id: string) => void; base?: string }) {
   const [tab, setTab] = useState<string>(CAI_UI.tabs[0]);
   const [nav, setNav] = useState<string>("Home");
-  const fire = (id: string) => onAction?.(id);
+  const go = (page: string) => { window.location.href = base + page; };
+  const fire = (id: string) => (onAction ? onAction(id) : go(CAI_LINKS.home + "#" + (id === "location" ? "gps" : "cam")));
   const [primary, ...secondary]: Action[] = CAI_UI.actions;
 
   return (
@@ -35,7 +36,7 @@ export default function CAIHome({ onAction }: { onAction?: (id: string) => void 
 
       <div role="tablist" style={{ display: "flex", background: PANEL, borderRadius: 16, padding: 4, marginBottom: 14 }}>
         {CAI_UI.tabs.map((t: string) => (
-          <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
+          <button key={t} role="tab" aria-selected={tab === t} onClick={() => { setTab(t); go(CAI_LINKS.views[t] ?? CAI_LINKS.home); }}
             style={{ flex: 1, padding: 12, borderRadius: 12, border: 0, cursor: "pointer",
               background: tab === t ? "#12392a" : "transparent", color: tab === t ? GREEN : "#b8c4be", fontWeight: 600 }}>
             {t}
@@ -84,7 +85,7 @@ export default function CAIHome({ onAction }: { onAction?: (id: string) => void 
 
       <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxWidth: 480, margin: "0 auto", display: "flex", background: PANEL, borderTop: "1px solid #1c2a24" }}>
         {CAI_UI.nav.map((n: string) => (
-          <button key={n} onClick={() => setNav(n)}
+          <button key={n} onClick={() => { setNav(n); go(CAI_LINKS.views[n] ?? CAI_LINKS.home); }}
             style={{ flex: 1, padding: "14px 0", background: "transparent", border: 0, color: nav === n ? GREEN : "#8a9a92", cursor: "pointer" }}>
             {n}
           </button>

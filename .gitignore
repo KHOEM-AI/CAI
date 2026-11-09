@@ -6,3 +6,6 @@ __pycache__/
 *.pyc
 cai_core
 *.bak*
+p
+.cai-share.json*
+.cai-google-client-id

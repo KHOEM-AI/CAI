@@ -15,8 +15,8 @@ export const PROJECTS = [
 export const CAI_UI = {
   brand: "KHOEM-AI",
   tagline: "Vision · Count · Locate",
-  tabs: ["Camera", "360° Scan", "GPS"],
-  features: ["Count", "Detect Objects", "360° Scan", "GPS Location", "Show on Map", "Photo Info"],
+  tabs: ["Camera", "360° Scan", "GPS", "Share"],
+  features: ["Count", "Detect Objects", "360° Scan", "GPS Location", "Show on Map", "Photo Info", "Share Location", "Track Devices"],
   actions: [
     { id: "camera",  label: "Open Camera",         sub: "Take a photo & AI scan (360°)" },
     { id: "gallery", label: "Choose from Gallery", sub: "Select photo & scan" },
@@ -30,7 +30,14 @@ export const CAI_UI = {
 };
 
 // page links (relative: work on :5180 and under AI/public/cai/)
-export const CAI_LINKS = { home: "index.html", scan: "cai-scan.html", api: ":5001/api", ui: ":5175" };
+export const CAI_LINKS = {
+  home: "cai-scan.html", scan: "cai-scan.html", api: ":5001/api", share: ":5181", ui: ":5175",
+  // every screen has its own address: cai-scan.html#<view>
+  views: {
+    Camera: "cai-scan.html#cam", "360° Scan": "cai-scan.html#r360", GPS: "cai-scan.html#gps", Share: "cai-scan.html#share",
+    Home: "cai-scan.html#cam", History: "cai-scan.html#hist", Scan: "cai-scan.html#cam", Results: "cai-scan.html#res", Settings: "cai-scan.html#set",
+  },
+};
 
 export const getProject = (id) => PROJECTS.find((p) => p.id.toLowerCase() === id.toLowerCase());
 
