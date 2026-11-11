@@ -8,4 +8,4 @@
 - ចែករំលែកទីតាំង/តាមដានឧបករណ៍៖ `share-server.mjs` (:5181) · ដាក់ Google Client ID ក្នុង `~/.cai-google-client-id` ហើយ `./ai.sh restart`
 - ភ្ជាប់ទៅវិញទៅមក៖ `cai-scan.html#cam|#r360|#gps|#share|#hist|#res|#set` បើកផ្ទាំងដោយផ្ទាល់ (ប្រើដោយ CAIHome និង AI UI)
 - ទូរស័ព្ទពីរគ្រឿង៖ `./ai.sh tunnel` (ត្រូវ `pkg install cloudflared`) រួចបើក address https លើទូរស័ព្ទមួយទៀត
-- ឯកសារចែករំលែកទីតាំង · ឧបករណ៍ · ឯកជនភាព៖ docs/SHARING.md · test៖ node --test test/share.test.mjs
+- ឯកសារចែករំលែកទីតាំង · ឧបករណ៍ · ឯកជនភាព៖ docs/SHARING.md · test៖ node --test test/*.test.mjs
