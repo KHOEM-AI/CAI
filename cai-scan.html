@@ -120,7 +120,7 @@ button:disabled{opacity:.4;cursor:not-allowed}label{display:flex;gap:8px;align-i
 <nav class="nav"><button data-n="cam" class="on"><span>🏠</span>Home</button><button data-n="hist"><span>🕘</span>History</button><button class="sc" id="sc">⛶</button><button data-n="res"><span>📊</span>Results</button><button data-n="set"><span>⚙</span>Settings</button></nav>
 <div id="toast"></div>
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],KI='http://'+(location.hostname||'localhost')+':5001/api';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],KI='/ki/api';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const KM={person:'មនុស្ស',cat:'ឆ្មា',dog:'ឆ្កែ',bird:'បក្សី',horse:'សេះ',sheep:'ចៀម',cow:'គោ',elephant:'ដំរី',bottle:'ដប',cup:'ពែង',knife:'កាំបិត',scissors:'កន្ត្រៃ','cell phone':'ទូរស័ព្ទ',laptop:'កុំព្យូទ័រ',tv:'ទូរទស្សន៍',banana:'ចេក',apple:'ផ្លែប៉ោម',orange:'ក្រូច',car:'ឡាន',motorcycle:'ម៉ូតូ',bicycle:'កង់',truck:'ឡានដឹកទំនិញ',bus:'ឡានក្រុង','potted plant':'រុក្ខជាតិ'};
